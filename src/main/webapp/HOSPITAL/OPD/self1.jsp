@@ -16,7 +16,7 @@
 <meta name="ProgId" content="FrontPage.Editor.Document">
 <title>OPD Slip</title>
 <style type="text/css" media="print">
-<style>
+
    div {
         background-color: #fff;
         padding: 25px;
@@ -26,8 +26,6 @@
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         
     }
-   
-</style>
 
 </style>
 <script language="javascript" type="text/javascript" src="/hosp1/javascript/getOV.js"></script>
