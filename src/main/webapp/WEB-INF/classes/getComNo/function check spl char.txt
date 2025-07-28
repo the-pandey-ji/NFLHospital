@@ -1,0 +1,22 @@
+public  String toTitleCaseWithoutSC(String givenString) {
+    
+        String sb ="";
+        if(givenString != null && !givenString.isEmpty())
+        {
+             givenString = givenString.replaceAll("[-+^&%$#@*']*", "");
+                //str= str.toUpperCase();
+                System.out.println("String without special character is:"+givenString);    
+            String[] arr = givenString.split(" ");
+    
+
+            for (int i = 0; i < arr.length; i++) {
+                String abc= arr[i].trim();
+                if(abc != null && !abc.isEmpty())
+                {
+                char capLetter = Character.toUpperCase(abc.charAt(0));
+                 sb += capLetter+ abc.substring(1)+ " ";
+                }
+            }
+        }        
+    return sb.toString().trim();
+    }

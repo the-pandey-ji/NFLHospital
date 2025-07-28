@@ -1,0 +1,51 @@
+<html>
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Enter Employee Code</title>
+<base target="main">
+<script language="JavaScript">
+         <!-- // ignore if non-JS browser
+          function validate() {
+            var digits = "0123456789";
+            if(MyForm.T1.value=="")
+              {
+                alert("Please enter the Employee Number\n"); 
+                event.returnValue=false;
+                MyForm.T1.focus(); 
+              }
+            else if(MyForm.T1.value != "")
+             {
+               for(var i=0;i<MyForm.T1.value.length;i++)
+                {
+                  temp = MyForm.T1.value.substring(i,i+1);
+                    if (digits.indexOf(temp) == -1 )
+                     {
+                       alert("The numerical text must be a number.\n");
+                       event.returnValue=false;
+                       MyForm.T1.value="";
+                       MyForm.T1.focus();
+                       break;
+                     }
+                } 
+            }
+            else
+            {
+              event.returnValue=true;
+            } 
+      }
+   // -->
+</script>
+</head>
+<body background="../../Stationery/Glacier%20Bkgrd.jpg">
+<form name="MyForm" method="POST" action="/hosp1/HOSPITAL/OPD/dependent1.jsp" onsubmit="validate();">
+  <p align="center">
+  <font size="2">
+  <b><font face="Tahoma" color="#003399">Enter Employee Code</font></b><font face="Tahoma">&nbsp;
+  </font>&nbsp;&nbsp;&nbsp; <input type="text" name="T1" size="20"><input type="submit" value="Detail" name="B1" style="font-family: Tahoma; font-size: 10pt; color: #3366CC; font-weight: bold">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font></p>
+</form>
+<hr width="80%">
+</body>
+</html>

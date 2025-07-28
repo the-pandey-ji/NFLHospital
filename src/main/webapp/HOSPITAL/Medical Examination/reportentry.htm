@@ -1,0 +1,62 @@
+<html>
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Medical Examination Of&nbsp; NFL&nbsp; Employees</title>
+<script language="JavaScript">
+         <!-- // ignore if non-JS browser
+          function validate() 
+             {
+               var digits = "0123456789";
+               if(MyForm.medexamno.value=="")
+                  {
+                     alert("Please Enter the Med. Examination Number\n"); 
+                     event.returnValue=false;
+                     MyForm.medexamno.focus();
+                  }
+               else if(MyForm.medexamno.value != "")
+                  {
+                    for(var i=0;i<MyForm.medexamno.value.length;i++)
+                       {
+                          temp = MyForm.medexamno.value.substring(i,i+1);
+                          if (digits.indexOf(temp) == -1 )
+                             {
+                                 alert("The numerical text must be a number.\n");
+                                 event.returnValue=false;
+                                 MyForm.medexamno.value="";
+                                 MyForm.medexamno.focus();
+                                 break;
+                             }
+                       } 
+                  }
+               else
+                  {
+                       event.returnValue=true;
+                  } 
+            }
+   // -->
+ </script>
+</head>
+<body>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p align="center"><b><font face="Tahoma" color="#000080" size="4">Medical Examination Of&nbsp; NFL&nbsp; Employees</font></b></p>
+<div align="center">
+  <center>
+  <table border="0" width="54%" height="166">
+    <tr>
+      <td width="100%" height="160">
+        <form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Medical Examination/entryform.jsp" onsubmit="validate();" >
+          <p align="center"><font size="2" face="Tahoma" color="#000080"><b>Enter Medical Examination No. </b></font>&nbsp;
+          <input type="text" name="medexamno" size="20">
+          <input type="submit" value="Submit" name="B1"></p>
+        </form>
+        <p align="center">&nbsp;</td>
+    </tr>
+  </table>
+  </center>
+</div>
+</body>
+</html>

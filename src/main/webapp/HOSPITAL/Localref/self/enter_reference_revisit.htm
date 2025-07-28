@@ -1,0 +1,74 @@
+<html>
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Loacl Reference</title>
+<base target="main">
+<script language="JavaScript">
+   <!-- // ignore if non-JS browser
+    function validate() 
+     {
+            var digits = "0123456789";
+            if(MyForm.refno.value=="")
+              {
+                alert("Please Enter the Reference Number printed on OPD slip\n"); 
+                event.returnValue=false;
+                MyForm.refno.focus();
+              }
+            else if(MyForm.refno.value != "")
+             {
+               for(var i=0;i<MyForm.refno.value.length;i++)
+                {
+                  temp = MyForm.refno.value.substring(i,i+1);
+                    if (digits.indexOf(temp) == -1 )
+                     {
+                       
+                       alert("The numerical text must be a number.\n");
+                       event.returnValue=false;
+                       MyForm.refno.value="";
+                       MyForm.refno.focus();
+                       break;
+                     }
+                } 
+            }
+            else
+             {
+                event.returnValue=true;
+             } 
+     }
+   // -->
+ </script>
+</head>
+<body background="../Stationery/Glacier%20Bkgrd.jpg">
+<form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Localref/self/refdetaildeprevisit.jsp" target="_self" onsubmit="validate();" >
+    <p align="center" style="margin-top: -4; margin-bottom: -4">&nbsp;</p>
+    <p align="center" style="margin-top: -4; margin-bottom: -4">&nbsp;</p>
+    <p align="center" style="margin-top: -4; margin-bottom: -4"><b>
+    <font face="Tahoma">Select Year</font><font size="3" face="Tahoma">&nbsp;
+    <select size="1" name="D1">
+    <option value="2011">2011</option>
+    <option selected value="2012">2012</option>
+    <option value="2013">2013</option>
+    <option value="2014">2014</option>
+    <option value="2015">2015</option>
+<option value="2016">2016</option>
+<option value="2017">2017</option>
+<option value="2018">2018</option>
+<option value="2019">2019</option>
+<option value="2020">2020</option>
+<option value="2021">2021</option>
+<option value="2022">2022</option>
+<option value="2023">2023</option>
+<option value="2023">2024</option>
+<option value="2023">2025</option>
+    </select></font></b><font face="Tahoma" size="3">
+    <b>&nbsp;&nbsp;&nbsp;&nbsp; </b></font><b><font size="3" face="Tahoma">Enter Reference No&nbsp;&nbsp;&nbsp;&nbsp;
+    </font></b><input type="text" name="refno" size="20"><font face="Tahoma" size="3">
+    <b>&nbsp;&nbsp; <input type="submit" value="Go" name="B1"></b></font></p>
+</form>
+<hr width="80%">
+<p align="center">&nbsp;</p>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<html>
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Enter Employee Code</title>
+<base target="main">
+<script language="JavaScript">
+         <!-- // ignore if non-JS browser
+          function validate() {
+            var digits = "0123456789";
+            if((login.userid.value=="") or 
+              {
+                alert("Please enter the Employee Number\n"); 
+                event.returnValue=false;
+                login.userid.focus(); 
+              }
+            else if(login.userid.value != "")
+             {
+               for(var i=0;i<login.userid.value.length;i++)
+                {
+                  temp = login.userid.value.substring(i,i+1);
+                    if (digits.indexOf(temp) == -1 )
+                     {
+                       alert("The numerical text must be a number.\n");
+                       event.returnValue=false;
+                       login.userid.value="";
+                       login.userid.focus();
+                       break;
+                     }
+                } 
+            }
+            else
+            {
+              event.returnValue=true;
+            } 
+      }
+         
+   // -->
+</script>
+</head>
+<body bgcolor="#CCFFFF">
+
+<form name="login" method="POST" action="/hosp/HOSPITAL/testreport/check2.jsp" onsubmit="validate();" target="_self">
+  <p align="center"> <img border="0" src="path5.jpg" width="115" height="102"></p>
+  <p align="center">
+  <font face="Arial Black" size="4" color="#0000FF">NFL Hospital Test Report</font></p>
+  <p align="center">
+  &nbsp;</p>
+  <div align="center">
+    <center>
+    <table border="2" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="31%">
+      <tr>
+        <td width="50%" align="center"><font color="#FF0000"><b>VIEWERS LOGIN</b></font></td>
+      </tr>
+      <tr>
+  <td width="50%" align="center">
+  <p align="center">
+  <font color="#008080">
+  <b><font face="Tahoma">User Id</font>&nbsp;</b></font><font size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 
+  <input type="text" name="userid" size="5" tabindex="3"></font></p></td>
+  </tr>
+  <tr>
+        <td width="50%" align="center">
+  <p align="center">
+  <font color="#008080">
+  <b><font face="Tahoma">Password</font>&nbsp;</b></font><font size="2"><font color="#008080">&nbsp;</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+  <input type="password" name="passwd" size="10" tabindex="4"></font></p>
+        </td>
+      </tr>
+      <tr>
+        <td width="50%" align="center">&nbsp;</td>
+      </tr>
+      <tr>
+        <td width="50%" align="center">
+  <font size="2">
+  <input type="submit" value="Submit" name="B2" ></font></td>
+      </tr>
+    </table>
+    </center>
+  </div>
+  <p align="center">
+  &nbsp;</p>
+  <p align="center">
+  <font size="2">
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></p>
+</form>
+<hr width="80%">
+
+</body>
+</html>

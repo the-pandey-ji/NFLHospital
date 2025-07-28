@@ -1,0 +1,143 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Entry For Medical Certificate</title>
+</head>
+
+<body background="../../Stationery/Clear%20Day%20Bkgrd.jpg">
+
+<form method="POST" action="http://127.0.0.1:81/HOSPITAL/Medical Certificate/mcert.jsp">
+ 
+  <p align="center">&nbsp;&nbsp; <b><font size="4" face="Tahoma"> Entry For
+  Medical Certificate</font></b></p>
+  <div align="center">
+    <center>
+    <table border="0" width="58%" bgcolor="#CCFFFF">
+      <tr>
+        <td width="53%"><font size="2" face="Tahoma"><b>Patient
+          name</b></font></td>
+        <td width="49%"><input type="text" name="T1" size="28"></td>
+      </tr>
+      <tr>
+        <td width="53%"><font face="Tahoma" size="2"><b>Relation</b></font></td>
+        <td width="49%"><select size="1" name="D1">
+            <option>S/O</option>
+            <option>D/O</option>
+            <option>W/O</option>
+          </select></td>
+      </tr>
+      <tr>
+        <td width="53%"><font face="Tahoma" size="2"><b>Father</b></font></td>
+        <td width="49%"><input type="text" name="T10" size="28"></td>
+      </tr>
+      <tr>
+        <td width="53%"><font face="Tahoma" size="2"><b>Employee
+          Code</b></font></td>
+        <td width="49%"><input type="text" name="T2" size="28"></td>
+      </tr>
+      <tr>
+        <td width="53%"><font face="Tahoma" size="2"><b>Designation</b></font></td>
+        <td width="49%"><input type="text" name="T3" size="28"></td>
+      </tr>
+      <tr>
+        <td width="53%"><font face="Tahoma" size="2"><b>Department</b></font></td>
+        <td width="49%"><input type="text" name="T4" size="28"></td>
+      </tr>
+      <tr>
+        <td width="53%"><font face="Tahoma" size="2"><b>Suffering
+          From</b></font></td>
+        <td width="49%"><input type="text" name="T5" size="28"></td>
+      </tr>
+      <tr>
+        <td width="53%"><font face="Tahoma" size="2"><b>Leave
+          Days</b></font></td>
+        <td width="49%"><input type="text" name="T6" size="28"></td>
+      </tr>
+      <tr>
+        <td width="53%"><font face="Tahoma" size="2"><b>From
+          (01-Jan-2008)</b></font></td>
+        <td width="49%"><input type="text" name="T7" size="28"></td>
+      </tr>
+      <tr>
+        <td width="53%"><font face="Tahoma" size="2"><b>To
+          (01-Jan-2008)</b></font></td>
+        <td width="49%"><input type="text" name="T8" size="28"></td>
+      </tr>
+      <tr>
+        <td width="53%"><font face="Tahoma" size="2"><b>Fit For
+          Duty from(01-Jan-2008)</b></font></td>
+        <td width="49%"><input type="text" name="T9" size="28"></td>
+      </tr>
+    </table>
+    </center>
+  </div>
+  <p align="center">&nbsp;<input type="submit" value="Submit" name="B1" onClick="checkForm();">&nbsp;&nbsp;
+  <input type="reset" value="Reset" name="B2"></p>
+</form>
+
+<SCRIPT LANGUAGE="JavaScript">
+        <!--
+        function checkForm()
+         {
+           if(document.MyForm.T1.value == "")
+           {
+             alert("Please Enter Patient Name !!")
+             document.MyForm.T1.focus();
+           }  
+           else if(document.MyForm.T10.value == "")
+           {
+             alert("Please Enter Father's Name !!")
+             document.MyForm.T10.focus();
+           }
+           else if(document.MyForm.T2.value == "")
+           {
+             alert("Please Enter Employee Code !!")
+             document.MyForm.T2.focus();
+           }
+           else if(document.MyForm.T3.value == "")
+           {
+             alert("Please Enter Designation !!")
+             document.MyForm.T3.focus();
+           }
+           else if(document.MyForm.T4.value == "")
+           {
+             alert("Please Enter Department !!")
+             document.MyForm.T4.focus();
+           }
+           else if(document.MyForm.T5.value == "")
+           {
+             alert("Please Enter Suffering from !!")
+             document.MyForm.T5.focus();
+           }
+           else if(document.MyForm.T6.value == "")
+           {
+             alert("Please Enter Leave Days !!")
+             document.MyForm.T6.focus();
+           }
+           else if(document.MyForm.T7.value == "")
+           {
+             alert("Please Enter Start Date !!")
+             document.MyForm.T7.focus();
+           } 
+           else if(document.MyForm.T8.value == "")
+           {
+             alert("Please Enter End date !!")
+             document.MyForm.T8.focus();
+           }
+           else if(document.MyForm.T9.value == "")
+           {
+             alert("Please Enter Fit for Duty From !!")
+             document.MyForm.T9.focus();
+           }
+         }
+
+	//-->
+</SCRIPT>
+
+</body>
+
+</html>

@@ -1,0 +1,70 @@
+<HTML>
+<HEAD>
+<STYLE>
+.js {
+  color: white;
+  background-color: orange;
+}
+</STYLE>
+<SCRIPT>
+function addRowDOM (tableID) { 
+// pass every cell content as a futher arg
+  var table = 
+    document.all ? document.all[tableID] :
+      document.getElementById(tableID);
+  if (arguments.length > 1) {
+    var row = table.insertRow(table.rows.length);
+    if (document.all) {
+      for (var i = 1; i < arguments.length; i++) {
+        var cell = row.insertCell(i - 1);
+        cell.innerHTML = arguments[i];
+      }
+    }
+    else if (document.getElementById) { 
+//NN6 bug inserting cells in wrong sequence
+      for (var i = arguments.length - 1; i >= 1; i--) {
+        var cell = row.insertCell(arguments.length - 1 - i);
+        cell.appendChild(document.createTextNode(arguments[i]));
+      }
+    }
+  }
+}
+function addRowHTML (tableID, html) {
+  if (document.getElementById && !document.all) {
+    var table = document.getElementById(tableID);
+    var tbody = table.tBodies[table.tBodies.length - 1];
+    var range = document.createRange();
+    range.setStartAfter(tbody.lastChild);
+    var docFrag = range.createContextualFragment(html);
+    tbody.appendChild(docFrag);
+  }
+}
+</SCRIPT>
+</HEAD>
+<BODY>
+<BUTTON 
+  ONCLICK="addRowDOM
+('table1', 'JavaScript.FAQTs.com', 'www.FAQTs.com');"
+>
+add row per DOM methods
+</BUTTON>
+<BUTTON 
+  ONCLICK="addRowHTML('table1', 
+'<TR><TD>JavaScript.FAQTs.com<\/TD><TD>www.FAQTs.com<\/TD><\/TR>');"
+>
+add row as html
+</BUTTON>
+<TABLE ID="table1" BORDER="1" CLASS="js">
+<TBODY>
+<TR>
+<TD>
+JavaScript.FAQTs.com
+</TD>
+<TD>
+www.FAQTs.com
+</TD>
+</TR>
+</TBODY>
+</TABLE>
+</BODY>
+</HTML>

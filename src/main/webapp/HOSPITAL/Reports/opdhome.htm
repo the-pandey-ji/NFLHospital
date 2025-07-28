@@ -1,0 +1,37 @@
+<html>
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Enter Employee Code</title>
+ <script language="JavaScript">
+       <!-- // ignore if non-JS browser
+          function validate() 
+             {
+                 if(MyForm.T1.value=="")
+                    {
+                        alert("Please Enter Date in required format\n"); 
+                        event.returnValue=false;
+                        MyForm.T1.focus();
+                    }
+                 else
+                    {
+                       event.returnValue=true;
+                    } 
+           }
+   // -->
+ </script>
+</head>
+<body background="../Stationery/Clear%20Day%20Bkgrd.jpg">
+<form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Reports/opd.jsp" onSubmit="validate();" >
+   <p align="center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <b><font size="4">&nbsp;<u>OPD</u></font></b></p>
+   <p>&nbsp;</p>
+    <p align="center">
+  <b><font face="Tahoma" size="3" color="#003399">Enter&nbsp; DATE (ddmmyyyy)</font></b><font face="Tahoma">&nbsp;
+  </font>&nbsp;&nbsp;&nbsp; <input type="text" name="dt" size="20"><input type="submit" value="Proceed" name="B1" style="font-family: Tahoma; font-size: 10pt; color: #3366CC; font-weight: bold"></p>
+   <p align="center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+  </form>
+</body>
+</html>

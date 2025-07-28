@@ -1,0 +1,89 @@
+<html>
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Registration for NFL Employee</title>
+</head>
+
+<body bgcolor="#CCFFCC">
+ <p align="center"><b><span style="text-transform: uppercase"><font size="3">REGISTRATION FORM FOR NFL EMPLOYEES</font></span></b>
+ <p align="center">&nbsp;<form name="MyForm" method="POST" action="/hosp1/HOSPITAL/New Registration/processnflreg.jsp">
+  
+  <div align="center">
+    <center>
+  <table border="0" width="46%" height="155">
+    <tr>
+      <td width="101%" height="22">Name</td>
+      <td width="152%" height="22"><input type="text" name="T1" size="35"></td>
+    </tr>
+    <tr>
+      <td width="101%" height="22">Designation</td>
+      <td width="141%" height="22"><input type="text" name="T2" size="35"></td>
+    </tr>
+    <tr>
+      <td width="101%" height="22">Department Code</td>
+      <td width="141%" height="22"><input type="text" name="T5" size="35"></td>
+    </tr>
+    <tr>
+      <td width="101%" height="21">E.Code No.</td>
+      <td width="141%" height="21"><input type="text" name="T3" size="35"></td>
+    </tr>
+    <tr>
+      <td width="101%" height="22">Date of Birth </td>
+      <td width="141%" height="22"><input type="text" name="T4" size="35"></td>
+    </tr>
+    <tr>
+      <td width="101%" height="22">Sex</td>
+      <td width="141%" height="22"><select size="1" name="D1">
+          <option>M</option>
+          <option>F</option>
+        </select></td>
+    </tr>
+  </table>
+    </center>
+  </div>
+  <p align="center">
+<input type="button" value="Save" name="B1" onClick="checkForm()";><input type="reset" value="Reset" name="B2"></p>
+</form>
+<SCRIPT LANGUAGE="JavaScript">
+ <!--
+    function checkForm()
+        {
+           if(document.MyForm.T1.value == "")
+             {
+                 alert("Please Enter Your Employee Name !!")
+                 document.MyForm.T1.focus();
+             }
+           else if(document.MyForm.T2.value == "")
+             {
+                 alert("Please Enter Designation !!")
+                 document.MyForm.T2.focus();
+             }
+	       else if(document.MyForm.T3.value == "")
+	         {
+	             alert("Please Enter Your Employee Number !!")
+	             document.MyForm.T3.focus();
+             }
+	       else if(document.MyForm.T4.value == "")
+	         {
+	             alert("Please Enter Date of Birth !!")
+	             document.MyForm.T4.focus();
+             }
+           else if(document.MyForm.T5.value == "")
+	         {
+	             alert("Please Enter Date of Birth !!")
+	             document.MyForm.T5.focus();
+             }
+           else
+             {
+                 document.MyForm.submit();
+             }
+       }
+
+	//-->
+ </SCRIPT>
+</body>
+
+</html>
