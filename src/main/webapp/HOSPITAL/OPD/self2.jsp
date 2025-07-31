@@ -30,18 +30,80 @@
 
 </style>
 <script language="javascript" type="text/javascript" src="/hosp1/javascript/getOV.js"></script>
-<!-- Select2 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-<!-- jQuery (already included) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Select2 JS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
 <body>
+<% 
+	/* String empn = session.getAttribute("nm").toString();
+	String name = "";
+	String age = "";
+	String sex = "";
+					
+    //String dataSourceName = "hosp";
+    // String dbURL = "jdbc:oracle:thin:@10.3.126.84:1521:ORCL";
+    
+  
+    
+    Connection con=DBConnect.getConnection(); 
+    Connection con1=DBConnect.getConnection1(); 
+
+    try 
+        {
+  
+           String query = "select ename,to_char(sysdate,'yyyy') - to_char(birthdate,'yyyy'), sex FROM employeemaster where empn=?";           
+           
+           
+            Statement stmt=con.createStatement();
+  
+
+           PreparedStatement pstmt = con1.prepareStatement(query);
+			pstmt.setString(1, empn);
+			ResultSet rs = pstmt.executeQuery();
 
 
+           while(rs.next())
+	          {
+	             name = rs.getString(1);
+	             age = rs.getString(2);
+                     sex = rs.getString(3);
+                    
+	          }
+           
+           System.out.println("name:"+name);
+           System.out.println("agr:"+age);
+           System.out.println("sex:"+sex);
+           
+       
+        	
+	     // ResultSet rs3 = stmt.executeQuery("insert into opd(SRNO, PATIENTNAME,RELATION, AGE, OPDDATE, SEX, EMPN,TYP,EMPNAME) values ('"+srno+"','"+name+"','SELF','"+age1+"',SYSDATE,'"+sex+"','"+empn+"','"+typ+"','"+name+"')");
+	        
+
+	
+	
+
+	    }
+	    
+catch(SQLException e) 
+   {
+      while((e = e.getNextException()) != null)
+      out.println(e.getMessage() + "<BR>");
+   }
+
+finally
+   {
+       if(con != null) 
+         {
+             try
+                 {
+                    con.close();
+                 }
+             catch (Exception ignored) {}
+         }
+   } */
+%>
 <div align="center">
                <center>
                <table border="1" cellpadding="0" cellspacing="0" style="border-collapse: collapse; border-width: 0" bordercolor="#111111" width="47%" height="39">
@@ -78,62 +140,165 @@
                </center>
              </div>
              
-             <div align="center">
-    <h3>Select or Add Disease</h3>
-   <select id="searchDisease" style="width: 300px;">
-    <option value="">-- Select or type disease --</option>
-</select>
-<button onclick="addDisease()">Add if not listed</button>
+             
+             
+             
+  <div >
+  <h3>Select or Add Disease</h3>
+  <p>Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.</p>
+  <select id="diseaseSelect" multiple style="width: 300px;"></select>
+  <br><br>
+  <input type="text" id="newDisease" placeholder="Type and click Add if not listed" />
+  <button onclick="addNewDisease()">Add Disease</button>
+  <div class="todo-list" id="todoListDisease">
+    <strong>Selected Disease:</strong>
+    <div id="todoItemsDisease"></div>
+  </div>
+  
 </div>
+
+<div>
+  <h3>Select or Add Medicine</h3>
+  
+  <select id="medicineSelect" multiple style="width: 300px;"></select>
+  <br><br>
+  <input type="text" id="newMedicine" placeholder="Type and click Add if not listed" />
+  <button onclick="addNewMedicine()">Add Medicine</button>
+  <div class="todo-list" id="todoListMedicine">
+    <strong>Selected Medicine:</strong>
+    <div id="todoItemsMedicine"></div>
+  </div>
+ 
+</div>
+
+ <button onclick="saveToDoList('medicine')">Save Selected Medicines</button>
 
 
 
 <script>
 $(document).ready(function () {
-    $('#searchDisease').select2({
-        placeholder: "Select or type disease",
-        allowClear: true,
-        tags: true // allows typing new diseases
-    });
+	  loadDisease();
+	  loadMedicine();
+	});
 
-    loadDiseases();
-});
+	function loadDisease() {
+	  $.ajax({
+	    url: '/hosp1/jsps/getDisease.jsp',
+	    method: 'GET',
+	    success: function(response) {
+	      $('#diseaseSelect').append(response);
+	      $('#diseaseSelect').select2({
+	        placeholder: "Select diseases",
+	        allowClear: true,
+	        width: 'resolve'
+	      });
+	      $('#diseaseSelect').on('change', updateToDoListDisease);
+	    },
+	    error: function() {
+	      alert("Failed to load diseases.");
+	    }
+	  });
+	}
 
-function loadDiseases() {
-    $.getJSON("hosp1/jsps/getDiseases.jsp", function (data) {
-        const $dropdown = $('#searchDisease');
-        $dropdown.empty(); // clear old options
-        $dropdown.append('<option></option>'); // for placeholder
+	function loadMedicine() {
+	  $.ajax({
+	    url: '/hosp1/jsps/getMedicine.jsp',
+	    method: 'GET',
+	    success: function(response) {
+	      $('#medicineSelect').append(response);
+	      $('#medicineSelect').select2({
+	        placeholder: "Select medicines",
+	        allowClear: true,
+	        width: 'resolve'
+	      });
+	      $('#medicineSelect').on('change', updateToDoListMedicine);
+	    },
+	    error: function() {
+	      alert("Failed to load medicines.");
+	    }
+	  });
+	}
 
-        $.each(data, function (index, item) {
-            $dropdown.append('<option value="' + item.disease_name + '">' + item.disease_name + '</option>');
-        });
-    });
-}
+	function addNewDisease() {
+	  let newDisease = $('#newDisease').val().trim();
+	  if (!newDisease) {
+	    alert("Please enter a Disease.");
+	    return;
+	  }
 
-function addDisease() {
-    const disease = $('#searchDisease').val().trim();
-    if (!disease) {
-        alert("Please select or type a disease name.");
-        return;
-    }
+	  $.ajax({
+	    url: '/hosp1/jsps/addDisease.jsp',
+	    method: 'POST',
+	    data: { diseaseName: newDisease },
+	    success: function(response) {
+	      if (response.trim() === "OK") {
+	        let newOption = new Option(newDisease, newDisease, true, true);
+	        $('#diseaseSelect').append(newOption).trigger('change');
+	        $('#newDisease').val('');
+	        updateToDoListDisease();
+	      } else {
+	        alert("Disease already exists or failed to add.");
+	      }
+	    },
+	    error: function() {
+	      alert("An error occurred while adding the disease.");
+	    }
+	  });
+	}
 
-    $.get("hosp1/jsps/addDisease.jsp?disease_name=" + encodeURIComponent(disease), function (response) {
-        if (response.trim() === "success") {
-            alert("Disease added successfully.");
-            loadDiseases();
-            $('#searchDisease').val(null).trigger('change'); // reset dropdown
-        } else if (response.trim() === "invalid") {
-            alert("Invalid disease name.");
-        } else {
-            alert("Failed to add disease. It may already exist.");
-        }
-    });
-}
+	function addNewMedicine() {
+	  let newMedicine = $('#newMedicine').val().trim();
+	  if (!newMedicine) {
+	    alert("Please enter a Medicine.");
+	    return;
+	  }
 
+	  $.ajax({
+	    url: '/hosp1/jsps/addMedicine.jsp',
+	    method: 'POST',
+	    data: { medicineName: newMedicine },
+	    success: function(response) {
+	      if (response.trim() === "OK") {
+	        let newOption = new Option(newMedicine, newMedicine, true, true);
+	        $('#medicineSelect').append(newOption).trigger('change');
+	        $('#newMedicine').val('');
+	        updateToDoListMedicine();
+	      } else {
+	        alert("Medicine already exists or failed to add.");
+	      }
+	    },
+	    error: function() {
+	      alert("An error occurred while adding the medicine.");
+	    }
+	  });
+	}
+
+	function updateToDoListDisease() {
+	  let selected = $('#diseaseSelect option:selected');
+	  let listHtml = '';
+	  selected.each(function() {
+	    listHtml += '<div class="todo-item">' + $(this).text() + '</div>';
+	  });
+	  $('#todoItemsDisease').html(listHtml);
+	}
+
+	function updateToDoListMedicine() {
+	  let selected = $('#medicineSelect option:selected');
+	  let listHtml = '';
+	  selected.each(function() {
+	    listHtml += '<div class="todo-item">' + $(this).text() + '</div>';
+	  });
+	  $('#todoItemsMedicine').html(listHtml);
+	}
+
+	// Example save function placeholder
+
+
+	
 
 
 </script>
+
 
 </body>
 </html>
