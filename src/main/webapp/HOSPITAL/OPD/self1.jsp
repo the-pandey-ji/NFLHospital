@@ -98,7 +98,8 @@
   <input type="text" id="newMedicine" placeholder="Type and click Add if not listed" />
   <button onclick="addNewMedicine()">Add Medicine</button>
   
-  
+  </div>
+  <div class="medicine-inputs" id="medicineInputsContainer"></div>
 
 
 
@@ -134,14 +135,14 @@ function loadMedicine() {
     url: '/hosp1/jsps/getMedicine.jsp',
     method: 'GET',
     success: function(response) {
-      $('#medicineSelect')
-        .html(response)
-        .select2({
-          placeholder: "Select medicines",
-          allowClear: true,
-          width: 'resolve'
-        })
-        .on('change', updateToDoListMedicine);
+    	$('#medicineSelect')
+    	  .html(response)
+    	  .select2({
+    	    placeholder: "Select medicines",
+    	    allowClear: true,
+    	    width: 'resolve'
+    	  })
+    	  .on('change', updateToDoListMedicine);
     },
     error: function() {
       alert("Failed to load medicines.");
@@ -190,6 +191,33 @@ function updateToDoListDisease() {
 }
 
 
+
+
+function updateToDoListMedicine() {
+	  let selectedMedicines = $('#medicineSelect').val(); // array of selected medicine values
+	  let container = $('#medicineInputsContainer');
+	  container.empty(); // Clear old entries
+
+	  if (!selectedMedicines || selectedMedicines.length === 0) return;
+
+	  selectedMedicines.forEach(function (medicine) {
+	    let medicineLabel = $('#medicineSelect option[value="' + medicine + '"]').text();
+	    let html = `
+	      <div class="medicine-box" style="margin-bottom: 15px; padding: 10px; border: 1px solid #ccc;">
+	        <strong>${medicineLabel}</strong><br>
+	        <label>Prescription:</label>
+	        <input type="text" name="prescription_${medicine}" placeholder="e.g. After food" />
+	        <label>Dosage:</label>
+	        <input type="text" name="dosage_${medicine}" placeholder="e.g. 500mg" />
+	        <label>Frequency:</label>
+	        <input type="text" name="frequency_${medicine}" placeholder="e.g. 2 times/day" />
+	        <label>Duration:</label>
+	        <input type="text" name="duration_${medicine}" placeholder="e.g. 5 days" />
+	      </div>
+	    `;
+	    container.append(html);
+	  });
+	}
 
 /* function updateToDoListMedicine() {
 		  const selectedData = $('#medicineSelect').select2('data');

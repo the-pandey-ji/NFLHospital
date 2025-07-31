@@ -1,51 +1,26 @@
-
-var xmlHttp =null;
-function getOV()
-  {
-	xmlHttp = new XMLHttpRequest();
-	if (!xmlHttp) {
-	    alert("Your browser does not support AJAX!");
-	    return;
-	}
-      
-      
-     
-            
-             var empn=document.getElementById('ovcode').value;
-             //var reason="";
-
-
-                    var url="/hosp1/jsps/employeeInfo.jsp";
-					url=url+"?q="+empn;
-                   url=url+"&sid="+Math.random();
-					//url += "&sid=" + Date.now();
-                    xmlHttp.onreadystatechange=stateChangedOV;
-                    xmlHttp.open("GET",url,true);
-                    xmlHttp.send(null);
-					
-              
-            
-				
+function getOV() {
+  var xmlHttp = new XMLHttpRequest();
+  if (!xmlHttp) {
+    alert("Your browser does not support AJAX!");
+    return;
   }
 
-function stateChangedOV()
-  {
-    if(xmlHttp.readyState==4)
-      {
-         var edata = new Array();
-		
-         edata = xmlHttp.responseText.split("#");
-		 
-  
-         //document.getElementById('ovcode').value=edata[0];
-         document.getElementById('ovname').value=edata[0];
-         document.getElementById('ovage').value=edata[1];
-         document.getElementById('ovsex').value=edata[2];
+  var empn = document.getElementById('ovcode').value;
+  var url = "/hosp1/jsps/employeeInfo.jsp?q=" + encodeURIComponent(empn) + "&sid=" + Date.now();
 
-        
-         //document.bag.ovcode.value=xmlHttp.responseText;
-         //document.getElementById('ovcode').value=xmlHttp.responseText;
-
+  xmlHttp.onreadystatechange = function() {
+    if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
+      var edata = xmlHttp.responseText.split("#");
+      if (edata.length >= 3) {
+        document.getElementById('ovname').value = edata[0];
+        document.getElementById('ovage').value = edata[1];
+        document.getElementById('ovsex').value = edata[2];
+      } else {
+        alert("Invalid response format.");
       }
-  }
+    }
+  };
 
+  xmlHttp.open("GET", url, true);
+  xmlHttp.send(null);
+}
