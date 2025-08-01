@@ -79,11 +79,30 @@
     
     <button type="button" onclick="saveTempPrescription()">Save Data</button>
     
-    <!-- <div style="margin: 20px;">
-  <h3>Additional Notes</h3>
-  <textarea name="note" id="note" rows="4" cols="50" placeholder="Enter any additional instructions or notes here..."></textarea>
-</div> -->
-
+    <div id="medicineDetailsContainer" style="margin:20px; display:none;">
+  <h3>Medicine Details</h3>
+  <table border="1" cellpadding="5" cellspacing="0" width="80%" id="medicineDetailsTable">
+    <thead>
+      <tr>
+        <th>Medicine Name</th>
+        <th>Dosage</th>
+        <th>Frequency</th>
+        <th>Timing (Before/After Food)</th>
+        <th>Number of Days</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Rows will be added dynamically here -->
+    </tbody>
+  </table>
+  
+  <div style="margin-top:20px;">
+    <h3>Additional Notes</h3>
+    <textarea name="additionalNotes" id="additionalNotes" rows="4" cols="80" placeholder="Enter any additional instructions or notes here..."></textarea>
+  </div>
+</div>
+    
+   
     
   </form>
 
@@ -160,7 +179,7 @@
     	  });
     	}
 
-    /* function addNewMedicine() {
+/*      function addNewMedicine() {
       let newMedicine = $('#newMedicine').val().trim();
       if (!newMedicine) return alert("Please enter a Medicine.");
       $.post('/hosp1/jsps/addMedicine.jsp', { medicineName: newMedicine }, function (response) {
@@ -172,8 +191,8 @@
           alert("Medicine already exists or failed to add.");
         }
       });
-    } */
-    function addNewMedicine() {
+    }  */
+     function addNewMedicine() {
     	  let newMedicine = $('#newMedicine').val().trim();
     	  if (!newMedicine) return alert("Please enter a Medicine.");
     	  $.post('/hosp1/jsps/addMedicine.jsp', { medicineName: newMedicine }, function (response) {
@@ -187,8 +206,10 @@
     	      alert("Medicine already exists or failed to add.");
     	    }
     	  });
-    	}
+    	} 
 
+    
+    
     function updateToDoListDisease() {
       let listHtml = '';
       $('#diseaseSelect option:selected').each(function () {
@@ -196,6 +217,9 @@
       });
       $('#todoItemsDisease').html(listHtml);
     }
+    
+    
+    
 
     function updateToDoListMedicine() {
       let listHtml = '';
@@ -204,6 +228,12 @@
       });
       $('#todoItemsMedicine').html(listHtml);
     }
+    
+    
+    
+    
+
+    
     
     
     
@@ -228,13 +258,46 @@
     	    traditional: true, // This is key: sends arrays properly
     	    success: function (response) {
     	      alert(response.trim());
+
+    	      // ✅ Now generate the medicine detail table
+    	      generateMedicineDetailsTable();
     	    },
     	    error: function () {
     	      alert("Failed to save data.");
     	    }
     	  });
     	}
+    
+    
+    function generateMedicineDetailsTable() {
+    	  let empn = $('#ovcode').val().trim();
+    	  if (!empn) {
+    	    alert("Please enter Employee Code first.");
+    	    return;
+    	  }
 
+    	  $.ajax({
+    	    url: '/hosp1/jsps/getTempMedicine.jsp',
+    	    method: 'GET',
+    	    data: { ovcode: empn },
+    	    success: function(html) {
+    	      if (!html.trim()) {
+    	        alert("No medicines found in temp prescription.");
+    	        $('#medicineDetailsContainer').hide();
+    	      } else {
+    	        $('#medicineDetailsTable tbody').html(html);
+    	        $('#medicineDetailsContainer').show();
+    	      }
+    	    },
+    	    error: function() {
+    	      alert("Failed to fetch medicines from temp prescription.");
+    	    }
+    	  });
+    	}
+
+
+    
+   
     
     
   </script>
