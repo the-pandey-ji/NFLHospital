@@ -42,7 +42,8 @@
         int rows = ps.executeUpdate();
 
         if (rows > 0) {
-            out.print("OK");
+
+            out.print(newDiseaseCode);
         } else {
             out.print("FAIL1");
         }

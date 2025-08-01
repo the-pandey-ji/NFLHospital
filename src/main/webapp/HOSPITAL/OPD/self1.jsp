@@ -130,7 +130,7 @@
       });
     }
 
-    function addNewDisease() {
+   /*  function addNewDisease() {
       let newDisease = $('#newDisease').val().trim();
       if (!newDisease) return alert("Please enter a Disease.");
       $.post('/hosp1/jsps/addDisease.jsp', { diseaseName: newDisease }, function (response) {
@@ -142,9 +142,25 @@
           alert("Disease already exists or failed to add.");
         }
       });
-    }
+    } */
+    function addNewDisease() {
+    	  let newDisease = $('#newDisease').val().trim();
+    	  if (!newDisease) return alert("Please enter a Disease.");
+    	  $.post('/hosp1/jsps/addDisease.jsp', { diseaseName: newDisease }, function (response) {
+    	    response = response.trim();
+    	    if (response !== "FAIL1" && response !== "FAIL2" && !isNaN(response)) {
+    	      // response is the new disease code/id
+    	      let newDiseaseCode = response;
+    	      let newOption = new Option(newDisease, newDiseaseCode, true, true);
+    	      $('#diseaseSelect').append(newOption).trigger('change');
+    	      $('#newDisease').val('');
+    	    } else {
+    	      alert("Disease already exists or failed to add.");
+    	    }
+    	  });
+    	}
 
-    function addNewMedicine() {
+    /* function addNewMedicine() {
       let newMedicine = $('#newMedicine').val().trim();
       if (!newMedicine) return alert("Please enter a Medicine.");
       $.post('/hosp1/jsps/addMedicine.jsp', { medicineName: newMedicine }, function (response) {
@@ -156,7 +172,22 @@
           alert("Medicine already exists or failed to add.");
         }
       });
-    }
+    } */
+    function addNewMedicine() {
+    	  let newMedicine = $('#newMedicine').val().trim();
+    	  if (!newMedicine) return alert("Please enter a Medicine.");
+    	  $.post('/hosp1/jsps/addMedicine.jsp', { medicineName: newMedicine }, function (response) {
+    	    response = response.trim();
+    	    if (response !== "FAIL1" && response !== "FAIL2" && !isNaN(response)) {
+    	      let newMedicineCode = response;
+    	      let newOption = new Option(newMedicine, newMedicineCode, true, true);
+    	      $('#medicineSelect').append(newOption).trigger('change');
+    	      $('#newMedicine').val('');
+    	    } else {
+    	      alert("Medicine already exists or failed to add.");
+    	    }
+    	  });
+    	}
 
     function updateToDoListDisease() {
       let listHtml = '';
