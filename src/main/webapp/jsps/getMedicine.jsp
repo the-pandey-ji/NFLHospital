@@ -3,14 +3,15 @@
 <%
 Connection con=DBConnect.getConnection(); 
     Statement stmt = con.createStatement();
-    ResultSet rs = stmt.executeQuery("SELECT medicinename FROM medicinemaster");
+    ResultSet rs = stmt.executeQuery("SELECT medicinename,medicinecode FROM medicinemaster");
 
 
 
     while (rs.next()) {
         String medicine = rs.getString("medicinename");
+        String mcode = rs.getString("medicinecode");
     %>
-        <option value="<%= medicine %>"><%= medicine %></option>
+        <option value="<%= mcode %>"><%= medicine %></option>
     <%
     }
     
