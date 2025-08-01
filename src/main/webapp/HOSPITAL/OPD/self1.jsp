@@ -76,10 +76,15 @@
       <button type="button" onclick="addNewMedicine()">Add Medicine</button>
       <div id="todoItemsMedicine" style="margin-top: 20px;"></div>
     </div>
+    
+    <button type="button" onclick="saveTempPrescription()">Save Data</button>
+    
+    <!-- <div style="margin: 20px;">
+  <h3>Additional Notes</h3>
+  <textarea name="note" id="note" rows="4" cols="50" placeholder="Enter any additional instructions or notes here..."></textarea>
+</div> -->
 
-    <div style="text-align:center; margin: 20px;">
-      <input type="submit" value="Submit OPD Slip" />
-    </div>
+    
   </form>
 
   <script src="/hosp1/javascript/getOV.js"></script>
@@ -168,6 +173,39 @@
       });
       $('#todoItemsMedicine').html(listHtml);
     }
+    
+    
+    
+    function saveTempPrescription() {
+    	  let ovcode = $('#ovcode').val().trim();
+    	  let diseases = $('#diseaseSelect').val();
+    	  let medicines = $('#medicineSelect').val();
+
+    	  if (!ovcode) {
+    	    alert("Please enter Employee Code before saving.");
+    	    return;
+    	  }
+
+    	  $.ajax({
+    	    url: '/hosp1/jsps/saveTempPrescription.jsp',
+    	    method: 'POST',
+    	    data: {
+    	      ovcode: ovcode,
+    	      diseaseSelect: diseases,
+    	      medicineSelect: medicines
+    	    },
+    	    traditional: true, // This is key: sends arrays properly
+    	    success: function (response) {
+    	      alert(response.trim());
+    	    },
+    	    error: function () {
+    	      alert("Failed to save data.");
+    	    }
+    	  });
+    	}
+
+    
+    
   </script>
 </body>
 </html>
