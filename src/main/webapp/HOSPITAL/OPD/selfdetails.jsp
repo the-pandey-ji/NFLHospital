@@ -72,7 +72,7 @@
 	          }
 
            
-          ResultSet rs1 = stmt.executeQuery("select max(srno)+1 from OPD");
+          ResultSet rs1 = stmt.executeQuery("SELECT NVL(MAX(srno), 0) + 1 FROM OPD");
         	 while(rs1.next())
 	          {
 	             srno = rs1.getString(1);
