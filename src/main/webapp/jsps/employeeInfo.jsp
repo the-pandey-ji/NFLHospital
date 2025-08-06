@@ -14,7 +14,7 @@
 String sendString="";
 
 String emp = request.getParameter("q");
-System.out.println("emp:::"+emp);
+/* System.out.println("emp:::"+emp); */
 //String emp="8338";
 String name = "";
 String age = "";

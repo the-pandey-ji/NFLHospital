@@ -40,6 +40,7 @@
     int opdId = 1;
     if (rs1.next()) {
       opdId = rs1.getInt(1);
+     
     }
     rs1.close();
 
@@ -129,6 +130,10 @@
 
 
     out.println("Prescription saved successfully.");
+
+	response.sendRedirect(response.encodeRedirectURL("printSelfOPD.jsp?opdId=" + opdId));
+
+
 
   } catch (Exception e) {
     out.println("Error saving prescription: " + e.getMessage());
