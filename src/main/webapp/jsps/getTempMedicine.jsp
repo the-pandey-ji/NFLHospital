@@ -75,10 +75,24 @@
 </tr>
 <%
     }
+    
+    %>
+    <tr>
+    <td colspan="5" style="text-align: center;">
+	<label for="notes">Additional Notes:</label><br>
+<textarea name="notes" id="notes" rows="3" placeholder="Enter additional details if any" style="width: 100%;"></textarea>
+    </td>
+		</tr>
+
+	<%   
     if (!hasRows) {
 %>
-<tr><td colspan="5" style="color: red;">No medicines found for this Employee Code.</td></tr>
-<%
+
+	<tr>
+		<td colspan="5" style="color: red;">No medicines found for this
+			Employee Code.</td>
+	</tr>
+	<%
     }
   } catch (Exception e) {
     out.println("<tr><td colspan='5' style='color:red;'>Error fetching medicines: " + e.getMessage() + "</td></tr>");

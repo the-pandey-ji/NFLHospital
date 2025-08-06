@@ -25,7 +25,7 @@
 </head>
 
 <body>
-  <form method="post" action="saveOPD.jsp">
+  <form method="post" action="/hosp1/jsps/savePrescription.jsp">
     <div align="center">
       <table border="1" cellpadding="0" cellspacing="0" width="47%">
         <tr>
@@ -61,7 +61,7 @@
 
     <div style="margin: 20px;">
       <h3>Select or Add Disease</h3>
-      <select id="diseaseSelect" multiple style="width: 300px;"></select>
+      <select id="diseaseSelect" name="diseaseSelect" multiple style="width: 300px;"></select>
       <br><br>
       <input type="text" id="newDisease" placeholder="Type and click Add if not listed" />
       <button type="button" onclick="addNewDisease()">Add Disease</button>
@@ -96,14 +96,12 @@
     </tbody>
   </table>
   
-  <div style="margin-top:20px;">
-    <h3>Additional Notes</h3>
-    <textarea name="additionalNotes" id="additionalNotes" rows="4" cols="80" placeholder="Enter any additional instructions or notes here..."></textarea>
-  </div>
-</div>
+
     
-   
-    
+  		 <div style="margin-top:20px;">
+ 			 <button type="button" onclick="submitFinalPrescription()">Save Prescription</button>
+		</div>
+    </div>
   </form>
 
   <script src="/hosp1/javascript/getOV.js"></script>
@@ -296,10 +294,60 @@
     	}
 
 
-    
-   
-    
-    
-  </script>
+    function submitFinalPrescription() {
+    	
+    	  let empn = $('#ovcode').val();
+    	  
+    	  if (!empn) {
+    	    alert("Employee Code is missing.");
+    	    return;
+    	  }
+    	  /*
+     	  // Validate that at least one disease is selected	
+    	  alert("Submitting prescription for Employee Code: " + empn);
+    	  // Gather selected diseases
+    	  let diseaseCodes = $('#diseaseSelect').val();
+    	  alert("Selected diseases: " + diseaseCodes);
+    	  
+			if (!diseaseCodes || diseaseCodes.length === 0) {
+					alert("Please select at least one disease.");
+					return;
+				} */
+
+				/*   // Gather additional notes
+				  let notes = $('#additionalNotes').val();
+
+				  // Gather medicine data
+				  let data = {
+				    ovcode: empn,
+				    notes: notes
+				  };
+
+				  // Collect data from each row
+				  $('#medicineDetailsTable tbody tr').each(function () {
+				    let medCode = $(this).find('input[name^="medicineCodes"]').val();
+				    data['dosage_' + medCode] = $(this).find('input[name^="dosage_"]').val();
+				    data['frequency_' + medCode] = $(this).find('select[name^="frequency_"]').val();
+				    data['timing_' + medCode] = $(this).find('select[name^="timing_"]').val();
+				    data['days_' + medCode] = $(this).find('input[name^="days_"]').val();
+				  }); */
+
+				/* $.ajax({
+				  url: '/hosp1/jsps/savePrescription.jsp',
+				  method: 'POST',
+				  data: data,
+				  success: function (response) {
+				    alert(response.trim());
+				    // Optionally, clear temp data or reload page
+				  },
+				  error: function () {
+				    alert("Failed to save final prescription.");
+				  }
+				}); */
+
+				document.forms[0].submit();
+
+			}
+		</script>
 </body>
 </html>
