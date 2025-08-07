@@ -29,7 +29,7 @@ String opdIdParam = request.getParameter("opdId");
 	String dt = "";
 	String typ = "N";
 
-	
+	 List<Map<String, String>> prescriptionList = new ArrayList<Map<String, String>>();
     //String dataSourceName = "hosp";
     // String dbURL = "jdbc:oracle:thin:@10.3.126.84:1521:ORCL";
     
@@ -64,12 +64,42 @@ String opdIdParam = request.getParameter("opdId");
 		}
         rs.close();
 		pstmt.close();
-System.out.println("OPD ID: " + opdId);
+/* System.out.println("OPD ID: " + opdId);
         System.out.println("Patient Name: " + name);
         System.out.println("Relation: " + relation);
         System.out.println("Age: " + age);
         System.out.println("Date: " + dt);
-        System.out.println("Sex " + sex);
+        System.out.println("Sex " + sex); */
+        
+        
+       
+
+      
+        String query2 = 
+        "SELECT NVL(mm.MEDICINENAME, 'Unknown Medicine') AS MEDICINE, " +
+        "p.DOSAGE, p.FREQUENCY, p.TIMING, p.DAYS " +
+        "FROM HOSPITAL.PRESCRIPTION p " +
+        "LEFT JOIN HOSPITAL.MEDICINEMASTER mm ON TO_CHAR(p.MEDICINECODE) = TO_CHAR(mm.MEDICINECODE) " +
+        "WHERE p.OPD_ID = ?";
+
+    PreparedStatement pstmt2 = conn.prepareStatement(query2);
+    pstmt2.setInt(1, opdId);
+    ResultSet rs2 = pstmt2.executeQuery();
+
+    while (rs2.next()) {
+        Map<String, String> presc = new HashMap<String, String>();
+        presc.put("medicine", rs2.getString("MEDICINE"));  // now it's the name
+        presc.put("dosage", rs2.getString("DOSAGE"));
+        presc.put("frequency", rs2.getString("FREQUENCY"));
+        presc.put("timing", rs2.getString("TIMING"));
+        presc.put("days", rs2.getString("DAYS"));
+        prescriptionList.add(presc);
+    }
+
+            rs2.close();
+            pstmt2.close();
+           
+      
 	}
 
 	catch (SQLException e) {
@@ -85,6 +115,7 @@ System.out.println("OPD ID: " + opdId);
 	}
 		}
 	}
+   
 %>
 <p style="margin-bottom: -1">&nbsp;</p>
 <div align="center">
@@ -159,6 +190,38 @@ System.out.println("OPD ID: " + opdId);
 <font size="2" face="Arial"><b>Prevention is better than cure</b></font> <font face="Kruti Dev 011" size="3">¼ bykt ls csgrj gS jksdFkke ½</font>
   </center>
 </div>
+
+
+<% if (!prescriptionList.isEmpty()) { %>
+  <br/>
+  <h3 align="center">Prescribed Medicines</h3>
+  <table border="1" width="80%" align="center" cellpadding="5">
+    <thead>
+      <tr>
+        <th>Medicine</th>
+        <th>Dosage</th>
+        <th>Frequency</th>
+        <th>Timing</th>
+        <th>No. of Days</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% for (Map<String, String> row : prescriptionList) { %>
+      <tr>
+        <td><%= row.get("medicine") %></td>
+        <td><%= row.get("dosage") %></td>
+        <td><%= row.get("frequency") %></td>
+        <td><%= row.get("timing") %></td>
+        <td><%= row.get("days") %></td>
+      </tr>
+    <% } %>
+    </tbody>
+  </table>
+<% } else { %>
+  <p align="center">No prescriptions found for this OPD ID.</p>
+<% } %>
+
+
 <p align="center"><script>
 document.write("<input type='button' " +
 "onClick='window.print()' " +
