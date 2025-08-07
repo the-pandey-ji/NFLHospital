@@ -18,89 +18,122 @@
 
 </head>
 <body>
+
 <%
 String opdIdParam = request.getParameter("opdId");
-	int opdId = (opdIdParam != null) ? Integer.parseInt(opdIdParam) : 0;
-	String empn = "";
-	String name = "";
-	String relation = "Self";
-	String age = "";
-	String sex = "";
-	String dt = "";
-	String typ = "N";
+int opdId = 0;
+if (opdIdParam != null) {
+    try {
+        opdId = Integer.parseInt(opdIdParam);
+    } catch (NumberFormatException nfe) {
+        opdId = 0;
+    }
+}
 
-	 List<Map<String, String>> prescriptionList = new ArrayList<Map<String, String>>();
-    //String dataSourceName = "hosp";
-    // String dbURL = "jdbc:oracle:thin:@10.3.126.84:1521:ORCL";
-    
-  
-    
-    Connection conn=DBConnect.getConnection(); 
+String empn = "";
+String name = "";
+String relation = "Self";
+String age = "";
+String sex = "";
+String dt = "";
 
-    try 
-        {
-  
-    	 String query = "select PATIENTNAME,RELATION,AGE, to_char(sysdate,'dd-MON-yyyy') as opddate,SEX,EMPN FROM opd where srno=?";           
-         
-    	 
+List<Map<String, String>> prescriptionList = new ArrayList<Map<String, String>>();
+Set<String> diseaseCodesSet = new HashSet<String>();
+String note = null;  // Single note
+Map<String, String> diseaseMap = new HashMap<String, String>();
 
+Connection conn = null;
+PreparedStatement pstmt = null;
+PreparedStatement pstmt2 = null;
+Statement stmt = null;
+ResultSet rs = null;
+ResultSet rs2 = null;
+ResultSet rsDiseases = null;
 
+try {
+    conn = DBConnect.getConnection();
 
-        PreparedStatement pstmt = conn.prepareStatement(query);
-	pstmt.setInt(1, opdId);
-	ResultSet rs = pstmt.executeQuery();
+    // Fetch patient details
+    String query = "select PATIENTNAME, RELATION, AGE, to_char(sysdate,'dd-MON-yyyy') as opddate, SEX, EMPN from opd where srno=?";
+    pstmt = conn.prepareStatement(query);
+    pstmt.setInt(1, opdId);
+    rs = pstmt.executeQuery();
 
+    if (rs.next()) {
+        name = rs.getString("PATIENTNAME");
+        relation = rs.getString("RELATION");
+        empn = rs.getString("EMPN");
+        age = rs.getString("AGE");
+        dt = rs.getString("opddate");
+        sex = rs.getString("SEX");
+    }
+    rs.close();
+    pstmt.close();
 
-        while(rs.next())
-	          {
-        	     
-	             name = rs.getString("PATIENTNAME");
-				relation = rs.getString("RELATION");
-				empn = rs.getString("EMPN");
-				age = rs.getString("AGE");
-				
-				dt = rs.getString("opddate");
-				sex = rs.getString("SEX");
-		}
-        rs.close();
-		pstmt.close();
-/* System.out.println("OPD ID: " + opdId);
-        System.out.println("Patient Name: " + name);
-        System.out.println("Relation: " + relation);
-        System.out.println("Age: " + age);
-        System.out.println("Date: " + dt);
-        System.out.println("Sex " + sex); */
-        
-        
-       
-
-      
-        String query2 = 
+    // Fetch prescriptions and collect disease codes and notes
+    String query2 = 
         "SELECT NVL(mm.MEDICINENAME, 'Unknown Medicine') AS MEDICINE, " +
-        "p.DOSAGE, p.FREQUENCY, p.TIMING, p.DAYS " +
+        "p.DOSAGE, p.FREQUENCY, p.TIMING, p.DAYS, p.NOTES, p.DISEASECODE " +
         "FROM HOSPITAL.PRESCRIPTION p " +
         "LEFT JOIN HOSPITAL.MEDICINEMASTER mm ON TO_CHAR(p.MEDICINECODE) = TO_CHAR(mm.MEDICINECODE) " +
         "WHERE p.OPD_ID = ?";
 
-    PreparedStatement pstmt2 = conn.prepareStatement(query2);
+    pstmt2 = conn.prepareStatement(query2);
     pstmt2.setInt(1, opdId);
-    ResultSet rs2 = pstmt2.executeQuery();
+    rs2 = pstmt2.executeQuery();
 
     while (rs2.next()) {
         Map<String, String> presc = new HashMap<String, String>();
-        presc.put("medicine", rs2.getString("MEDICINE"));  // now it's the name
+        presc.put("medicine", rs2.getString("MEDICINE"));
         presc.put("dosage", rs2.getString("DOSAGE"));
         presc.put("frequency", rs2.getString("FREQUENCY"));
         presc.put("timing", rs2.getString("TIMING"));
         presc.put("days", rs2.getString("DAYS"));
         prescriptionList.add(presc);
-    }
 
-            rs2.close();
-            pstmt2.close();
-           
-      
-	}
+        // Set note if not already set
+        if (note == null || note.trim().length() == 0) {
+            String tempNote = rs2.getString("NOTES");
+            if (tempNote != null && tempNote.trim().length() > 0) {
+                note = tempNote.trim();
+            }
+        }
+
+        // Collect disease codes (comma separated)
+        String diseaseCodesStr = rs2.getString("DISEASECODE");
+        if (diseaseCodesStr != null && diseaseCodesStr.trim().length() > 0) {
+            String[] codes = diseaseCodesStr.split(",");
+            for (int i = 0; i < codes.length; i++) {
+                diseaseCodesSet.add(codes[i].trim());
+            }
+        }
+    }
+    rs2.close();
+    pstmt2.close();
+
+    // Fetch disease names for collected codes
+   //    Map<String, String> diseaseMap = new HashMap<String, String>();
+    if (!diseaseCodesSet.isEmpty()) {
+        StringBuffer codeList = new StringBuffer();
+        Iterator<String> iter = diseaseCodesSet.iterator();
+        while (iter.hasNext()) {
+            if (codeList.length() > 0) {
+                codeList.append(",");
+            }
+            codeList.append(iter.next());
+        }
+
+        String diseaseQuery = "SELECT DISEASE_CODE, DISEASE_NAME FROM HOSPITAL.DISEASES WHERE DISEASE_CODE IN (" + codeList.toString() + ")";
+        stmt = conn.createStatement();
+        rsDiseases = stmt.executeQuery(diseaseQuery);
+
+        while (rsDiseases.next()) {
+            diseaseMap.put(rsDiseases.getString("DISEASE_CODE"), rsDiseases.getString("DISEASE_NAME"));
+        }
+        rsDiseases.close();
+        stmt.close();
+    }
+}
 
 	catch (SQLException e) {
 		while ((e = e.getNextException()) != null)
@@ -174,52 +207,96 @@ String opdIdParam = request.getParameter("opdId");
   	 <td width="30%" height="1"><font size="1" face="Arial"><maxlength="2">&nbsp;<%=age%></font></td>
    </tr>
      <tr>
-  	 <td width="100%" height="11" colspan="4" style="border-top-style: solid">
-      <p>&nbsp;</p>
-      <p>&nbsp;</p>
-      <p>&nbsp;</p>
-      <p>&nbsp;</p>
-      <p>&nbsp;</p>
-      <p>&nbsp;
-      <p>&nbsp;<p>&nbsp;<p>&nbsp;<p>&nbsp; &nbsp;
-      <p>&nbsp;</td>
+  	 <td align=center width="100%" height="11" colspan="4" style="border-top-style: solid">
+     
+     
+     
+     
+     
+     
+     <% if (!diseaseMap.isEmpty()) { %>
+    <h3 align="center" style="margin-top:20px;">Diseases</h3>
+     <div align="center">
+    <ul">
+    <% 
+    Iterator<String> iter = diseaseCodesSet.iterator();
+    while (iter.hasNext()) {
+        String code = iter.next();
+        String dName = diseaseMap.get(code);
+        if (dName == null) {
+            dName = "Unknown Disease (" + code + ")";
+        }
+    %>
+        <li ><%= dName %></li>
+    <% } %>
+    </ul>
+    </div>
+<% } else { %>
+    <p align="center">No diseases found for this OPD ID.</p>
+<% } %>
+<!-- adding horizontal line -->
+<div align="center" style="margin: 20px; border: 1px solid #000;width:80%;"></div>
+
+<!-- Prescriptions List -->
+<% if (!prescriptionList.isEmpty()) { %>
+    <h3 align="center">Prescribed Medicines</h3>
+    <table border="1" width="80%" align="center" cellpadding="5">
+      <thead>
+        <tr>
+          <th>Medicine</th>
+          <th>Dosage</th>
+          <th>Frequency</th>
+          <th>Timing</th>
+          <th>No. of Days</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% for (int i = 0; i < prescriptionList.size(); i++) {
+            Map<String, String> row = prescriptionList.get(i);
+      %>
+        <tr>
+          <td><%= row.get("medicine") %></td>
+          <td><%= row.get("dosage") %></td>
+          <td><%= row.get("frequency") %></td>
+          <td><%= row.get("timing") %></td>
+          <td><%= row.get("days") %></td>
+        </tr>
+      <% } %>
+      </tbody>
+    </table>
+<% } else { %>
+    <p align="center">No prescriptions found for this OPD ID.</p>
+<% } %>
+
+<div align="center" style="margin: 20px; border: 1px solid #000;width:80%;"></div>
+
+<!-- Additional Notes -->
+<% if (note != null && note.length() > 0) { %>
+	<h3 align="center">Additional Notes</h3>
+<div align="center" style="margin: 20px; border: 1px solid #000; padding: 10px; width: 80%; box-sizing: border-box;">
+   
+    <p align="center"><%= note %></p>
+    </div>
+<% } %>
+
+
+<!-- Doctors name -->
+
+
+
+   
+    <p align="right" style="margin:50px;"><%= (request.getAttribute("doctorName") != null) ? request.getAttribute("doctorName") : "Doctor's Name" %></p>
+ 
+
+     
+      </td>
     </tr>
-<!-- <tr><td colspan="4" align="Center"> </td>  </tr> -->
 
 	</table>
 <font size="2" face="Arial"><b>Prevention is better than cure</b></font> <font face="Kruti Dev 011" size="3">¼ bykt ls csgrj gS jksdFkke ½</font>
   </center>
 </div>
 
-
-<% if (!prescriptionList.isEmpty()) { %>
-  <br/>
-  <h3 align="center">Prescribed Medicines</h3>
-  <table border="1" width="80%" align="center" cellpadding="5">
-    <thead>
-      <tr>
-        <th>Medicine</th>
-        <th>Dosage</th>
-        <th>Frequency</th>
-        <th>Timing</th>
-        <th>No. of Days</th>
-      </tr>
-    </thead>
-    <tbody>
-    <% for (Map<String, String> row : prescriptionList) { %>
-      <tr>
-        <td><%= row.get("medicine") %></td>
-        <td><%= row.get("dosage") %></td>
-        <td><%= row.get("frequency") %></td>
-        <td><%= row.get("timing") %></td>
-        <td><%= row.get("days") %></td>
-      </tr>
-    <% } %>
-    </tbody>
-  </table>
-<% } else { %>
-  <p align="center">No prescriptions found for this OPD ID.</p>
-<% } %>
 
 
 <p align="center"><script>
