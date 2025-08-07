@@ -213,27 +213,33 @@ try {
      
      
      
-     
-     <% if (!diseaseMap.isEmpty()) { %>
-    <h3 align="center" style="margin-top:20px;">Diseases</h3>
-     <div align="center">
-    <ul">
-    <% 
-    Iterator<String> iter = diseaseCodesSet.iterator();
-    while (iter.hasNext()) {
-        String code = iter.next();
-        String dName = diseaseMap.get(code);
-        if (dName == null) {
-            dName = "Unknown Disease (" + code + ")";
-        }
-    %>
-        <li ><%= dName %></li>
-    <% } %>
-    </ul>
+     <div style="margin: 20px; padding: 10px; width: 80%; box-sizing: border-box; display: flex; justify-content: space-between; align-items: flex-start;">
+  <% if (!diseaseMap.isEmpty()) { %>
+    <!-- Left side: Heading -->
+    <h3 style="margin-right: 20px;margin-top:0; width: 45%; text-align: right;padding-right:20px">Diseases</h3>
+
+    <!-- Right side: Disease list -->
+    <div style="width: 50%; text-align: left;">
+      <ul style="margin-top: 0; padding-left: 0; list-style-position: inside;">
+        <%
+          Iterator<String> iter = diseaseCodesSet.iterator();
+          while (iter.hasNext()) {
+              String code = iter.next();
+              String dName = diseaseMap.get(code);
+              if (dName == null) {
+                  dName = "Unknown Disease (" + code + ")";
+              }
+        %>
+          <li style="font-size:20px;"><%= dName %></li>
+        <% } %>
+      </ul>
     </div>
-<% } else { %>
-    <p align="center">No diseases found for this OPD ID.</p>
-<% } %>
+  <% } else { %>
+    <p style="text-align: center;">No diseases found for this OPD ID.</p>
+  <% } %>
+</div>
+
+
 <!-- adding horizontal line -->
 <div align="center" style="margin: 20px; border: 1px solid #000;width:80%;"></div>
 
@@ -268,7 +274,6 @@ try {
     <p align="center">No prescriptions found for this OPD ID.</p>
 <% } %>
 
-<div align="center" style="margin: 20px; border: 1px solid #000;width:80%;"></div>
 
 <!-- Additional Notes -->
 <% if (note != null && note.length() > 0) { %>
@@ -282,10 +287,10 @@ try {
 
 <!-- Doctors name -->
 
-
+<p align="right" style="margin-bottom:30px; margin-top:80px;margin-right:150px;">Doctor's Signarure     _______________________________</p>
 
    
-    <p align="right" style="margin:50px;"><%= (request.getAttribute("doctorName") != null) ? request.getAttribute("doctorName") : "Doctor's Name" %></p>
+<p align="right" style="margin-bottom:50px; margin-right:410px;"><%= (request.getAttribute("doctorName") != null) ? request.getAttribute("doctorName") : "Doctor's Name" %>:-</p>
  
 
      
