@@ -24,6 +24,46 @@
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 
+<%
+String depname = request.getParameter("depnm");
+if (depname == null || depname.isEmpty()) {
+	response.sendRedirect("/hosp1/jsps/error.jsp?message=Dependent name is missing.");
+	return;
+}
+
+String empn = session.getAttribute("eno").toString();
+String dname = session.getAttribute("dname").toString();
+String drel = session.getAttribute("drel").toString();
+String dage = "";
+String dsex = "";
+
+Connection con1=DBConnect.getConnection1(); 
+Statement stmt1=con1.createStatement();
+
+ResultSet rs = stmt1.executeQuery("select a.DEPENDENTNAME, b.sex, b.RELATIONNAME, to_char(sysdate,'yyyy') - to_char(dob,'yyyy') FROM dependents a, dependentrelation b  where A.RELATION =B.RELATIONCODE and  a.dependentname ='"+depname+"' and a.empn="+empn+"");
+while(rs.next())
+     {
+         dname = rs.getString(1);
+	drel = rs.getString(3);
+	dage = rs.getString(4);
+	dsex = rs.getString(2);
+
+	// Assigning values to session attributes
+	session.setAttribute("dname", dname);
+	session.setAttribute("drel", drel);
+	session.setAttribute("dage", dage);
+	session.setAttribute("dsex",dsex);
+	session.setMaxInactiveInterval(-1);
+	
+
+		}
+		if (dsex == "M") {
+	dsex = "MALE";
+		} else
+	dsex = "FEMALE";
+%>
+
+
 <body>
   <form method="post" action="/hosp1/jsps/savePrescription.jsp">
     <div align="center">
@@ -31,8 +71,8 @@
         <tr>
           <td align="center">
             E.Code:
-            <input type="text" name="ovcode" id="ovcode" size="9" style="color: red; font-weight: bold" />
-            <input type="button" value="GET" onclick="getOV();" />
+            <input type="text" name="ovcode" id="ovcode" size="9" style="color: red; font-weight: bold" value=<%= empn%> />
+          <!--  <input type="button" value="GET" onclick="getOV();" /> -->
           </td>
         </tr>
       </table>
@@ -44,16 +84,20 @@
           <td align="center">Name</td>
           <td align="center">Age</td>
           <td align="center">Sex</td>
+          <td align="center">Relation</td>
         </tr>
         <tr>
           <td align="center">
-            <input type="text" name="ovname" id="ovname" size="24" readonly style="color:red; font-weight:bold" />
+            <input type="text" name="ovname" id="ovname" size="24" readonly style="color:red; font-weight:bold" value=<%= dname%>>
           </td>
           <td align="center">
-            <input type="text" name="ovage" id="ovage" size="19" readonly style="color:red; font-weight:bold" />
+            <input type="text" name="ovage" id="ovage" size="19" readonly style="color:red; font-weight:bold" value=<%= dage%>>
           </td>
           <td align="center">
-            <input type="text" name="ovsex" id="ovsex" size="22" readonly style="color:red; font-weight:bold" />
+            <input type="text" name="ovsex" id="ovsex" size="22" readonly style="color:red; font-weight:bold" value=<%= dsex%>>
+          </td>
+           <td align="center">
+            <input type="text" name="ovrel" id="ovrel" size="22" readonly style="color:red; font-weight:bold" value=<%= drel%>>
           </td>
         </tr>
       </table>

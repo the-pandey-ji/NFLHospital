@@ -35,7 +35,7 @@
            
 	       ResultSet rs = stmt1.executeQuery("select * FROM dependents where status='A' and empn="+empn);
 	%>
-<form method="POST" action="/hosp1/HOSPITAL/OPD/self2.jsp">
+<form method="POST" action="/hosp1/HOSPITAL/OPD/details.jsp">
    <p align="center">&nbsp;</p>
    <p align="center"><font face="Tahoma" size="3" color="#000080">Dependents of E. Code. - <%= empn%> </font></p>
    <p align="center">&nbsp;</p>
@@ -49,9 +49,6 @@ while(rs.next())
 	rel = rs.getString(3);
 	age = rs.getString(4);
 	session.setAttribute("eno",empn); 
-	session.setAttribute("dname",dname);
-
-	
 	session.setMaxInactiveInterval(-1);
   	%>
     <option><%=dname%></option>
