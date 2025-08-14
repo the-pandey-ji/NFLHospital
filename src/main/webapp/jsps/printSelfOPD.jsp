@@ -32,10 +32,11 @@ if (opdIdParam != null) {
 
 String empn = "";
 String name = "";
-String relation = "Self";
+String relation = "";
 String age = "";
 String sex = "";
 String dt = "";
+String empname = "";
 
 List<Map<String, String>> prescriptionList = new ArrayList<Map<String, String>>();
 Set<String> diseaseCodesSet = new HashSet<String>();
@@ -54,7 +55,7 @@ try {
     conn = DBConnect.getConnection();
 
     // Fetch patient details
-    String query = "select PATIENTNAME, RELATION, AGE, to_char(sysdate,'dd-MON-yyyy') as opddate, SEX, EMPN from opd where srno=?";
+    String query = "select PATIENTNAME, RELATION, AGE, to_char(sysdate,'dd-MON-yyyy') as opddate, SEX, EMPN, EMPNAME from opd where srno=?";
     pstmt = conn.prepareStatement(query);
     pstmt.setInt(1, opdId);
     rs = pstmt.executeQuery();
@@ -66,9 +67,19 @@ try {
         age = rs.getString("AGE");
         dt = rs.getString("opddate");
         sex = rs.getString("SEX");
+        empname = rs.getString("EMPNAME");
+        
     }
     rs.close();
     pstmt.close();
+    
+    
+    if (sex.equalsIgnoreCase("M")) {
+    	sex = "MALE";
+    		} else if(sex.equalsIgnoreCase("F")) {
+    	sex = "FEMALE";}
+    		else
+    			sex = "Unknown";
 
     // Fetch prescriptions and collect disease codes and notes
     String query2 = 
@@ -196,7 +207,7 @@ try {
   	 <td width="15%" height="1"><font size="1" face="Arial">&nbsp;<%=empn%></font></td>
   	 <td width="30%" height="1">
 <font face="Kruti Dev 011" size="2"> deZpkjh uke</font>&nbsp;<b><font face="Arial" size="1">E.Name</font></b>:</td>
-  	 <td width="30%" height="1"><font size="1" face="Arial">&nbsp;<%=name%></font></td>
+  	 <td width="30%" height="1"><font size="1" face="Arial">&nbsp;<%=empname%></font></td>
     </tr>
      <tr>
   	 <td width="20%" height="1">
@@ -304,11 +315,24 @@ try {
 
 
 
-<p align="center"><script>
+<!-- <p align="center"><script>
 document.write("<input type='button' " +
 "onClick='window.print()' " +
 "class='printbutton' " +
 "value='Print This Page'/>");
 </script>
-</p></body>
+</p> -->
+<script>
+function printAndHide(btn) {
+  btn.style.display = 'none';
+  window.print();
+  btn.style.display = 'inline';
+}
+</script>
+
+<p align="center">
+  <input type="button" class="printbutton" value="Print This Page" onclick="printAndHide(this)" />
+</p>
+
+</body>
 </html>

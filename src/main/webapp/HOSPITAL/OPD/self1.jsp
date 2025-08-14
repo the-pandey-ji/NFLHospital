@@ -17,6 +17,7 @@
       border-radius: 10px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
+    
   </style>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -59,27 +60,47 @@
       </table>
     </div>
 
-    <div style="margin: 20px;">
-      <h3>Select or Add Disease</h3>
-      <select id="diseaseSelect" name="diseaseSelect" multiple style="width: 300px;"></select>
-      <br><br>
-      <input type="text" id="newDisease" placeholder="Type and click Add if not listed" />
-      <button type="button" onclick="addNewDisease()">Add Disease</button>
-      <div id="todoItemsDisease" style="margin-top:10px;"></div>
-    </div>
+<div style="display: flex;
+    gap: 100px; /* space between divs */
+    justify-content: center;
+    align-items: flex-start;
+    margin:30px">
+    
+    
+  <div style="min-width: 320px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08);">
+    
+    <h3>Select or Add Disease</h3>
+    <select id="diseaseSelect" name="diseaseSelect" multiple style="width: 300px;"></select>
+    <br><br>
+    <input type="text" id="newDisease" placeholder="Type and click Add if not listed" />
+    <button type="button" onclick="addNewDisease()">Add Disease</button>
+    <div id="todoItemsDisease" style="margin-top:10px;"></div>
+  </div>
 
-    <div style="margin: 20px;">
-      <h3>Select or Add Medicine</h3>
-      <select id="medicineSelect" multiple style="width: 300px;"></select>
-      <br><br>
-      <input type="text" id="newMedicine" placeholder="Type and click Add if not listed" />
-      <button type="button" onclick="addNewMedicine()">Add Medicine</button>
-      <div id="todoItemsMedicine" style="margin-top: 20px;"></div>
-    </div>
+  <div style=" min-width: 320px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08);">
+    <h3>Select or Add Medicine</h3>
+    <select id="medicineSelect" multiple style="width: 300px;"></select>
+    <br><br>
+    <input type="text" id="newMedicine" placeholder="Type and click Add if not listed" />
+    <button type="button" onclick="addNewMedicine()">Add Medicine</button>
+    <div id="todoItemsMedicine" style="margin-top: 20px;"></div>
+  </div>
+     </div>
+     
+<div align="center"> 
+    <button  type="button" onclick="saveTempPrescription()">Save Data</button>
     
-    <button type="button" onclick="saveTempPrescription()">Save Data</button>
+ </div>
     
-    <div id="medicineDetailsContainer" style="margin:20px; display:none;">
+    <div align="center" id="medicineDetailsContainer" style="margin:20px; display:none;">
   <h3>Medicine Details</h3>
   <table border="1" cellpadding="5" cellspacing="0" width="80%" id="medicineDetailsTable">
     <thead>
@@ -98,7 +119,7 @@
   
 
     
-  		 <div style="margin-top:20px;">
+  		 <div  align="center" style="margin-top:20px;">
  			 <button type="button" onclick="submitFinalPrescription()">Save Prescription</button>
 		</div>
     </div>

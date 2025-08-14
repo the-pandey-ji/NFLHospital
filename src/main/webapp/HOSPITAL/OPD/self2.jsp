@@ -17,6 +17,7 @@
       border-radius: 10px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
+    
   </style>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -32,35 +33,41 @@ if (depname == null || depname.isEmpty()) {
 }
 
 String empn = session.getAttribute("eno").toString();
-String dname = session.getAttribute("dname").toString();
-String drel = session.getAttribute("drel").toString();
+String drel = session.getAttribute("drel") != null ? session.getAttribute("drel").toString() : "";
 String dage = "";
 String dsex = "";
 
 Connection con1=DBConnect.getConnection1(); 
 Statement stmt1=con1.createStatement();
 
-ResultSet rs = stmt1.executeQuery("select a.DEPENDENTNAME, b.sex, b.RELATIONNAME, to_char(sysdate,'yyyy') - to_char(dob,'yyyy') FROM dependents a, dependentrelation b  where A.RELATION =B.RELATIONCODE and  a.dependentname ='"+depname+"' and a.empn="+empn+"");
+ResultSet rs = stmt1.executeQuery("select a.DEPENDENTNAME, trim(b.sex), b.RELATIONNAME, to_char(sysdate,'yyyy') - to_char(dob,'yyyy') FROM dependents a, dependentrelation b  where A.RELATION =B.RELATIONCODE and  a.dependentname ='"+depname+"' and a.empn="+empn+"");
 while(rs.next())
      {
-         dname = rs.getString(1);
+         depname = rs.getString(1);
 	drel = rs.getString(3);
 	dage = rs.getString(4);
 	dsex = rs.getString(2);
-
+	
+	
+     }
 	// Assigning values to session attributes
-	session.setAttribute("dname", dname);
+	session.setAttribute("depname", depname);
 	session.setAttribute("drel", drel);
 	session.setAttribute("dage", dage);
 	session.setAttribute("dsex",dsex);
 	session.setMaxInactiveInterval(-1);
 	
 
-		}
-		if (dsex == "M") {
+		
+
+
+		if (dsex.equalsIgnoreCase("M")) {
 	dsex = "MALE";
-		} else
-	dsex = "FEMALE";
+		} else if(dsex.equalsIgnoreCase("F")) {
+	dsex = "FEMALE";}
+		else
+			dsex = "Unknown";
+		
 %>
 
 
@@ -88,7 +95,7 @@ while(rs.next())
         </tr>
         <tr>
           <td align="center">
-            <input type="text" name="ovname" id="ovname" size="24" readonly style="color:red; font-weight:bold" value=<%= dname%>>
+            <input type="text" name="ovname" id="ovname" size="24" readonly style="color:red; font-weight:bold" value=<%= depname%>>
           </td>
           <td align="center">
             <input type="text" name="ovage" id="ovage" size="19" readonly style="color:red; font-weight:bold" value=<%= dage%>>
@@ -102,28 +109,48 @@ while(rs.next())
         </tr>
       </table>
     </div>
-
-    <div style="margin: 20px;">
-      <h3>Select or Add Disease</h3>
-      <select id="diseaseSelect" name="diseaseSelect" multiple style="width: 300px;"></select>
-      <br><br>
-      <input type="text" id="newDisease" placeholder="Type and click Add if not listed" />
-      <button type="button" onclick="addNewDisease()">Add Disease</button>
-      <div id="todoItemsDisease" style="margin-top:10px;"></div>
-    </div>
-
-    <div style="margin: 20px;">
-      <h3>Select or Add Medicine</h3>
-      <select id="medicineSelect" multiple style="width: 300px;"></select>
-      <br><br>
-      <input type="text" id="newMedicine" placeholder="Type and click Add if not listed" />
-      <button type="button" onclick="addNewMedicine()">Add Medicine</button>
-      <div id="todoItemsMedicine" style="margin-top: 20px;"></div>
-    </div>
     
-    <button type="button" onclick="saveTempPrescription()">Save Data</button>
     
-    <div id="medicineDetailsContainer" style="margin:20px; display:none;">
+<div style="display: flex;
+    gap: 100px; /* space between divs */
+    justify-content: center;
+    align-items: flex-start;
+    margin:30px">
+    
+    <div style="min-width: 320px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08);">
+    
+    <h3>Select or Add Disease</h3>
+    <select id="diseaseSelect" name="diseaseSelect" multiple style="width: 300px;"></select>
+    <br><br>
+    <input type="text" id="newDisease" placeholder="Type and click Add if not listed" />
+    <button type="button" onclick="addNewDisease()">Add Disease</button>
+    <div id="todoItemsDisease" style="margin-top:10px;"></div>
+  </div>
+
+  <div style=" min-width: 320px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08);">
+    <h3>Select or Add Medicine</h3>
+    <select id="medicineSelect" multiple style="width: 300px;"></select>
+    <br><br>
+    <input type="text" id="newMedicine" placeholder="Type and click Add if not listed" />
+    <button type="button" onclick="addNewMedicine()">Add Medicine</button>
+    <div id="todoItemsMedicine" style="margin-top: 20px;"></div>
+  </div>
+     </div>
+     
+<div align="center"> 
+    <button  type="button" onclick="saveTempPrescription()">Save Data</button>
+    
+ </div>
+    
+  <div align="center" id="medicineDetailsContainer" style="margin:20px; display:none;">
   <h3>Medicine Details</h3>
   <table border="1" cellpadding="5" cellspacing="0" width="80%" id="medicineDetailsTable">
     <thead>
@@ -142,7 +169,7 @@ while(rs.next())
   
 
     
-  		 <div style="margin-top:20px;">
+  		 <div  align="center" style="margin-top:20px;">
  			 <button type="button" onclick="submitFinalPrescription()">Save Prescription</button>
 		</div>
     </div>
