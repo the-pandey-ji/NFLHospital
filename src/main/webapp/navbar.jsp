@@ -32,7 +32,8 @@
     <tr>
       <td width="12%" height="49" valign="middle" align="left">
         <p align="center">
-        <img border="0" src="/hosp1/logo/NFL%20logorajinder'spc.gif" width="100" height="80" style="margin-left:50px;"></td>
+        <a href="/hosp1/home/rep1.jsp"> <img border="0" src="/hosp1/nflimage.png" width="100" height="80" style="margin-left:50px;"></a>
+       </td>
       
       <td width="88%" height="49" style="padding-left: 30vw;">
 
