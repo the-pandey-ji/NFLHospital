@@ -7,6 +7,20 @@
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.*" %>
 <%@ page import="com.DB.DBConnect" %>
+<%@ page import="com.entity.User" %>
+
+<%
+
+    // Check if the user is logged in
+    User user = (User) session.getAttribute("Docobj");
+    if (user == null) {
+        // Redirect to login page if not logged in
+        response.sendRedirect("/hosp1/index.jsp");
+        
+        return;
+    }
+%>
+
 
 <html>
 <head>
@@ -224,7 +238,7 @@ try {
      
      
      
-     <div style="margin: 20px; padding: 10px; width: 80%; box-sizing: border-box; display: flex; justify-content: space-between; align-items: flex-start;">
+     <div style="margin: 2px; padding: 1px; width: 80%; box-sizing: border-box; display: flex; justify-content: space-between; align-items: flex-start;">
   <% if (!diseaseMap.isEmpty()) { %>
     <!-- Left side: Heading -->
     <h3 style="margin-right: 20px;margin-top:0; width: 45%; text-align: right;padding-right:20px">Diseases</h3>
@@ -252,12 +266,12 @@ try {
 
 
 <!-- adding horizontal line -->
-<div align="center" style="margin: 20px; border: 1px solid #000;width:80%;"></div>
+<div align="center" style=" border: 1px solid #000;width:90%;"></div>
 
 <!-- Prescriptions List -->
 <% if (!prescriptionList.isEmpty()) { %>
     <h3 align="center">Prescribed Medicines</h3>
-    <table border="1" width="80%" align="center" cellpadding="5">
+    <table border="1" width="90%" align="center" cellpadding="5">
       <thead>
         <tr>
           <th>Medicine</th>
@@ -298,10 +312,14 @@ try {
 
 <!-- Doctors name -->
 
-<p align="right" style="margin-bottom:30px; margin-top:80px;margin-right:150px;">Doctor's Signarure     _______________________________</p>
-
+<p align="right" style="margin-bottom:30px; margin-top:80px;margin-right:150px;">Doctor's Signarure    _____________</p>
+ <%
+		   
+	        User user1 = (User) session.getAttribute("Docobj");
+	        
+	    %>
    
-<p align="right" style="margin-bottom:50px; margin-right:410px;"><%= (request.getAttribute("doctorName") != null) ? request.getAttribute("doctorName") : "Doctor's Name" %>:-</p>
+<p align="right" style="margin-bottom:50px; margin-right:140px;">Doctor's Name : <%=user1.getUsername() %></p>
  
 
      

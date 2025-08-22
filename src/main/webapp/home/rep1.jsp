@@ -16,7 +16,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 <meta name="GENERATOR" content="Microsoft FrontPage 5.0">
 <meta name="ProgId" content="FrontPage.Editor.Document">
-<title>New Page 3</title>
+<title>NFL Hospital</title>
 <script language="JavaScript1.2">
 function alert()
 {
@@ -25,7 +25,11 @@ function alert()
 
 </head>
 
-<body background="../Stationery/Clear%20Day%20Bkgrd.jpg">
+<body background="/hosp1/Stationery/Clear%20Day%20Bkgrd.jpg">
+
+<%@include file="/navbar.jsp" %>
+
+
   <div align="right">
   <table border="0" width="92%">
     <tr>

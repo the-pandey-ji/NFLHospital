@@ -43,7 +43,7 @@ import com.entity.User;
 
 				User user = new User();
 				user.setEmpn(empn);
-				user.setQtrno(qtrno);
+				user.setDesignation(qtrno);
 				user.setUsername(username);
 				user.setEmail(email);
 				user.setPhone(phone);

@@ -18,7 +18,7 @@
 
 body {
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-	 background: url('/Complaint-Management-System/img/download.jpeg') no-repeat center center fixed;
+	 background: url('path') no-repeat center center fixed;
             background-size: cover;
 	background-size: cover;
 	margin: 0;
@@ -267,7 +267,7 @@ td {
       
       	
         <form action="login" method="post">
-            <img src="/Complaint-Management-System/img/nflimage.png" alt="NFL Logo" height="200" width="230">
+            <img src="/hosp1/nflimage.png" alt="NFL Logo" height="200" width="230">
             <h1 class="flash">National Fertilizers Limited, Panipat</h1>
             <h2>OPD</h2>
             <div class="table-container">

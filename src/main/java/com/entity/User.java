@@ -4,7 +4,7 @@ public class User {
 	
 	private long empn;
 	private String username;
-	private String qtrno;
+	private String designation;
 	private String email;
 	private String phone;
 	private String password;
@@ -32,11 +32,11 @@ public class User {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	public String getQtrno() {
-		return qtrno;
+	public String getDesignation() {
+		return designation;
 	}
-	public void setQtrno(String qtrno) {
-		this.qtrno = qtrno;
+	public void setDesignation(String designation) {
+		this.designation = designation;
 	}
 	public String getEmail() {
 		return email;
@@ -82,7 +82,7 @@ public class User {
 	}
 	@Override
 	public String toString() {
-		return "User [empn=" + empn + ", username=" + username + ", qtrno=" + qtrno + ", email=" + email + ", phone="
+		return "User [empn=" + empn + ", username=" + username + ", designation=" + designation + ", email=" + email + ", phone="
 				+ phone + ", password=" + password + ", usercreationdate=" + usercreationdate + ", status=" + status
 				+ ", role=" + role + "]";
 	}

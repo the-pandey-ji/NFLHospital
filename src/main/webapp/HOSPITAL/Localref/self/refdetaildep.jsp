@@ -7,6 +7,7 @@
 <%@ page import="java.lang.*" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.*" %>
+<%@ page import="com.DB.DBConnect" %>
 <html>
 <head>
 <meta http-equiv="Content-Language" content="en-us">
@@ -43,12 +44,19 @@
                     } 
               }
    // -->
+   
+    function validate() 
+    {
+    	event.returnValue = true; // Allow form submission by default
+    }
  </script>
 </head>
-<body background="../Stationery/Glacier%20Bkgrd.jpg">
+<body background="/hosp1/Stationery/Glacier%20Bkgrd.jpg">
  <form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Localref/self/refdetaillocaldep.jsp" onsubmit="validate();" >
  <%
+
 	String refno = request.getParameter("refno");
+
 	String name ="";
 	String sex ="";
 	String relation ="";
@@ -58,27 +66,29 @@
 	String empn1 ="";
 	String yr = "";
 
-    String dataSourceName = "hosp";
-    String dbURL = "jdbc:odbc:"+ dataSourceName;
-				
-    Connection conn  = null;    
+Connection conn = null;
+   
     try 
         {
-           Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-           conn = DriverManager.getConnection(dbURL,"","");
-           Statement stmt=conn.createStatement();
+    	 conn = DBConnect.getConnection();
+    
+        Statement stmt=conn.createStatement();
 	         
-            ResultSet rsyr = stmt.executeQuery("select format(Now(),'yyyy') from opd");
+            ResultSet rsyr = stmt.executeQuery("select to_char(sysdate,'yyyy') from opd");
               while(rsyr.next())
 	               {
 	                 yr = rsyr.getString(1);
 	               }
+             
+           
 	               
             ResultSet rsref = stmt.executeQuery("select srno from opd where srno = "+refno);
+            
+            
               if(rsref.next())
 	            {
 
-                 ResultSet rsdetail = stmt.executeQuery("select patientname,empn,sex,relation,age,format(opddate,'dd-mmm-yyyy') from opd where srno = "+refno);
+                 ResultSet rsdetail = stmt.executeQuery("select patientname,empn,sex,relation,age,to_char(opddate,'dd-mon-yyyy') from opd where srno = "+refno);
                   while(rsdetail.next())
 	               {
 	                   name = rsdetail.getString("patientname");
@@ -88,6 +98,8 @@
 	                   age = rsdetail.getString("age");
 	                   refdt = rsdetail.getString(6);
 	               }
+                  
+                 
 	
 %>
 
@@ -134,8 +146,7 @@
        try 
          {
 
-           Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-           conn1 = DriverManager.getConnection(dbURL,"","");
+    	  conn1 = DBConnect.getConnection();
            Statement stmt1=conn1.createStatement();
 	            
              ResultSet rshosp = stmt1.executeQuery("select hcode, hname from LOCALHOSPITAL order by hcode");
@@ -167,10 +178,7 @@
        while((e = e.getNextException()) != null)
        out.println(e.getMessage() + "<BR>");
      }
-   catch(ClassNotFoundException e) 
-      {
-          out.println("ClassNotFoundexception :" + e.getMessage() + "<BR>");
-      }
+  
    finally
       {
           if(conn1 != null) 
@@ -216,10 +224,7 @@
        while((e = e.getNextException()) != null)
        out.println(e.getMessage() + "<BR>");
    }
- catch(ClassNotFoundException e) 
-      {
-          out.println("ClassNotFoundexception :" + e.getMessage() + "<BR>");
-      }
+
  finally
       {
           if(conn != null) 

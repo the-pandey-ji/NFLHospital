@@ -145,7 +145,7 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
         this.item0_0 = "SELF"
         this.item0_1 = "DEPENDENTS"
 
-        this.url0_0 = "../../../hosp1/HOSPITAL/OPD/opdself"
+        this.url0_0 = "../../../hosp1/HOSPITAL/OPD/self1.jsp"
         this.url_target0_0 = "_top"
         this.url0_1 = "../../../hosp1/HOSPITAL/OPD/opddep"
         this.url_target0_1 = "_top"

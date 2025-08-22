@@ -7,6 +7,7 @@
 <%@ page import="java.lang.*" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.*" %>
+<%@ page import="com.DB.DBConnect" %>
 
 <html>
 <head>
@@ -42,23 +43,26 @@
 	String ename ="";
 	String referredto ="";
 		
-	String dataSourceName = "hosp";
-    String dbURL = "jdbc:odbc:"+ dataSourceName;
+	
 				
     Connection conn  = null;    
     try 
         {
-           Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-           conn = DriverManager.getConnection(dbURL,"","");
+    	conn = DBConnect.getConnection1();
+           
            Statement stmt=conn.createStatement();
     
-	       ResultSet rs1 = stmt.executeQuery("select a.ename, a.DESIGNATION, c.DISCIPLINENAME from employeemaster a, FURNITUREDEPT b, FURNITUREDISCIPLINE c where a.DEPTCODE=b.DEPTCODE and b.SECTIONCODE=c.DISCIPLINECODE and a.empn="+empn+"");
+	       ResultSet rs1 = stmt.executeQuery("select a.ename, a.DESIGNATION, c.DISCIPLINENAME from employeemaster a, FURNITUREDEPT b, FURNITUREDISCIPLINE c where a.DEPTCODE=b.DEPTCODE and b.SECTIONCODE=c.DISCIPLINECODE  and a.oldnewdata='N' and onpayroll='A' and a.empn="+empn+"");
             while(rs1.next())
 	             {
 	                 ename=rs1.getString(1);
 	                 desg= rs1.getString(2);
 	                 dept= rs1.getString(3);
 	             }
+            
+           /*  System.out.println("ename: " + ename);
+            System.out.println("desg: " + desg);
+            System.out.println("dept: " + dept); */
 	   
 	       ResultSet rs2 = stmt.executeQuery("select hname,format(Now(),'yyyy') from LOCALHOSPITAL where hcode='"+referto+"'");
                while(rs2.next())
@@ -80,10 +84,7 @@
              while((e = e.getNextException()) != null)
              out.println(e.getMessage() + "<BR>");
         }
-     catch(ClassNotFoundException e) 
-        {
-             out.println("ClassNotFoundexception :" + e.getMessage() + "<BR>");
-        }
+    
      finally
         {
              if(conn != null) 

@@ -1,4 +1,14 @@
-
+<%@ page language="java" session="true"%>
+<%@ page import="java.math.*" %>
+<%@ page import="oracle.jdbc.driver.*" %>
+<%@ page contentType="text/html" %>
+<%@ page import="java.util.*" %>
+<%@ page import="java.io.* "%>
+<%@ page import="java.lang.*" %>
+<%@ page import="java.sql.*" %>
+<%@ page import="java.text.*" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="java.io.*" %>
 
 
 <html>
@@ -15,7 +25,12 @@
    
  </script>
 </head>
+
+
+
 <body>
+<%@ include file="/navbar.jsp" %>
+
 
 <form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Localref/self/refdetaildep.jsp" target="main" onsubmit="validate();" >
     <p align="center" style="margin-top: -4px; margin-bottom: -4px"><b><font size="3" face="Tahoma">Enter Reference Nos&nbsp;&nbsp;&nbsp;&nbsp;

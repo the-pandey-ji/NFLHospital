@@ -35,24 +35,24 @@ public class LoginServlet extends HttpServlet {
         try {
             long empn = Long.parseLong(request.getParameter("empn"));
             String password = request.getParameter("password");
+            
+//            System.out.println("Employee Number: " + empn);
 
             if (empn > 0 && password != null && !password.isEmpty()) {
                 User us = userDAO.userLogin(empn, password);
-//                System.out.println("User object: " + us);
+  //             System.out.println("User object: " + us);
 
                 if (us != null) {
-                    session.setAttribute("Userobj", us);
+                	
+                    session.setAttribute("Docobj", us);
+                    
+   //                 System.out.println("User object: 2 " + us);
                     
 //                    System.out.println("User object after login: ");
 
-                    if (us.getRole().equals("AC") || us.getRole().equals("AE")) {
-                        // Redirect to admin dashboard
-//                    	System.out.println("Redirecting to admin dashboard");
-                        response.sendRedirect("admin/home.jsp");
-                    } else {
-                        // Redirect to user dashboard
-                        response.sendRedirect("home.jsp");
-                    }
+                    
+                        response.sendRedirect("/hosp1/home/rep1.jsp");
+                    
                 }
 				else {
 					// Invalid credentials
