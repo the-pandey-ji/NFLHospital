@@ -7,6 +7,7 @@
 <%@ page import="java.lang.*" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.*" %>
+<%@ page import="com.DB.DBConnect" %>
 
 <html>
 <head>
@@ -45,20 +46,19 @@
 	      escorta="No";
        }
    %>
-  <!-- alert(<%=refno%>, <%=name%>, <%=refno%>, <%=empn%>, <%=relation%>, <%=age%>, <%=refdt%>, <%=sex%>, <%=disease%>, <%=referto%>, <%=referby%>, <%=escort%> );-->
+  
    
    <%
-   String dataSourceName = "hosp";
-    String dbURL = "jdbc:odbc:"+ dataSourceName;
-				
-    Connection conn  = null;    
-    try 
-        {
-           Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-           conn = DriverManager.getConnection(dbURL,"","");
-           Statement stmt=conn.createStatement();
+   Connection conn  = null; 
+   Connection conn1  = null;    
+   try 
+       {
+   	conn = DBConnect.getConnection();
+   	conn1 = DBConnect.getConnection1();
+           Statement stmt=conn.createStatement(); //for outrefdetail
+           Statement stmt1=conn1.createStatement(); //for employeemaster
 
-           ResultSet rs1 = stmt.executeQuery("select a.ename, a.DESIGNATION, c.DISCIPLINENAME from employeemaster a, FURNITUREDEPT b, FURNITUREDISCIPLINE c where a.DEPTCODE=b.DEPTCODE and b.SECTIONCODE=c.DISCIPLINECODE and a.empn="+empn+"");
+           ResultSet rs1 = stmt1.executeQuery("select a.ename, a.DESIGNATION, c.DISCIPLINENAME from employeemaster a, FURNITUREDEPT b, FURNITUREDISCIPLINE c where a.DEPTCODE=b.DEPTCODE and b.SECTIONCODE=c.DISCIPLINECODE and a.empn="+empn+"");
             while(rs1.next())
 	             {
 	                 ename=rs1.getString(1);
@@ -66,15 +66,18 @@
 	                 dept= rs1.getString(3);
 	             }
        
-           ResultSet rs2 = stmt.executeQuery("select hname,city,format(Now(),'yyyy') from OUTSTATIONHOSPITAL where hcode='"+referto+"'");
+           ResultSet rs2 = stmt.executeQuery("select hname,city,to_char(sysdate,'yyyy') from OUTSTATIONHOSPITAL where hcode='"+referto+"'");
              while(rs2.next())
                  {
                      referredto=rs2.getString(1)+","+rs2.getString(2);
                      yr=rs2.getString(3);
    
                  } 
-           ResultSet rs3 = stmt.executeQuery("insert into outrefdetail"+yr+"(REFNO, PATIENTNAME, EMPN, REL, AGE, REFDATE, SEX, HOSPITAL, DISEASE, DOC, ESCORT,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"','"+refdt+"','"+sex+"','"+referto+"','"+disease+"','"+referby+"','"+escort+"','N')");
-  	         while(rs3.next())
+          
+             
+           ResultSet rs3 = stmt.executeQuery("insert into outrefdetail"+yr+" (REFNO, PATIENTNAME, EMPN, REL, AGE, REFDATE, SEX, HOSPITAL, DISEASE, DOC, ESCORT,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"','"+refdt+"','"+sex+"','"+referto+"','"+disease+"','"+referby+"','"+escort+"','N')");
+
+           while(rs3.next())
 	                {
 	                }
         }
@@ -83,10 +86,7 @@
              while((e = e.getNextException()) != null)
              out.println(e.getMessage() + "<BR>");
         }
-     catch(ClassNotFoundException e) 
-        {
-             out.println("ClassNotFoundexception :" + e.getMessage() + "<BR>");
-        }
+   
      finally
         {
              if(conn != null) 

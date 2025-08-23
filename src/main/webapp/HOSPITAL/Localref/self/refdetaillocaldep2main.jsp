@@ -72,37 +72,42 @@ if (refno != null && !refno.trim().isEmpty()) {
             <tr>
                 <td width="50%"><font face="Tahoma" size="2"><b>Reference No </b></font></td>
                 <td width="50%"><font face="Tahoma" size="2" color="#0000FF"><b>
-                    <input type="text" name="refno" value="<%= refno %>" size="21"></b></font></td>
+                    <input type="text" name="refno" readonly value="<%= refno %>" size="21"></b></font></td>
             </tr>
             <tr>
                 <td width="50%"><font face="Tahoma" size="2"><b>Patient Name </b></font></td>
                 <td width="50%"><font face="Tahoma" size="2" color="#0000FF"><b>
-                    <input type="text" name="name" value="<%= name %>" size="21"></b></font></td>
+                    <input type="text" name="name" readonly  value="<%= name %>" size="21"></b></font></td>
             </tr>
             <tr>
                 <td width="50%"><font face="Tahoma" size="2"><b>Employee Code</b></font></td>
                 <td width="50%"><font face="Tahoma" size="2" color="#0000FF"><b>
-                    <input type="text" name="empn" value="<%= empn %>" size="21"></b></font></td>
+                    <input type="text" name="empn" readonly  value="<%= empn %>" size="21"></b></font></td>
             </tr>
             <tr>
                 <td width="50%"><font face="Tahoma" size="2"><b>Relation</b></font></td>
                 <td width="50%"><font face="Tahoma" size="2" color="#0000FF"><b>
-                    <input type="text" name="relation" value="<%= relation %>" size="21"></b></font></td>
+                    <input type="text" name="relation" readonly  value="<%= relation %>" size="21"></b></font></td>
             </tr>
             <tr>
                 <td width="50%"><font face="Tahoma" size="2"><b>Age</b></font></td>
                 <td width="50%"><font face="Tahoma" size="2" color="#0000FF"><b>
-                    <input type="text" name="age" value="<%= age %>" size="21"></b></font></td>
+                    <input type="text" name="age" readonly  value="<%= age %>" size="21"></b></font></td>
             </tr>
             <tr>
                 <td width="50%"><font face="Tahoma" size="2"><b>Date</b></font></td>
                 <td width="50%"><font face="Tahoma" size="2" color="#0000FF"><b>
-                    <input type="text" name="refdt" value="<%= refdt %>" size="21"></b></font></td>
+                    <input type="text" name="refdt" readonly  value="<%= refdt %>" size="21"></b></font></td>
             </tr>
             <tr>
                 <td width="50%"><font face="Tahoma" size="2"><b>Sex</b></font></td>
                 <td width="50%"><font face="Tahoma" size="2" color="#0000FF"><b>
-                    <input type="text" name="sex" value="<%= sex %>" size="21"></b></font></td>
+                    <input type="text" name="sex" readonly  value="<%= sex %>" size="21"></b></font></td>
+            </tr>
+              <tr>
+                <td width="50%"><font face="Tahoma" size="2"><b>Refered By</b></font></td>
+                <td width="50%"><font face="Tahoma" size="2" color="#0000FF"><b>
+                    <input type="text" name="referby"  readonly  value="<%=user1.getUsername()  %>" size="21"></b></font></td>
             </tr>
             <!-- Add other fields as needed -->
             <tr>
@@ -129,11 +134,7 @@ if (refno != null && !refno.trim().isEmpty()) {
   </select>
      </b></font></td>
     </tr>
-   <tr>
-                <td width="50%"><font face="Tahoma" size="2"><b>Refered By</b></font></td>
-                <td width="50%"><font face="Tahoma" size="2" color="#0000FF"><b>
-                    <input type="text" name="referby" value="<%=user1.getUsername()  %>" size="21"></b></font></td>
-            </tr>
+ 
   <%
                     
      }

@@ -44,15 +44,18 @@
 	String referredto ="";
 		
 	
+	
 				
-    Connection conn  = null;    
+    Connection conn  = null; 
+    Connection conn1  = null;    
     try 
         {
-    	conn = DBConnect.getConnection1();
+    	conn = DBConnect.getConnection();
+    	conn1 = DBConnect.getConnection1();
            
-           Statement stmt=conn.createStatement();
+           Statement stmt1=conn1.createStatement(); //for employeemaster
     
-	       ResultSet rs1 = stmt.executeQuery("select a.ename, a.DESIGNATION, c.DISCIPLINENAME from employeemaster a, FURNITUREDEPT b, FURNITUREDISCIPLINE c where a.DEPTCODE=b.DEPTCODE and b.SECTIONCODE=c.DISCIPLINECODE  and a.oldnewdata='N' and onpayroll='A' and a.empn="+empn+"");
+	       ResultSet rs1 = stmt1.executeQuery("select a.ename, a.DESIGNATION, c.DISCIPLINENAME from employeemaster a, FURNITUREDEPT b, FURNITUREDISCIPLINE c where a.DEPTCODE=b.DEPTCODE and b.SECTIONCODE=c.DISCIPLINECODE  and a.oldnewdata='N' and onpayroll='A' and a.empn="+empn+"");
             while(rs1.next())
 	             {
 	                 ename=rs1.getString(1);
@@ -64,15 +67,18 @@
             System.out.println("desg: " + desg);
             System.out.println("dept: " + dept); */
 	   
-	       ResultSet rs2 = stmt.executeQuery("select hname,format(Now(),'yyyy') from LOCALHOSPITAL where hcode='"+referto+"'");
+            Statement stmt2=conn.createStatement();  //for localhospital
+	       ResultSet rs2 = stmt2.executeQuery("select hname,to_char(sysdate,'yyyy') from LOCALHOSPITAL where hcode='"+referto+"'");
                while(rs2.next())
                     {
                         referredto=rs2.getString(1);
                         yr=rs2.getString(2);
 
                     } 
+               
+        System.out.println("referredto: " + referredto);
      
-           ResultSet rs = stmt.executeQuery("insert into LOACALREFDETAIL"+yr+"(REFNO,PATIENTNAME,EMPN,REL,AGE,REFDATE,SEX,DISEASE,DOC,specialist,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"',Now(),'"+sex+"','"+disease+"','"+referby+"','"+referto+"','N')");
+           ResultSet rs = stmt2.executeQuery("insert into LOACALREFDETAIL"+yr+"(REFNO,PATIENTNAME,EMPN,REL,AGE,REFDATE,SEX,DISEASE,DOC,specialist,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"',sysdate,'"+sex+"','"+disease+"','"+referby+"','"+referto+"','N')");
                while(rs.next())
 	                {
 	                }
@@ -92,6 +98,7 @@
                    try
                         {
                              conn.close();
+                             conn1.close();
                         }
                    catch (Exception ignored) {}
                }
