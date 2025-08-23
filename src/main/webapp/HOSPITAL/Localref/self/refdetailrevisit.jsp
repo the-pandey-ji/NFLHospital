@@ -7,6 +7,7 @@
 <%@ page import="java.lang.*" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.*" %>
+<%@ page import="com.DB.DBConnect" %>
 <html>
 <head>
 <meta http-equiv="Content-Language" content="en-us">
@@ -24,6 +25,7 @@
  </script>
 </head>
 <body background="../Stationery/Glacier%20Bkgrd.jpg">
+<%@ include file="/navbar.jsp" %>
  <form name="MyForm">
  <p align="center"><font face="Tahoma" size="4" color="#0000FF"><b><span style="text-transform: uppercase"><u>Local Reference HISTORY</u></span></b></font></p>
   <div align="center">
@@ -56,17 +58,15 @@
     
     //out.println(empn);
     
-    String dataSourceName = "hosp";
-    String dbURL = "jdbc:odbc:"+ dataSourceName;
-				
-    Connection conn  = null;    
+    Connection conn  = null; 
+
     try 
         {
-           Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-           conn = DriverManager.getConnection(dbURL,"","");
+    	conn = DBConnect.getConnection();
+    	
            Statement stmt=conn.createStatement();
         
-               ResultSet rs = stmt.executeQuery("select a.patientname,a.empn,a.rel, format(a.refdate,'dd-mm-yyyy'),a.refno, b.DOCTOR_NAME, c.HNAME, Switch(a.revisitflag='N','Refer',a.revisitflag='Y','Revisit',a.revisitflag is null,'Refer') from LOACALREFDETAIL"+yr+" a, DOCTOR B, LOCALHOSPITAL C  where a.DOC=b.CODE and a.SPECIALIST=c.HCODE and a.empn="+empn+" and a.refdate > DateAdd ('m', -6, Now()) order by a.refdate desc");
+               ResultSet rs = stmt.executeQuery("SELECT  a.patientname, a.empn,  a.rel, TO_CHAR(a.refdate, 'dd-mm-yyyy') AS ref_date, a.refno,  a.doc,  c.hname,  CASE  WHEN a.revisitflag = 'N' THEN 'Refer' WHEN a.revisitflag = 'Y' THEN 'Revisit' WHEN a.revisitflag IS NULL THEN 'Refer' ELSE 'Unknown'  END AS visit_type FROM  LOACALREFDETAIL"+yr+" a JOIN localhospital c ON a.specialist = c.hcode WHERE  a.empn = "+empn+" AND a.refdate > ADD_MONTHS(SYSDATE, -6) ORDER BY  a.refdate DESC");
                  while(rs.next())
 	               {
 	                   name = rs.getString("patientname");
@@ -98,10 +98,7 @@
              while((e = e.getNextException()) != null)
              out.println(e.getMessage() + "<BR>");
         }
-     catch(ClassNotFoundException e) 
-        {
-             out.println("ClassNotFoundexception :" + e.getMessage() + "<BR>");
-        }
+   
      finally
         {
              if(conn != null) 
