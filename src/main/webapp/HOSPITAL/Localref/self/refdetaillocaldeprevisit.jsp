@@ -7,6 +7,7 @@
 <%@ page import="java.lang.*" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.*" %>
+<%@ page import="com.DB.DBConnect" %>
 
 <html>
 <head>
@@ -24,6 +25,7 @@
 </style>
 </head>
 <body>
+<%@include file="/navbar.jsp" %>
  <%
 	String yr = "";
 	String refno = request.getParameter("refno");
@@ -37,41 +39,69 @@
 	String disease = request.getParameter("disease");
 	String referto = request.getParameter("referto");
 	String referby = request.getParameter("referby");
+	String hcode =request.getParameter("hcode");
 	String desg ="";
 	String dept ="";
 	String ename ="";
 	String referredto ="";
 		
-	String dataSourceName = "hosp";
-    String dbURL = "jdbc:odbc:"+ dataSourceName;
-				
-    Connection conn  = null;    
-    try 
-        {
-           Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-           conn = DriverManager.getConnection(dbURL,"","");
+	
+	
+	
+	
+	 Connection conn  = null; 
+	    Connection conn1  = null;    
+	    try 
+	        {
+	    	conn = DBConnect.getConnection();
+	    	conn1 = DBConnect.getConnection1();
+	    	
+	    	
            Statement stmt=conn.createStatement();
-    
-	       ResultSet rs1 = stmt.executeQuery("select a.ename, a.DESIGNATION, c.DISCIPLINENAME from employeemaster a, FURNITUREDEPT b, FURNITUREDISCIPLINE c where a.DEPTCODE=b.DEPTCODE and b.SECTIONCODE=c.DISCIPLINECODE and a.empn="+empn+"");
+           Statement stmt1=conn1.createStatement();
+           
+	       ResultSet rs1 = stmt1.executeQuery("select a.ename, a.DESIGNATION, c.DISCIPLINENAME,to_char(sysdate,'yyyy'),to_char(sysdate,'dd-mm-yyyy') from employeemaster a, FURNITUREDEPT b, FURNITUREDISCIPLINE c where a.DEPTCODE=b.DEPTCODE and b.SECTIONCODE=c.DISCIPLINECODE and a.empn="+empn+"");
               while(rs1.next())
 	             {
 	                 ename=rs1.getString(1);
 	                 desg= rs1.getString(2);
 	                 dept= rs1.getString(3);
+	                
 	             }
 	   
-	       ResultSet rs2 = stmt.executeQuery("select hname,format(Now(),'yyyy'),format(Now(),'dd-mm-yyyy') from LOCALHOSPITAL where hcode='"+referto+"'");
+	        ResultSet rs2 = stmt.executeQuery("select hname,to_char(sysdate,'yyyy'),to_char(sysdate,'dd-mm-yyyy') from LOCALHOSPITAL where hcode='"+hcode+"'");
                while(rs2.next())
                     {
                         referredto=rs2.getString(1);
                         yr=rs2.getString(2);
                         refdt1=rs2.getString(3);
-                    } 
+                    }  
+                    
+                    System.out.println("refno .................................................... current="+refno);
+                	System.out.println("name="+name);
+                	System.out.println("empn="+empn);
+                	System.out.println("relation="+relation);
+                	System.out.println("age="+age);
+                	System.out.println("refdt="+refdt);
+                	System.out.println("sex: " +sex);
+                	System.out.println("disease="+disease);
+                	System.out.println("referto="+referto);
+                	System.out.println("referby="+referby);
+                	System.out.println("ename="+ename);
+                	System.out.println("desg="+desg);
+                	System.out.println("dept="+dept);
+                	System.out.println("referredto="+referredto);
+                	System.out.println("yr="+yr);
+                	System.out.println("refdt1="+refdt1);
      
-           ResultSet rs = stmt.executeQuery("insert into LOACALREFDETAIL"+yr+"(REFNO,PATIENTNAME,EMPN,REL,AGE,REFDATE,SEX,DISEASE,DOC,specialist,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"',Now(),'"+sex+"','"+disease+"','"+referby+"','"+referto+"','Y')");
+           ResultSet rs = stmt.executeQuery("insert into LOACALREFDETAIL"+yr+"(REFNO,PATIENTNAME,EMPN,REL,AGE,REFDATE,SEX,DISEASE,DOC,specialist,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"',to_char(sysdate,'dd-mm-yyyy'),'"+sex+"','"+disease+"','"+referby+"','"+hcode+"','Y')");
                while(rs.next())
 	                {
 	                }
+               
+              
+               
+          /* System.out.println("insert into LOACALREFDETAIL"+yr+"(REFNO,PATIENTNAME,EMPN,REL,AGE,REFDATE,SEX,DISEASE,DOC,specialist,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"',sysdate,'"+sex+"','"+disease+"','"+referby+"','"+referto+"','Y')"); */
 	              
 	   }
 	  
@@ -80,10 +110,7 @@
              while((e = e.getNextException()) != null)
              out.println(e.getMessage() + "<BR>");
         }
-     catch(ClassNotFoundException e) 
-        {
-             out.println("ClassNotFoundexception :" + e.getMessage() + "<BR>");
-        }
+     
      finally
         {
              if(conn != null) 
@@ -91,6 +118,7 @@
                    try
                         {
                              conn.close();
+                             conn1.close();
                         }
                    catch (Exception ignored) {}
                }
