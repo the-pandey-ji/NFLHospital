@@ -80,7 +80,7 @@
       		dept = rs1.getString(3);
       	}
 
-      	System.out.println("Refer to:"+hcode);
+     
 
 		ResultSet rs2 = stmt.executeQuery("select hname, to_char(sysdate,'yyyy'), to_char(sysdate,'dd-mm-yyyy') from OUTSTATIONHOSPITAL where hcode='" + hcode + "'");
 
@@ -89,12 +89,9 @@
       		yr = rs2.getString(2);
       		refdt1 = rs2.getString(3);
       	}
+
       	
-      	System.out.println("date:"+refdt1);
-      	System.out.println("year:"+yr);
-      	System.out.println("referred to:"+referredto);
-      	
-      	ResultSet rs3 = stmt.executeQuery("insert into outrefdetail"+yr+"(REFNO, PATIENTNAME, EMPN, REL, AGE, REFDATE, SEX, HOSPITAL, DISEASE, DOC, ESCORT,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"',to_char(sysdate,'dd-mm-yyyy'),'"+sex+"','"+referto+"','"+disease+"','"+referby+"','"+escort+"','Y')");
+      	ResultSet rs3 = stmt.executeQuery("insert into outrefdetail"+yr+"(REFNO, PATIENTNAME, EMPN, REL, AGE, REFDATE, SEX, HOSPITAL, DISEASE, DOC, ESCORT,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"',to_char(sysdate,'dd-mm-yyyy'),'"+sex+"','"+hcode+"','"+disease+"','"+referby+"','"+escort+"','Y')");
 
 		
 

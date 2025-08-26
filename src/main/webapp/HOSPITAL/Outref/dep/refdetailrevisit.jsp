@@ -86,7 +86,7 @@
 	                   refto = rs.getString(7);
 	                   reftype = rs.getString(8);
 	                   
-	                   System.out.println("over here");           System.out.println("over here");
+	             
 %>
     
     <tr>
