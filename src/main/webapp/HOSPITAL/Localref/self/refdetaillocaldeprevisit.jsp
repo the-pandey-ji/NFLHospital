@@ -60,7 +60,7 @@
            Statement stmt=conn.createStatement();
            Statement stmt1=conn1.createStatement();
            
-	       ResultSet rs1 = stmt1.executeQuery("select a.ename, a.DESIGNATION, c.DISCIPLINENAME,to_char(sysdate,'yyyy'),to_char(sysdate,'dd-mm-yyyy') from employeemaster a, FURNITUREDEPT b, FURNITUREDISCIPLINE c where a.DEPTCODE=b.DEPTCODE and b.SECTIONCODE=c.DISCIPLINECODE and a.empn="+empn+"");
+	       ResultSet rs1 = stmt1.executeQuery("select a.ename, a.DESIGNATION, c.DISCIPLINENAME from employeemaster a, FURNITUREDEPT b, FURNITUREDISCIPLINE c where a.DEPTCODE=b.DEPTCODE and b.SECTIONCODE=c.DISCIPLINECODE and a.empn="+empn+"");
               while(rs1.next())
 	             {
 	                 ename=rs1.getString(1);
@@ -77,7 +77,7 @@
                         refdt1=rs2.getString(3);
                     }  
                     
-                    System.out.println("refno .................................................... current="+refno);
+                  /*   System.out.println("refno .................................................... current="+refno);
                 	System.out.println("name="+name);
                 	System.out.println("empn="+empn);
                 	System.out.println("relation="+relation);
@@ -92,7 +92,7 @@
                 	System.out.println("dept="+dept);
                 	System.out.println("referredto="+referredto);
                 	System.out.println("yr="+yr);
-                	System.out.println("refdt1="+refdt1);
+                	System.out.println("refdt1="+refdt1); */
      
            ResultSet rs = stmt.executeQuery("insert into LOACALREFDETAIL"+yr+"(REFNO,PATIENTNAME,EMPN,REL,AGE,REFDATE,SEX,DISEASE,DOC,specialist,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"',to_char(sysdate,'dd-mm-yyyy'),'"+sex+"','"+disease+"','"+referby+"','"+hcode+"','Y')");
                while(rs.next())

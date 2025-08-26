@@ -65,27 +65,27 @@
              if (rs.next())
                 {
  	                   name = rs.getString("patientname");
- 	                   System.out.println("patientname: " + name);
+ 	            
 	                   empn = rs.getInt("empn");
-	                   System.out.println("empn: " + empn);
+	          
 	                   sex = rs.getString("sex");
-	                   System.out.println("Sex :"+sex);
+	         
 	                   relation = rs.getString("rel");
-	                   System.out.println("relation :"+relation);
+	          
 	                   age = rs.getString("age");
-	                   System.out.println("age :"+age);
+	                 
 	                   dname = rs.getString("doc");
-	                   System.out.println("dname :"+dname);
+	               
 	                   hcode = rs.getString("hcode");
-	                   System.out.println("hcode :"+hcode);
+	                  
                        hname = rs.getString("hname");
-                       System.out.println("hname :"+hname);
+                     
 	                   refdt = rs.getString(9);
-	                   System.out.println("refdt :"+refdt);
+	            
 	                   refdt1 = rs.getString(10);
-	                   System.out.println("refdt1 :"+refdt1);
+	                
 	                   disease = rs.getString(11);
-	                   System.out.println("disease :"+disease);
+	      
 %>
 <form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Localref/self/refdetaillocaldeprevisit.jsp" onsubmit="validate();" >
   <p align="center"><font face="Tahoma" size="4" color="#0000FF"><b><span style="text-transform: uppercase"><u>

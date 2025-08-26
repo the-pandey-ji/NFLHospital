@@ -7,6 +7,7 @@
 <%@ page import="java.lang.*" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.*" %>
+<%@ page import="com.DB.DBConnect" %>
 
 <html>
 <head>
@@ -17,6 +18,9 @@
 <title>Reference No</title>
 </head>
 <body>
+
+<%@ include file="/navbar.jsp" %>
+
 <%
 	String yr = "";
 	String refno = request.getParameter("refno");
@@ -31,11 +35,15 @@
 	String referto = request.getParameter("referto");
 	String referby = request.getParameter("referby");
 	String escort = request.getParameter("escort");
+	String hcode = request.getParameter("hcode");
 	String escorta="";
 	String desg ="";
 	String dept ="";
 	String ename ="";
 	String referredto ="";
+	
+	
+	
     
     if(escort.equals("Y"))
 	   {
@@ -46,63 +54,67 @@
 	      escorta="No";
        }
    %>
-  <!-- alert(<%=refno%>, <%=name%>, <%=refno%>, <%=empn%>, <%=relation%>, <%=age%>, <%=refdt%>, <%=sex%>, <%=disease%>, <%=referto%>, <%=referby%>, <%=escort%> );-->
+ 
    
    <%
-   String dataSourceName = "hosp";
-    String dbURL = "jdbc:odbc:"+ dataSourceName;
-				
-    Connection conn  = null;    
-    try 
-        {
-           Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-           conn = DriverManager.getConnection(dbURL,"","");
-           Statement stmt=conn.createStatement();
+      Connection conn  = null; //for hospital
+         Connection conn1  = null; //for employee
+         
+         
+         try 
+             {
+         	conn = DBConnect.getConnection();
+         	conn1 = DBConnect.getConnection1();
+ 
+      	Statement stmt = conn.createStatement();
+      	Statement stmt1 = conn1.createStatement();
+      	
 
-           ResultSet rs1 = stmt.executeQuery("select a.ename, a.DESIGNATION, c.DISCIPLINENAME from employeemaster a, FURNITUREDEPT b, FURNITUREDISCIPLINE c where a.DEPTCODE=b.DEPTCODE and b.SECTIONCODE=c.DISCIPLINECODE and a.empn="+empn+"");
-            while(rs1.next())
-	             {
-	                 ename=rs1.getString(1);
-	                 desg= rs1.getString(2);
-	                 dept= rs1.getString(3);
-	             }
-       
-           ResultSet rs2 = stmt.executeQuery("select hname,format(Now(),'yyyy'),format(Now(),'dd-mm-yyyy') from OUTSTATIONHOSPITAL where hcode='"+referto+"'");
-             while(rs2.next())
-                 {
-                     referredto=rs2.getString(1);
-                     yr=rs2.getString(2);
-                     refdt1=rs2.getString(3);
-                 } 
-           ResultSet rs3 = stmt.executeQuery("insert into outrefdetail"+yr+"(REFNO, PATIENTNAME, EMPN, REL, AGE, REFDATE, SEX, HOSPITAL, DISEASE, DOC, ESCORT,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"',Now(),'"+sex+"','"+referto+"','"+disease+"','"+referby+"','"+escort+"','Y')");
-  	       //ResultSet rs3 = stmt.executeQuery("insert into outrefdetail"+yr+"(REFNO, PATIENTNAME,EMPN,REL,AGE,REFDATE, SEX, HOSPITAL, DISEASE, DOC,ESCORT,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"','"+refdt+"','"+sex+"','"+referto+"','"+disease+"','"+referby+"','"+escort+"','Y')");
 
-                 while(rs3.next())
-	                {
-	                }
+      	/* ResultSet rs1 = stmt1.executeQuery("select a.ename, a.DESIGNATION, c.DISCIPLINENAME from employeemaster a, FURNITUREDEPT b, FURNITUREDISCIPLINE c where a.DEPTCODE=b.DEPTCODE and b.SECTIONCODE=c.DISCIPLINECODE and a.empn="+empn); */
+    	ResultSet rs1 = stmt1.executeQuery("select a.ename, a.DESIGNATION, c.DISCIPLINENAME from employeemaster a, FURNITUREDEPT b, FURNITUREDISCIPLINE c where a.DEPTCODE=b.DEPTCODE and b.SECTIONCODE=c.DISCIPLINECODE and a.empn='" + empn + "'");
+   
+      	while (rs1.next()) {
+      		ename = rs1.getString(1);
+      		desg = rs1.getString(2);
+      		dept = rs1.getString(3);
+      	}
 
-        }
-     catch(SQLException e) 
-        {
-             while((e = e.getNextException()) != null)
-             out.println(e.getMessage() + "<BR>");
-        }
-     catch(ClassNotFoundException e) 
-        {
-             out.println("ClassNotFoundexception :" + e.getMessage() + "<BR>");
-        }
-     finally
-        {
-             if(conn != null) 
-               {
-                   try
-                        {
-                             conn.close();
-                        }
-                   catch (Exception ignored) {}
-               }
-        }
-%>
+      	System.out.println("Refer to:"+hcode);
+
+		ResultSet rs2 = stmt.executeQuery("select hname, to_char(sysdate,'yyyy'), to_char(sysdate,'dd-mm-yyyy') from OUTSTATIONHOSPITAL where hcode='" + hcode + "'");
+
+      	while (rs2.next()) {
+      		referredto = rs2.getString(1);
+      		yr = rs2.getString(2);
+      		refdt1 = rs2.getString(3);
+      	}
+      	
+      	System.out.println("date:"+refdt1);
+      	System.out.println("year:"+yr);
+      	System.out.println("referred to:"+referredto);
+      	
+      	ResultSet rs3 = stmt.executeQuery("insert into outrefdetail"+yr+"(REFNO, PATIENTNAME, EMPN, REL, AGE, REFDATE, SEX, HOSPITAL, DISEASE, DOC, ESCORT,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"',to_char(sysdate,'dd-mm-yyyy'),'"+sex+"','"+referto+"','"+disease+"','"+referby+"','"+escort+"','Y')");
+
+		
+
+      	//ResultSet rs3 = stmt.executeQuery("insert into outrefdetail"+yr+"(REFNO, PATIENTNAME,EMPN,REL,AGE,REFDATE, SEX, HOSPITAL, DISEASE, DOC,ESCORT,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"',to_char(sysdate,'dd-mm-yyyy'),'"+sex+"','"+disease+"','"+referby+"','"+hcode+"','"+escort+"','Y')");
+
+      	while (rs3.next()) {
+      	}
+
+      } catch (SQLException e) {
+      	while ((e = e.getNextException()) != null)
+      		out.println(e.getMessage() + "<BR>");
+      }  finally {
+      	if (conn != null) {
+      		try {
+      	conn.close();
+      		} catch (Exception ignored) {
+      		}
+      	}
+      }
+      %>
 <p>&nbsp;</p>
 <div align="center">
   

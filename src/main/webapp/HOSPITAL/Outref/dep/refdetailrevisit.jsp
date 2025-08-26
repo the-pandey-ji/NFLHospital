@@ -24,6 +24,13 @@
  </script>
 </head>
 <body background="../Stationery/Glacier%20Bkgrd.jpg">
+
+<%@ include file="/navbar.jsp" %>
+
+
+
+
+
  <form name="MyForm">
  <p align="center"><span style="text-transform: uppercase"><u><b>
  <font face="Tahoma" size="4" color="#0000FF">OUT</font></b></u></span><font face="Tahoma" size="4" color="#0000FF"><b><span style="text-transform: uppercase"><u> 
@@ -57,18 +64,17 @@
     int refno =0;
     
     //out.println(empn);
+    Connection conn  = null; 
     
-    String dataSourceName = "hosp";
-    String dbURL = "jdbc:odbc:"+ dataSourceName;
-				
-    Connection conn  = null;    
+   
     try 
         {
-           Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-           conn = DriverManager.getConnection(dbURL,"","");
+    	conn = DBConnect.getConnection();
            Statement stmt=conn.createStatement();
+           
+
         
-               ResultSet rs = stmt.executeQuery("select a.patientname,a.empn,a.rel, format(a.refdate,'dd-mm-yyyy'),a.refno, b.DOCTOR_NAME, c.HNAME,Switch(a.revisitflag='N','Refer',a.revisitflag='Y','Revisit',a.revisitflag is null,'Refer') from OUTREFDETAIL"+yr+" a, DOCTOR B, OUTSTATIONHOSPITAL C  where a.DOC=b.CODE and a.HOSPITAL=c.HCODE and a.empn="+empn+" and a.refdate > DateAdd ('m', -6, Now()) order by a.refdate desc");
+           ResultSet rs = stmt.executeQuery("SELECT a.patientname, a.empn, a.rel, TO_CHAR(a.refdate, 'dd-mm-yyyy'), a.refno, a.doc, c.HNAME,CASE WHEN a.revisitflag = 'N' THEN 'Refer'WHEN a.revisitflag = 'Y' THEN 'Revisit' ELSE 'Refer' END FROM OUTREFDETAIL"+yr+" a, OUTSTATIONHOSPITAL c WHERE a.HOSPITAL = c.HCODE AND a.empn = "+empn+" AND a.refdate > ADD_MONTHS(SYSDATE, -6) ORDER BY a.refdate DESC");
                  while(rs.next())
 	               {
 	                   name = rs.getString("patientname");
@@ -79,6 +85,8 @@
                        refby = rs.getString(6);
 	                   refto = rs.getString(7);
 	                   reftype = rs.getString(8);
+	                   
+	                   System.out.println("over here");           System.out.println("over here");
 %>
     
     <tr>
@@ -100,10 +108,7 @@
              while((e = e.getNextException()) != null)
              out.println(e.getMessage() + "<BR>");
         }
-     catch(ClassNotFoundException e) 
-        {
-             out.println("ClassNotFoundexception :" + e.getMessage() + "<BR>");
-        }
+    
      finally
         {
              if(conn != null) 
