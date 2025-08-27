@@ -135,7 +135,7 @@
             </tr>
     <tr>
       <td width="50%"><font face="Tahoma" size="2"><b>Disease</b></font></td>
-      <td width="50%"><input type="text" name="disease" value="<%=disease%>" size="20"></td>
+      <td width="50%"><input type="text" name="disease" readonly value="<%=disease%>" size="20"></td>
     </tr>
   </table>
   </center>

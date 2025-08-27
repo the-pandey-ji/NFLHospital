@@ -19,7 +19,7 @@
 <%
 String refno = request.getParameter("refno");
 boolean showDetails = false;
-String name = "", sex = "", relation = "", age = "", refdt = "";
+String name = "", sex = "", relation = "", age = "", refdt = "",disease="";
 int empn = 0;
 String yr = "";
 
@@ -104,11 +104,82 @@ if (refno != null && !refno.trim().isEmpty()) {
                 <td width="50%"><font face="Tahoma" size="2" color="#0000FF"><b>
                     <input type="text" name="sex" readonly  value="<%= sex %>" size="21"></b></font></td>
             </tr>
+            
+            
+            
+            
+<%       
+     Connection conn2  = null;    
+
+
+       try 
+         {
+
+    	  conn2 = DBConnect.getConnection();
+           Statement stmt2=conn2.createStatement();
+           
+        //   System.out.println("Fetching diseases for OPD_ID: " + refno); // Debugging line
+	            
+             ResultSet rsdisease = stmt2.executeQuery("SELECT DISTINCT d.DISEASE_CODE, d.DISEASE_NAME FROM (SELECT p.OPD_ID,TRIM(REGEXP_SUBSTR(p.DISEASECODE, '[^,]+', 1, LEVEL)) AS DISEASE_CODE FROM HOSPITAL.PRESCRIPTION p WHERE p.OPD_ID = '" + refno + "' CONNECT BY REGEXP_SUBSTR(p.DISEASECODE, '[^,]+', 1, LEVEL) IS NOT NULL AND PRIOR p.OPD_ID = p.OPD_ID AND PRIOR DBMS_RANDOM.VALUE IS NOT NULL) split_codes JOIN HOSPITAL.DISEASES d ON d.DISEASE_CODE = split_codes.DISEASE_CODE");
+             StringBuilder sb = new StringBuilder();
+             
+         //    System.out.println("Processing disease results..."); // Debugging line
+             
+             while (rsdisease.next()) {
+                 String diseaseName = rsdisease.getString("DISEASE_NAME");
+                 if (diseaseName != null && !diseaseName.isEmpty()) {
+                     sb.append(diseaseName).append(", ");
+                 }
+             }
+
+             // Remove the trailing comma and space
+             if (sb.length() > 0) {
+                 sb.setLength(sb.length() - 2);
+             }
+
+             disease = sb.toString();
+          //   System.out.println("Diseases: " + disease);  // Optional: for debugging
+         
+                    
+     }
+   catch(SQLException e) 
+     {
+       while((e = e.getNextException()) != null)
+      out.println(e.getMessage() + "<BR>");
+     }
+  
+   finally
+      {
+          if(conn2 != null) 
+            {
+               try
+                  {
+                      conn2.close();
+                  }
+               catch (Exception ignored) {}
+            }
+      }
+ %>   
+            
+            
+            
+            
+    <tr>
+      <td width="50%"><font face="Tahoma" size="2"><b>Disease</b></font></td>
+      <td width="50%"><input type="text" name="disease" size="20" readonly value="<%=disease%>"></td>
+    </tr>         
+            
+            
+            
               <tr>
                 <td width="50%"><font face="Tahoma" size="2"><b>Refered By</b></font></td>
                 <td width="50%"><font face="Tahoma" size="2" color="#0000FF"><b>
                     <input type="text" name="referby"  readonly  value="<%=user1.getUsername()  %>" size="21"></b></font></td>
             </tr>
+            
+      
+            
+            
             <!-- Add other fields as needed -->
             <tr>
       <td width="50%"><font face="Tahoma" size="2"><b>Referred to&nbsp; </b></font></td>
@@ -159,10 +230,7 @@ if (refno != null && !refno.trim().isEmpty()) {
    </select>
    </td>
     </tr>
-    <tr>
-      <td width="50%"><font face="Tahoma" size="2"><b>Disease</b></font></td>
-      <td width="50%"><input type="text" name="disease" size="20"></td>
-    </tr>
+   
         </table>
     </div>
     <p align="center">
