@@ -7,6 +7,9 @@
 <%@ page import="java.lang.*" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.*" %>
+<%@ page import="com.DB.DBConnect" %>
+
+
 <html>
 <head>
 <meta http-equiv="Content-Language" content="en-us">
@@ -85,17 +88,14 @@
 	   {
 	      relation1="BROTHER";
        }
-%>	
-<!--alert(<%=pname%>,<%=age%>,<%=empn%>,<%=sex%>,<%=ename%>,<%=relation%>,<%=category %>);-->
-<%						
-    String dataSourceName = "hosp";
-    String dbURL = "jdbc:odbc:"+ dataSourceName;
-				
+
+	
+	
+   
     Connection conn  = null;    
     try 
         {
-           Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-           conn = DriverManager.getConnection(dbURL,"","");
+    	 conn = DBConnect.getConnection();
            Statement stmt=conn.createStatement();
        
            ResultSet rs1 = stmt.executeQuery("select format(Date(),'dd-mmm-yyyy'), max(srno)+1 from opd");
@@ -113,10 +113,7 @@
            while((e = e.getNextException()) != null)
            out.println(e.getMessage() + "<BR>");
         }
-    catch(ClassNotFoundException e) 
-        {
-            out.println("ClassNotFoundexception :" + e.getMessage() + "<BR>");
-        }
+   
     finally
        {
           if(conn != null) 

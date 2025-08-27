@@ -19,17 +19,17 @@
 </head>
 <body bgcolor="#DFFFFF">
  <p align="center">&nbsp;<p align="center"><b><font size="3"><span style="text-transform: uppercase">OPD ENRTY FOR KV / CISF / MKTG / OTHERS</span></font></b>
- <p align="center">&nbsp;<form name="MyForm" method="POST" action="/hosp1/HOSPITAL/OPDO/selfdetail.jsp" >
+ <p align="center">&nbsp;<form name="MyForm" method="POST" action="/hosp1/HOSPITAL/OPDO/self2other.jsp" >
     <div align="center">
     <center>
   <table border="0" width="35%">
     <tr>
-      <td width="99%">KV/CISF/Other</td>
+      <td width="99%">CISF/Other</td>
       <td width="154%"><select size="1" name="category">
           <option value="C">CISF</option>
-          <option value="K">KV</option>
+       
           <option value="M">MKTG</option>
-          <option value="S">KV-STUDENT</option>
+ 
           <option value="O">OTHER</option>
         </select></td>
     </tr>
@@ -50,7 +50,7 @@
       <td width="143%">
       <select size="1" name="relation">
           <option value="SELF">SELF</option>
-          <option value="W">WIFE</option>
+          <option value="WIFE">WIFE</option>
           <option value="WIFE">HUSBAND</option>
           <option value="SON">SON</option>
           <option value="DAUGHTER">DAUGHTER</option>
