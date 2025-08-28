@@ -15,10 +15,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 <meta name="GENERATOR" content="Microsoft FrontPage 5.0">
 <meta name="ProgId" content="FrontPage.Editor.Document">
-<title>Registration for KV/CISF/MKTG/Others</title>
+<title>Registration for CISF/MKTG/Others</title>
 </head>
 <body bgcolor="#DFFFFF">
- <p align="center">&nbsp;<p align="center"><b><font size="3"><span style="text-transform: uppercase">OPD ENRTY FOR KV / CISF / MKTG / OTHERS</span></font></b>
+ <p align="center">&nbsp;<p align="center"><b><font size="3"><span style="text-transform: uppercase">OPD ENRTY FOR CISF / MKTG / OTHERS</span></font></b>
  <p align="center">&nbsp;<form name="MyForm" method="POST" action="/hosp1/HOSPITAL/OPDO/self2other.jsp" >
     <div align="center">
     <center>
@@ -70,8 +70,8 @@
     <tr>
       <td width="99%">Sex</td>
       <td width="143%"><select size="1" name="sex">
-          <option>M</option>
-          <option>F</option>
+          <option value="M">M</option>
+          <option value="F">F</option>
         </select></td>
     </tr>
   </table>

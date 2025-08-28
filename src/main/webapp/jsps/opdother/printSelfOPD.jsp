@@ -44,6 +44,8 @@ if (opdIdParam != null) {
     }
 }
 
+System.out.println("gabbar is here");
+
 String empn = "";
 String name = "";
 String relation = "";
@@ -73,7 +75,7 @@ try {
     pstmt = conn.prepareStatement(query);
     pstmt.setInt(1, opdId);
     rs = pstmt.executeQuery();
-
+    System.out.println("gabbar is here1");
     if (rs.next()) {
         name = rs.getString("PATIENTNAME");
         relation = rs.getString("RELATION");
@@ -87,13 +89,7 @@ try {
     rs.close();
     pstmt.close();
     
-    
-    if (sex.equalsIgnoreCase("M")) {
-    	sex = "MALE";
-    		} else if(sex.equalsIgnoreCase("F")) {
-    	sex = "FEMALE";}
-    		else
-    			sex = "Unknown";
+   
 
     // Fetch prescriptions and collect disease codes and notes
     String query2 = 

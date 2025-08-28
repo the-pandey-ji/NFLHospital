@@ -43,6 +43,8 @@ String oage = request.getParameter("age");
 String osex = request.getParameter("sex");
 String oename = request.getParameter("ename");
 
+String category = request.getParameter("category");
+
 
 
 
@@ -64,7 +66,7 @@ String oename = request.getParameter("ename");
 
 
 <body>
-  <form method="post" action="/hosp1/jsps/savePrescription.jsp">
+  <form method="post" action="/hosp1/jsps/opdother/savePrescription.jsp">
     <div align="center">
       <table border="1" cellpadding="0" cellspacing="0" width="47%">
         <tr>
@@ -88,25 +90,26 @@ String oename = request.getParameter("ename");
         </tr>
         <tr>
         <td align="center">
-            <input type="text" name="ovname" id="ovname" size="24" readonly style="color:red; font-weight:bold" value=<%= opname%>>
+            <input type="text" name="ovname" id="opname" size="24" readonly style="color:red; font-weight:bold" value=<%= opname%>>
           </td>
         
           <td align="center">
-            <input type="text" name="ovname" id="ovname" size="24" readonly style="color:red; font-weight:bold" value=<%= oename%>>
+            <input type="text" name="ovname" id="oename" size="24" readonly style="color:red; font-weight:bold" value=<%= oename%>>
           </td>
           <td align="center">
-            <input type="text" name="ovage" id="ovage" size="19" readonly style="color:red; font-weight:bold" value=<%= oage%>>
+            <input type="text" name="ovage" id="oage" size="19" readonly style="color:red; font-weight:bold" value=<%= oage%>>
           </td>
           <td align="center">
-            <input type="text" name="ovsex" id="ovsex" size="22" readonly style="color:red; font-weight:bold" value=<%= osex%>>
+            <input type="text" name="ovsex" id="osex" size="22" readonly style="color:red; font-weight:bold" value=<%= osex%>>
           </td>
            <td align="center">
-            <input type="text" name="ovrel" id="ovrel" size="22" readonly style="color:red; font-weight:bold" value=<%= orelation	%>>
+            <input type="text" name="ovrel" id="orelation" size="22" readonly style="color:red; font-weight:bold" value=<%= orelation	%>>
           </td>
         </tr>
       </table>
     </div>
     
+    <input type="hidden" name="category" value="<%=ocategory %>">
     
 <div style="display: flex;
     gap: 100px; /* space between divs */
@@ -364,12 +367,7 @@ String oename = request.getParameter("ename");
 
     function submitFinalPrescription() {
     	
-    	  let empn = $('#ovcode').val();
-    	  
-    	  if (!empn) {
-    	    alert("Employee Code is missing.");
-    	    return;
-    	  }
+    	 
     	
 
 				document.forms[0].submit();

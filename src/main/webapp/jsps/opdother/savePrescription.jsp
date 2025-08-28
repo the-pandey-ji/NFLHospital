@@ -5,6 +5,13 @@
 
 <%
 String empnParam = request.getParameter("ovcode");
+String opname = request.getParameter("opname");
+String oename = request.getParameter("oename");
+String orelation = request.getParameter("orelation");
+String oage = request.getParameter("oage");
+String osex = request.getParameter("osex");
+String category = request.getParameter("category");
+
   String notes = request.getParameter("notes");
   String[] diseaseCodes = request.getParameterValues("diseaseSelect");
   String diseaseCodeList = (diseaseCodes != null) ? String.join(",", diseaseCodes) : "";
@@ -17,13 +24,7 @@ String empnParam = request.getParameter("ovcode");
     return;
   }
 
-  int empn = 0;
-  try {
-    empn = Integer.parseInt(empnParam.trim());
-  } catch (NumberFormatException e) {
-    out.println("Invalid employee number.");
-    return;
-  }
+  
 
   Connection conn = null,con1 = null;
   PreparedStatement ps = null, psEmp = null, psOpd = null;
@@ -49,50 +50,18 @@ String empnParam = request.getParameter("ovcode");
    
 
 	// Get patient details
-	String pname ="" ,name = "", relation = "SELF", age = "", sex = "", typ = "N", dt = "";
+	String dt = "";
 	
-	  
+	
+int empn = Integer.parseInt(empnParam.trim());
 
+System.out.println("opname "+ opname); 
+	
+	
+	
+	
+	
 
-	String empQuery = "SELECT ename, TO_CHAR(SYSDATE, 'yyyy') - TO_CHAR(birthdate, 'yyyy'), sex, TO_CHAR(SYSDATE, 'dd-mon-yyyy') FROM employeemaster WHERE empn = ?";
-	psEmp = con1.prepareStatement(empQuery);
-	psEmp.setInt(1, empn);
-	rsEmp = psEmp.executeQuery();
-	if (rsEmp.next()) {
-		name = rsEmp.getString(1);
-		age = rsEmp.getString(2);
-		sex = rsEmp.getString(3);
-		dt = rsEmp.getString(4);
-		pname = rsEmp.getString(1);
-	}
-	rsEmp.close();
-	psEmp.close();
-	
-	
-	
-	 String dname = session.getAttribute("depname") != null ? session.getAttribute("depname").toString() : "";
-	    String drel = session.getAttribute("drel") != null ? session.getAttribute("drel").toString() : "";
-	    String dage = session.getAttribute("dage") != null ? session.getAttribute("dage").toString() : "";
-	  
-	
-	if (drel != null && !drel.isEmpty()) {
-		relation = drel;
-		pname = dname;
-		age = dage;
-		sex = session.getAttribute("dsex") != null ? session.getAttribute("dsex").toString() : "";
-	}
-
-	
-	
-/* 	System.out.println("Employee Name: " + name);
-    System.out.println("Employee Age: " + age);
-    System.out.println("Patient Name: " + pname); */
-    
-    session.removeAttribute("depname");
-    session.removeAttribute("drel");
-    session.removeAttribute("dage");
-    session.removeAttribute("dsex");
-    
     
 	
 	
@@ -101,13 +70,13 @@ String empnParam = request.getParameter("ovcode");
 	+ "VALUES (?, ?, ?, ?, SYSDATE, ?, ?, ?, ?)";
 	psOpd = conn.prepareStatement(opdSql);
 	psOpd.setInt(1, opdId);
-	psOpd.setString(2, pname);
-	psOpd.setString(3, relation);
-	psOpd.setString(4, age);
-	psOpd.setString(5, sex);
+	psOpd.setString(2, opname);
+	psOpd.setString(3, orelation);
+	psOpd.setString(4, oage);
+	psOpd.setString(5, osex);
 	psOpd.setInt(6, empn);
-	psOpd.setString(7, typ);
-	psOpd.setString(8, name);
+	psOpd.setString(7, category);
+	psOpd.setString(8, oename);
 	psOpd.executeUpdate();
 	psOpd.close();
 
