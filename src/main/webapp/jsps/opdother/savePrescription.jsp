@@ -2,6 +2,19 @@
 <%@ page import="java.util.*" %>
 <%@ page import="com.DB.DBConnect" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page import="com.entity.User" %>
+
+<%
+
+    // Check if the user is logged in
+    User user = (User) session.getAttribute("Docobj");
+    if (user == null) {
+        // Redirect to login page if not logged in
+        response.sendRedirect("/hosp1/index.jsp");
+        
+        return;
+    }
+%>
 
 <%
 String empnParam = request.getParameter("ovcode");
@@ -11,6 +24,10 @@ String orelation = request.getParameter("orelation");
 String oage = request.getParameter("oage");
 String osex = request.getParameter("osex");
 String category = request.getParameter("category");
+String doctor = user.getUsername();
+
+
+
 
   String notes = request.getParameter("notes");
   String[] diseaseCodes = request.getParameterValues("diseaseSelect");
@@ -66,8 +83,8 @@ System.out.println("opname "+ opname);
 	
 	
 	// Insert into OPD
-	String opdSql = "INSERT INTO OPD (SRNO, PATIENTNAME, RELATION, AGE, OPDDATE, SEX, EMPN, TYP, EMPNAME) "
-	+ "VALUES (?, ?, ?, ?, SYSDATE, ?, ?, ?, ?)";
+	String opdSql = "INSERT INTO OPD (SRNO, PATIENTNAME, RELATION, AGE, OPDDATE, SEX, EMPN, TYP, EMPNAME, DOCTOR) "
+	+ "VALUES (?, ?, ?, ?, SYSDATE, ?, ?, ?, ?,?)";
 	psOpd = conn.prepareStatement(opdSql);
 	psOpd.setInt(1, opdId);
 	psOpd.setString(2, opname);
@@ -77,6 +94,7 @@ System.out.println("opname "+ opname);
 	psOpd.setInt(6, empn);
 	psOpd.setString(7, category);
 	psOpd.setString(8, oename);
+	psOpd.setString(9, doctor);
 	psOpd.executeUpdate();
 	psOpd.close();
 

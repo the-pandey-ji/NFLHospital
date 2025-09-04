@@ -18,6 +18,10 @@
 <title>Registration for CISF/MKTG/Others</title>
 </head>
 <body bgcolor="#DFFFFF">
+
+<%@include file="/navbar.jsp" %>
+
+
  <p align="center">&nbsp;<p align="center"><b><font size="3"><span style="text-transform: uppercase">OPD ENRTY FOR CISF / MKTG / OTHERS</span></font></b>
  <p align="center">&nbsp;<form name="MyForm" method="POST" action="/hosp1/HOSPITAL/OPDO/self2other.jsp" >
     <div align="center">

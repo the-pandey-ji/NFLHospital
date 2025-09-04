@@ -1,8 +1,5 @@
-<%@ page import="com.entity.User" %>
+
 <%@include file="allCss.jsp"%>
-
-
-
 <%@page import="java.util.List"%>
 <%@page import="com.DB.DBConnect"%>
 <%@ page import="com.entity.User" %>

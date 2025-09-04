@@ -4,6 +4,8 @@
 <%@ page import="java.text.*" %>
 <%@ page import="com.DB.DBConnect" %>
 <%@ page contentType="text/html; charset=windows-1252" %>
+<%@ page import="com.entity.User" %>
+<%@include file="/allCss.jsp"%>
 
 <html>
 <head>
@@ -48,7 +50,6 @@ String category = request.getParameter("category");
 
 
 
-
 	// Assigning values to session attributes
 	
 
@@ -56,16 +57,129 @@ String category = request.getParameter("category");
 
 
 		if (osex.equalsIgnoreCase("M")) {
-	osex = "MALE";
+	osex = "M";
 		} else if(osex.equalsIgnoreCase("F")) {
-	osex = "FEMALE";}
+	osex = "F";}
 		else
-			osex = "Unknown";
+			osex = "U";
 		
 %>
 
 
 <body>
+
+<%
+
+    // Check if the user is logged in
+    User user = (User) session.getAttribute("Docobj");
+    if (user == null) {
+        // Redirect to login page if not logged in
+        response.sendRedirect("/hosp1/index.jsp");
+        
+        return;
+    }
+%>
+
+
+
+<div class="container-fluid p-3 bg-light">
+
+	<div class="row">
+	
+	
+		<div align="center" >
+  <center>
+  <table border="0" width="100%" cellspacing="1" height="53">
+    <tr>
+      <td width="12%" height="49" valign="middle" align="left">
+        <p align="center">
+        <a href="/hosp1/home/rep1.jsp"> <img border="0" src="/hosp1/nflimage.png" width="100" height="80" style="margin-left:50px;"></a>
+       </td>
+      
+      <td width="88%" height="49" style="padding-left: 30vw;">
+
+<p align="center" style="margin-top: -3; margin-bottom: 0;width:450px" ><strong><b><font face="Tahoma" color="#006600" size="4">NATIONAL FERTILIZERS LIMITED, PANIPAT UNIT</font></b></strong></p>
+<p align="center" style="margin-top: 5; margin-bottom: 0"><b><font face="Tahoma" size="5" color="#800000">HOSPITAL</font></b></p>
+      </td>
+      
+      
+    </tr>
+    
+
+  </table>
+  </center>
+</div>
+
+		
+		
+		
+		
+		
+		<div class="col-md-3 ml-auto  ">
+		 <%
+		   
+	        User user1 = (User) session.getAttribute("Docobj");
+	        if (user1 != null) {
+	    %>
+	        <span class="text-white btn btn-success ml-2">Welcome, <%= user1.getUsername() %>!</span>
+	        <!-- <a data-toggle="modal" data-target="#exampleModalCenter" class="btn btn-danger ml-2 text-white"><i class="fas fa-sign-out-alt"></i> Logout</a> -->
+	        
+	        <a href="changePassword.jsp" class="btn btn-primary my-2 my-sm-2 ml-2 mr-2"
+				type="submit"> <i class="fas "></i> Change Password
+			
+			</a>
+	        <a data-toggle="modal" data-target="#logoutModal" class="btn btn-danger ml-2 text-white"><i class="fas fa-sign-out-alt"></i> Logout</a>
+	        
+	     
+			
+	
+	    <%
+	        } else {
+	    %>
+				<a href="index.jsp" class="btn btn-success "><i
+					class="fas fa-sign-in-alt"></i> Login</a> 
+					
+			</div>
+		<%
+		}
+		%>
+
+	</div>
+</div>
+
+<!-- Logout Modal -->
+
+<!-- Button trigger modal 
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+  Launch demo modal
+</button>
+-->
+<!-- Modal -->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="text-center">
+          <h4>Are you sure you want to logout?</h4>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <!-- Trigger the LogoutServlet on Logout -->
+          <a href="/hosp1/logout" class="btn btn-danger ml-4 text-white">Logout!</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid" style="height: 5px; background-color: #303f9f; margin-bottom:50px; margin-top:30px"></div>
+
+
+<%-- <%@include file="/navbar.jsp" %> --%>
+
   <form method="post" action="/hosp1/jsps/opdother/savePrescription.jsp">
     <div align="center">
       <table border="1" cellpadding="0" cellspacing="0" width="47%">
@@ -90,20 +204,20 @@ String category = request.getParameter("category");
         </tr>
         <tr>
         <td align="center">
-            <input type="text" name="ovname" id="opname" size="24" readonly style="color:red; font-weight:bold" value=<%= opname%>>
+            <input type="text" name="opname" id="opname" size="24" readonly style="color:red; font-weight:bold" value=<%= opname%>>
           </td>
         
           <td align="center">
-            <input type="text" name="ovname" id="oename" size="24" readonly style="color:red; font-weight:bold" value=<%= oename%>>
+            <input type="text" name="oename" id="oename" size="24" readonly style="color:red; font-weight:bold" value=<%= oename%>>
           </td>
           <td align="center">
-            <input type="text" name="ovage" id="oage" size="19" readonly style="color:red; font-weight:bold" value=<%= oage%>>
+            <input type="text" name="oage" id="oage" size="19" readonly style="color:red; font-weight:bold" value=<%= oage%>>
           </td>
           <td align="center">
-            <input type="text" name="ovsex" id="osex" size="22" readonly style="color:red; font-weight:bold" value=<%= osex%>>
+            <input type="text" name="osex" id="osex" size="22" readonly style="color:red; font-weight:bold" value=<%= osex%>>
           </td>
            <td align="center">
-            <input type="text" name="ovrel" id="orelation" size="22" readonly style="color:red; font-weight:bold" value=<%= orelation	%>>
+            <input type="text" name="orelation" id="orelation" size="22" readonly style="color:red; font-weight:bold" value=<%= orelation	%>>
           </td>
         </tr>
       </table>

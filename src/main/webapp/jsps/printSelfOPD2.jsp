@@ -24,13 +24,12 @@
 
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>OPD Slip</title>
-  <style>
-    body {
-      font-family: 'Noto Sans Devanagari', 'Mangal', Arial, sans-serif;
-    }
-  </style>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>OPD Slip</title>
+
 </head>
 <body>
 
@@ -179,7 +178,7 @@ try {
 <p style="margin-bottom: -1">&nbsp;</p>
 <div align="center">
   <center>
-  <table border="1" width="100%" height="70%" style="border-style: solid; border-width: 1">
+  <table border="1" width="80%" height="70%" style="border-style: solid; border-width: 1">
     <tr >
 <td width="5%" height="19" style="border-bottom-style: solid" align="Center">
 <img src="/hosp1/HOSPITAL/OPD/NFL.jpg" alt="NFL" width="88" height="65" >
@@ -188,48 +187,48 @@ try {
      <!-- <p align="center"><b><font size="3" color="#003300">NFL Hospital, Panipat </font><font size="3">OPD SLIP</font></b> -->
 
 <p align="center" >
-                <font  size="5"><b>&#2344;&#2375;&#2358;&#2344;&#2354; &#2347;&#2352;&#2381;&#2335;&#2367;&#2354;&#2366;&#2311;&#2332;&#2352;&#2381;&#2360; &#2354;&#2367;&#2350;&#2367;&#2335;&#2375;&#2337; </b></font> <br/><font  size="4">&#2319;&#2344;.&#2319;&#2347;.&#2319;&#2354;. &#2330;&#2367;&#2325;&#2367;&#2340;&#2381;&#2360;&#2366;&#2354;&#2351;, &#2346;&#2366;&#2344;&#2368;&#2346;&#2340;   </font>
-<br/><font  size="3">&#2348;&#2366;&#2361;&#2381;&#2351; &#2352;&#2379;&#2327;&#2368; &#2357;&#2367;&#2349;&#2366;&#2327; (&#2323;&#2346;&#2368;&#2337;&#2368;) - &#2346;&#2352;&#2381;&#2330;&#2368;</font> </p>
+        <font face="Kruti Dev 011" size="5"><b>us'kuy QfVZykbtlZ fyfeVsM  </b></font> <br/><font face="Kruti Dev 011" size="4">,u-,Q-,y- fpfdRlky;] ikuhir </font>
+<br/><font face="Kruti Dev 011" size="3">cká jksxh foHkkx ¼vksihMh½ & iphZ</font> </p>
 <!--      
   <p align="center" style="line-height: 100%; margin-top: 0; margin-bottom: 0">
-        <font size="3">cká jksxh foHkkx ¼vksihMh½ & iphZ</font></p> -->
+        <font face="Kruti Dev 011" size="3">cká jksxh foHkkx ¼vksihMh½ & iphZ</font></p> -->
 
 	</td>
 
     </tr>
     <tr >
      <td width="15%" height="1">
-     <font  size="2"> &#2325;&#2381;&#2352;&#2350; &#2360;&#2306;&#2326;&#2381;&#2351;&#2366; </font><font size="1" face="Arial"><b>Sr. No.</b></font>  :  </td>
+     <font face="Kruti Dev 011" size="2"> Øe la[;k </font><font size="1" face="Arial"><b>Sr. No.</b></font>  :  </td>
   	 <td width="25%" height="1"><font size="1" face="Arial">&nbsp;<%=opdId%></font></td>
    	 <td width="30%" height="1" align="left"> 
-<font  size="2"> &#2340;&#2366;&#2352;&#2368;&#2326;</font> <font size="1" face="Arial"><b>Date</b></font> : </td>
+<font face="Kruti Dev 011" size="2"> rkjh[k</font> <font size="1" face="Arial"><b>Date</b></font> : </td>
   	 <td width="30%" height="1" align="left"><font size="1" face="Arial">&nbsp;<%=dt%></font></td>
     </tr>
     <tr>
      <td width="15%" height="1" align="left">
-<font  size="2">  &#2344;&#2366;&#2350;</font>&nbsp;<b><font face="Arial" size="1">Name</font></b> :</td>
+<font face="Kruti Dev 011" size="2"> uke</font>&nbsp;<b><font face="Arial" size="1">Name</font></b> :</td>
   </center>
    	 <td width="25%" height="1">
       <p align="left"><font size="1" face="Arial">&nbsp;<%=name%></font></td>
    <center>
      <td width="30%" height="1" align="left">
-<font  size="2">   &#2360;&#2306;&#2348;&#2306;&#2343;</font>&nbsp;<b><font face="Arial" size="1">Relation</font></b> :</td>
+<font face="Kruti Dev 011" size="2"> laca/k</font>&nbsp;<b><font face="Arial" size="1">Relation</font></b> :</td>
      <td width="30%" height="1" align="left"><font face="Arial" size="1">&nbsp;<%=relation%></font></td>
     </tr>
      <tr>
   	 <td width="25%" height="1">
-<font  size="2"> &#2325;&#2352;&#2381;&#2350;&#2330;&#2366;&#2352;&#2368; &#2360;&#2306;&#2326;&#2381;&#2351;&#2366;</font>&nbsp;<b><font face="Arial" size="1">E.Code</font></b> :</td>
+<font face="Kruti Dev 011" size="2"> deZpkjh la[;k</font>&nbsp;<b><font face="Arial" size="1">E.Code</font></b> :</td>
   	 <td width="15%" height="1"><font size="1" face="Arial">&nbsp;<%=empn%></font></td>
   	 <td width="30%" height="1">
-<font  size="2"> &#2325;&#2352;&#2381;&#2350;&#2330;&#2366;&#2352;&#2368; &#2344;&#2366;&#2350;</font>&nbsp;<b><font face="Arial" size="1">E.Name</font></b>:</td>
+<font face="Kruti Dev 011" size="2"> deZpkjh uke</font>&nbsp;<b><font face="Arial" size="1">E.Name</font></b>:</td>
   	 <td width="30%" height="1"><font size="1" face="Arial">&nbsp;<%=empname%></font></td>
     </tr>
      <tr>
   	 <td width="20%" height="1">
-<font  size="2"> &#2354;&#2367;&#2306;&#2327;</font>&nbsp;<b><font face="Arial" size="1">Sex</font></b>:</td>
+<font face="Kruti Dev 011" size="2"> fyax</font>&nbsp;<b><font face="Arial" size="1">Sex</font></b>:</td>
   	 <td width="20%" height="1"><font size="1" face="Arial">&nbsp;<%=sex%></font></td>
   	 <td width="30%" height="1">
-<font  size="2"> &#2310;&#2351;&#2369;</font>&nbsp;<b><font face="Arial" size="1">Age</font></b>:</td>
+<font face="Kruti Dev 011" size="2"> vk;q</font>&nbsp;<b><font face="Arial" size="1">Age</font></b>:</td>
   	 <td width="30%" height="1"><font size="1" face="Arial"><maxlength="2">&nbsp;<%=age%></font></td>
    </tr>
      <tr>
@@ -242,7 +241,7 @@ try {
      <div style="margin: 2px; padding: 1px; width: 80%; box-sizing: border-box; display: flex; justify-content: space-between; align-items: flex-start;">
   <% if (!diseaseMap.isEmpty()) { %>
     <!-- Left side: Heading -->
-    <h3 style="margin-right: 20px;margin-top:0; width: 45%; text-align: right;padding-right:20px"><font face="Arial" size="2.5"> &#2348;&#2368;&#2350;&#2366;&#2352;&#2367;&#2351;&#2366;&#2305;</font>&nbsp; Diseases</h3>
+    <h3 style="margin-right: 20px;margin-top:0; width: 45%; text-align: right;padding-right:20px">Diseases</h3>
 
     <!-- Right side: Disease list -->
     <div style="width: 50%; text-align: left;">
@@ -271,16 +270,17 @@ try {
 
 <!-- Prescriptions List -->
 <% if (!prescriptionList.isEmpty()) { %>
-    <h3 align="center"><font face="Arial" size="2.5">&#2344;&#2367;&#2351;&#2369;&#2325;&#2381;&#2340; &#2325;&#2368; &#2327;&#2312; &#2342;&#2357;&#2366;&#2311;&#2351;&#2366;&#2305;</font>&nbsp; Prescribed Medicines</h3>
+    <h3 align="center">Prescribed Medicines</h3>
     <table border="1" width="90%" align="center" cellpadding="5">
       <thead>
         <tr>
-          <th><font face="Arial" size="2.5">&#2342;&#2357;&#2366;</font> Medicine</th>
-          <th><font face="Arial" size="2.5"> &#2326;&#2369;&#2352;&#2366;&#2325;</font> Dosage</th>
-          <th><font face="Arial" size="2.5">&#2310;&#2357;&#2371;&#2340;&#2381;&#2340;&#2367;</font> Frequency</th>
-          <th><font face="Arial" size="2.5">&#2360;&#2350;&#2351;</font> Timing</th>
-          <th><font face="Arial" size="2.5">&#2342;&#2367;&#2344;</font> No. of Days</th>
+          <th>Medicine</th>
+          <th>Dosage</th>
+          <th>Frequency</th>
+          <th>Timing</th>
+          <th>No. of Days</th>
         </tr>
+      </thead>
       <tbody>
       <% for (int i = 0; i < prescriptionList.size(); i++) {
             Map<String, String> row = prescriptionList.get(i);
@@ -312,14 +312,14 @@ try {
 
 <!-- Doctors name -->
 
-<p align="right" style="margin-bottom:30px; margin-top:80px;margin-right:150px;"><font face="Arial" size="2.5">&#2337;&#2377;&#2325;&#2381;&#2335;&#2352; &#2325;&#2375;  &#2361;&#2360;&#2381;&#2340;&#2366;&#2325;&#2381;&#2359;&#2352;</font>&nbsp; Doctor's Signarure    _____________</p>
+<p align="right" style="margin-bottom:30px; margin-top:80px;margin-right:150px;">Doctor's Signarure    _____________</p>
  <%
 		   
 	        User user1 = (User) session.getAttribute("Docobj");
 	        
 	    %>
    
-<p align="right" style="margin-bottom:50px; margin-right:140px;"><font face="Arial" size="2.5">&#2337;&#2377;&#2325;&#2381;&#2335;&#2352; &#2325;&#2366; &#2344;&#2366;&#2350;</font>&nbsp; Doctor's Name : <%=user1.getUsername() %></p>
+<p align="right" style="margin-bottom:50px; margin-right:140px;">Doctor's Name : <%=user1.getUsername() %></p>
  
 
      
@@ -327,7 +327,7 @@ try {
     </tr>
 
 	</table>
-<font size="2" face="Arial"><b>Prevention is better than cure</b></font> <font  size="3">( &#2311;&#2354;&#2366;&#2332; &#2360;&#2375; &#2348;&#2375;&#2361;&#2340;&#2352; &#2361;&#2376; &#2352;&#2379;&#2325;&#2341;&#2366;&#2350; )</font>
+<font size="2" face="Arial"><b>Prevention is better than cure</b></font> <font face="Kruti Dev 011" size="3">¼ bykt ls csgrj gS jksdFkke ½</font>
   </center>
 </div>
 
@@ -349,7 +349,7 @@ function printAndHide(btn) {
 </script>
 
 <p align="center">
-  <input type="button" class="printbutton" value="&#2346;&#2381;&#2352;&#2367;&#2306;&#2335; &#2325;&#2352;&#2375;&#2306; Print This Page" onclick="printAndHide(this)" />
+  <input type="button" class="printbutton" value="Print This Page" onclick="printAndHide(this)" />
 </p>
 
 </body>
