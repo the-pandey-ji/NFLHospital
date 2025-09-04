@@ -41,6 +41,9 @@
 </script>
 </head>
 <body background="../Stationery/Glacier%20Bkgrd.jpg">
+
+<%@ include file="/navbar.jsp" %>
+
 <form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Outref/dep/outrefdetaildeprevisit.jsp" target="_self" onsubmit="validate();" style="margin-top:30px">
     <p align="center" style="margin-top: -4; margin-bottom: -4"><b>
     <font face="Tahoma">Select Year</font><font size="3" face="Tahoma">&nbsp;

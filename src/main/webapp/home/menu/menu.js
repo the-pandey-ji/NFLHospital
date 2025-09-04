@@ -110,17 +110,17 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
         this.item11 = "Reports"
         this.item12 = "Billing"
 
-        this.url0 = "http://"
+        this.url0 = ""
         this.url1 = "../../HOSPITAL/OPDO/registration_fom.jsp"
         this.url_target1 = "_top"
         this.url2 = "../../HOSPITAL/Localref/self/refdetaillocaldep2main.jsp"
         this.url_target2 = "_top"
-        this.url3 = "http://"
+        this.url3 = ""
         this.url_target3 = "_top"
         this.url4 = "../../HOSPITAL/Outref/dep/refdetailout2main.jsp"
         this.url_target4 = "_top"
-        this.url5 = "sample_link.html"
-        this.url7 = "sample_link.html"
+        this.url5 = ""
+        this.url7 = ""
         this.url9 = "../../HOSPITAL/Medical%20Certificate/med_cert.jsp"
         this.url_target9 = "_top"
         this.url_target10 = "_top"
@@ -208,9 +208,9 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
         this.item6_0 = "Local Reference"
         this.item6_1 = "Outstation Reference"
 
-        this.url6_0 = "../../HOSPITAL/Localrefoth/referenceoth"
+        this.url6_0 = "../../HOSPITAL/Localrefoth/enter_reference_no.jsp"
         this.url_target6_0 = "_top"
-        this.url6_1 = "../../HOSPITAL/Outrefoth/outreferenceoth"
+        this.url6_1 = "../../HOSPITAL/Outrefoth/enter_reference_no.jsp"
         this.url_target6_1 = "_top"
 
 
@@ -223,9 +223,9 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
         this.item7_0 = "Local Reference Revisit"
         this.item7_1 = "Outstation Reference Revisit"
 
-        this.url7_0 = "../../HOSPITAL/Localrefoth/enter_reference_revisit.htm"
+        this.url7_0 = "../../HOSPITAL/Localrefoth/enter_reference_revisit.jsp"
         this.url_target7_0 = "_top"
-        this.url7_1 = "../../HOSPITAL/Outrefoth/enter_reference_revisit.htm"
+        this.url7_1 = "../../HOSPITAL/Outrefoth/enter_reference_revisit.jsp"
         this.url_target7_1 = "_top"
 
 

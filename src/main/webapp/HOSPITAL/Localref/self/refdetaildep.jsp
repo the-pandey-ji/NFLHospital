@@ -52,6 +52,9 @@
  </script>
 </head>
 <body background="/hosp1/Stationery/Glacier%20Bkgrd.jpg">
+
+<%@ include file="/navbar.jsp" %>
+
  <form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Localref/self/refdetaillocaldep.jsp" onsubmit="validate();" >
  <%
 

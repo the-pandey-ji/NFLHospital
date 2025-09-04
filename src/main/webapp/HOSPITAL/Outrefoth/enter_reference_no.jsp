@@ -40,29 +40,15 @@
    // -->
 </script>
 </head>
+<%@ include file="/navbar.jsp" %>
+
 <body background="../Stationery/Glacier%20Bkgrd.jpg">
-<form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Outrefoth/outrefdetailothrevisit.jsp" target="_self" onsubmit="validate();" >
-    <p align="center" style="margin-top: -4; margin-bottom: -4"><b>
-    <font face="Tahoma">Select Year</font><font size="3" face="Tahoma">&nbsp;
-    <select size="1" name="D1">
-    <option value="2011">2011</option>
-    <option selected value="2012">2012</option>
-    <option value="2013">2013</option>
-    <option value="2014">2014</option>
-    <option value="2015">2015</option>
-    <option value="2016">2016</option>
-    <option value="2017">2017</option>
-    <option value="2018">2018</option>
-    <option value="2019">2019</option>
-	<option value="2020">2020</option>
-	<option value="2021">2021</option>
-<option value="2022">2022</option>
-<option value="2023">2023</option>
-<option value="2024">2024</option>
-<option value="2025">2025</option>
-    </select></font></b><font face="Tahoma" size="3"><b>&nbsp;&nbsp;&nbsp;&nbsp; </b></font><b><font size="3" face="Tahoma">Enter Reference No&nbsp;&nbsp;&nbsp;&nbsp;</font></b>
-    <input type="text" name="refno" size="20"><font face="Tahoma" size="3">
-    <b>&nbsp;&nbsp; <input type="submit" value="Go" name="B1"></b></font></p>
+<form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Outref/dep/outrefdetaildep.jsp" target="main" onsubmit="Validate();" >
+    <p align="center" style="margin-top: -4; margin-bottom: -4"><b><font size="3" face="Tahoma">Enter Reference No&nbsp;&nbsp;&nbsp;&nbsp;
+    </font></b>
+    <input type="text" name="refno" size="20"><font face="Tahoma" size="3"><b>
+    <input type="submit" value="Detail" name="B1"></b></font></p>
+</form>
 <hr width="80%">
 <p align="center">&nbsp;</p>
 </body>
