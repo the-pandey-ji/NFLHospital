@@ -40,13 +40,15 @@
 	String referby = request.getParameter("referby");
 	String typ = request.getParameter("typ");
 	String empname = request.getParameter("empname");
-	String escort = request.getParameter("escort");
+	String hcode = request.getParameter("hcode");
 
 
 	String referredto ="";
 		
-	
-	
+	if(typ.equals("C"))
+		typ="CISF";
+	else if(typ.equals("O"))
+		typ="Other";
 				
     Connection conn  = null; 
     Connection conn1  = null;    
@@ -55,12 +57,12 @@
     	conn = DBConnect.getConnection();
     	conn1 = DBConnect.getConnection1();
            
-           /* Statement stmt1=conn1.createStatement(); //for employeemaster
+       /*     Statement stmt1=conn1.createStatement(); //for employeemaster
     
 	       ResultSet rs1 = stmt1.executeQuery("select a.ename, a.DESIGNATION, c.DISCIPLINENAME from employeemaster a, FURNITUREDEPT b, FURNITUREDISCIPLINE c where a.DEPTCODE=b.DEPTCODE and b.SECTIONCODE=c.DISCIPLINECODE  and a.oldnewdata='N' and onpayroll='A' and a.empn="+empn+"");
             while(rs1.next())
 	             {
-	                 ename=rs1.getString(1);
+	         
 	                 desg= rs1.getString(2);
 	                 dept= rs1.getString(3);
 	             } */
@@ -68,11 +70,9 @@
            /*  System.out.println("ename: " + ename);
             System.out.println("desg: " + desg);
             System.out.println("dept: " + dept); */
-            
-/*           System.out.println("referto: " + referto);
- */	   
+	   
             Statement stmt2=conn.createStatement();  //for localhospital
-	       ResultSet rs2 = stmt2.executeQuery("select hname,to_char(sysdate,'yyyy') from OUTSTATIONHOSPITAL where hcode='"+referto+"'");
+	       ResultSet rs2 = stmt2.executeQuery("select hname,to_char(sysdate,'yyyy') from LOCALHOSPITAL where hcode='"+hcode+"'");
                while(rs2.next())
                     {
                         referredto=rs2.getString(1);
@@ -80,15 +80,14 @@
 
                     } 
                
-   /*   System.out.println("referredto yr: " + yr);  */
+      
      
-     ResultSet rs = stmt2.executeQuery("insert into OUTREFDETAIL"+yr+"(REFNO,PATIENTNAME,EMPN,REL,AGE,REFDATE,HOSPITAL,SEX,DISEASE,DOC,ESCORT,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"',sysdate,'"+referto+"','"+sex+"','"+disease+"','"+referby+"','"+escort+"','N')");
+           ResultSet rs = stmt2.executeQuery("insert into LOACALREFDETAIL"+yr+"(REFNO,PATIENTNAME,EMPN,REL,AGE,REFDATE,SEX,DISEASE,DOC,specialist,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"',sysdate,'"+sex+"','"+disease+"','"+referby+"','"+hcode+"','Y')");
                while(rs.next())
 	                {
 	                }
                
-               System.out.println("inserted in out ref other");
-	              
+         
 	   }
 	  
      catch(SQLException e) 
@@ -109,6 +108,9 @@
                    catch (Exception ignored) {}
                }
         }
+    
+   
+/*     System.out.println("refer to: " + referto); */
        //out.print("result is: "+ename); 
 %>
 <div align="center">
@@ -170,9 +172,9 @@
       <p>&nbsp;</p>
       <p>&nbsp;</p>
       <p>&nbsp;</p>  
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
       </td>
     </tr>
 	<tr> 

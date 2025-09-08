@@ -87,7 +87,7 @@
     System.out.println("referredto yr: " + yr);  
     System.out.println("referredto yr: " + referredto); */
      
-     ResultSet rs = stmt2.executeQuery("insert into OUTREFDETAIL"+yr+" (REFNO,PATIENTNAME,EMPN,REL,AGE,REFDATE,HOSPITAL,SEX,DISEASE,DOC,ESCORT,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"',sysdate,'"+hcode+"','"+sex+"','"+disease+"','"+referby+"','"+escort+"','N')");
+     ResultSet rs = stmt2.executeQuery("insert into OUTREFDETAIL"+yr+" (REFNO,PATIENTNAME,EMPN,REL,AGE,REFDATE,HOSPITAL,SEX,DISEASE,DOC,ESCORT,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"',sysdate,'"+hcode+"','"+sex+"','"+disease+"','"+referby+"','"+escort+"','Y')");
                while(rs.next())
 	                {
 	                }

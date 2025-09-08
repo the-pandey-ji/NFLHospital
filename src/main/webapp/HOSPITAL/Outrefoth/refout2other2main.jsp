@@ -42,6 +42,15 @@ if (refno != null && !refno.trim().isEmpty()) {
                  refdt = rsdetail.getString(6);
                 showDetails = true;
             }
+             
+             if(typ.equals("C"))
+         		typ="CISF";
+         	else if(typ.equals("M"))
+         		typ="MKTG";
+         	else
+         		typ="OTHER";
+             
+             
         } else {
             out.print("<p align='center' style='color:red;'>Invalid Reference No.</p>");
         }
@@ -90,6 +99,11 @@ if (refno != null && !refno.trim().isEmpty()) {
                 <td width="50%"><font face="Tahoma" size="2"><b>Employee Code</b></font></td>
                 <td width="50%"><font face="Tahoma" size="2" color="#0000FF"><b>
                     <input type="text" name="empn" readonly  value="<%= empn %>" size="21"></b></font></td>
+            </tr>
+            <tr>
+                <td width="50%"><font face="Tahoma" size="2"><b>Employee Category </b></font></td>
+                <td width="50%"><font face="Tahoma" size="2" color="#0000FF"><b>
+                    <input type="text" name="empname" readonly  value="<%= typ %>" size="21"></b></font></td>
             </tr>
             <tr>
                 <td width="50%"><font face="Tahoma" size="2"><b>Relation</b></font></td>

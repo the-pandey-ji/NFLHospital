@@ -47,8 +47,10 @@
 		
 	if(typ.equals("C"))
 		typ="CISF";
-	else if(typ.equals("O"))
-		typ="Other";
+	else if(typ.equals("M"))
+		typ="MKTG";
+	else
+		typ="OTHER";
 				
     Connection conn  = null; 
     Connection conn1  = null;    
@@ -72,7 +74,7 @@
             System.out.println("dept: " + dept); */
 	   
             Statement stmt2=conn.createStatement();  //for localhospital
-	       ResultSet rs2 = stmt2.executeQuery("select hname,to_char(sysdate,'yyyy') from LOCALHOSPITAL where hcode='"+hcode+"'");
+	       ResultSet rs2 = stmt2.executeQuery("select hname,to_char(sysdate,'yyyy') from LOCALHOSPITAL where hcode='"+referto+"'");
                while(rs2.next())
                     {
                         referredto=rs2.getString(1);

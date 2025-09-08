@@ -106,7 +106,7 @@
 
   	disease = rs.getString(11);
   %>
-<form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Localrefoth/refdetaillocal2other.jsp" onsubmit="validate();" >
+<form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Localrefoth/refdetaillocal2other2revisit.jsp" onsubmit="validate();" >
   <p align="center"><font face="Tahoma" size="4" color="#0000FF"><b><span style="text-transform: uppercase"><u>
   revisit For Local Reference</u></span></b></font></p>
   <p align="center">&nbsp;</p>

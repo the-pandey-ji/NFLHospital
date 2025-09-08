@@ -43,6 +43,16 @@ if (refno != null && !refno.trim().isEmpty()) {
                 
                 showDetails = true;
             }
+            
+            
+            if (typ.equals("M"))
+            		typ = "MKTG";
+            else if (typ.equals("C"))
+            	typ = "CISF";
+            else
+            	typ = "OTHER";
+            
+            
         } else {
             out.print("<p align='center' style='color:red;'>Invalid Reference No.</p>");
         }
@@ -91,6 +101,11 @@ if (refno != null && !refno.trim().isEmpty()) {
                 <td width="50%"><font face="Tahoma" size="2"><b>Employee Code</b></font></td>
                 <td width="50%"><font face="Tahoma" size="2" color="#0000FF"><b>
                     <input type="text" name="empn" readonly  value="<%= empn %>" size="21"></b></font></td>
+            </tr>
+             <tr>
+                <td width="50%"><font face="Tahoma" size="2"><b>Employee Category </b></font></td>
+                <td width="50%"><font face="Tahoma" size="2" color="#0000FF"><b>
+                    <input type="text" name="empname" readonly  value="<%= typ %>" size="21"></b></font></td>
             </tr>
             <tr>
                 <td width="50%"><font face="Tahoma" size="2"><b>Relation</b></font></td>
@@ -242,6 +257,7 @@ if (refno != null && !refno.trim().isEmpty()) {
         </table>
         
         <input type="hidden" name="typ" value="<%= typ %>">
+       <%--  <input type="hidden" name="hcode" value="<%= hcode %>"> --%>
     </div>
     <p align="center">
         <input type="submit" value="Save" name="B1">
