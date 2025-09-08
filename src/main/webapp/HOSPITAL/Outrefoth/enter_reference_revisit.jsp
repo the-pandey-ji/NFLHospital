@@ -44,7 +44,7 @@
 
 <%@ include file="/navbar.jsp" %>
 
-<form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Outref/dep/outrefdetaildeprevisit.jsp" target="_self" onsubmit="validate();" style="margin-top:30px">
+<form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Outrefoth/outrefOth2revisit.jsp" target="_self" onsubmit="validate();" style="margin-top:30px">
     <p align="center" style="margin-top: -4; margin-bottom: -4"><b>
     <font face="Tahoma">Select Year</font><font size="3" face="Tahoma">&nbsp;
     <select size="1" name="D1">

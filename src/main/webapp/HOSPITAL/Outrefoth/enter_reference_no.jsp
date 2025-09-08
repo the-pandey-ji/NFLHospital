@@ -43,7 +43,7 @@
 <%@ include file="/navbar.jsp" %>
 
 <body background="../Stationery/Glacier%20Bkgrd.jpg">
-<form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Outref/dep/outrefdetaildep.jsp" target="main" onsubmit="Validate();" >
+<form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Outrefoth/refout2other2main.jsp" target="main" onsubmit="Validate();" >
     <p align="center" style="margin-top: -4; margin-bottom: -4"><b><font size="3" face="Tahoma">Enter Reference No&nbsp;&nbsp;&nbsp;&nbsp;
     </font></b>
     <input type="text" name="refno" size="20"><font face="Tahoma" size="3"><b>

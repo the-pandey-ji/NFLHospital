@@ -19,7 +19,7 @@
 <%
 String refno = request.getParameter("refno");
 boolean showDetails = false;
-String name = "", sex = "", relation = "", age = "", refdt = "",disease="";
+String name = "", sex = "", relation = "", age = "", refdt = "",disease="",empname="",typ="";
 int empn = 0;
 String yr = "";
 
@@ -30,14 +30,16 @@ if (refno != null && !refno.trim().isEmpty()) {
         Statement stmt = conn.createStatement();
         ResultSet rsref = stmt.executeQuery("select srno from opd where srno = " + refno);
         if (rsref.next()) {
-            ResultSet rsdetail = stmt.executeQuery("select patientname,empn,sex,relation,age,to_char(opddate,'dd-mon-yyyy') from opd where srno = " + refno);
-            if (rsdetail.next()) {
-                name = rsdetail.getString("patientname");
-                empn = rsdetail.getInt("empn");
-                sex = rsdetail.getString("sex");
-                relation = rsdetail.getString("relation");
-                age = rsdetail.getString("age");
-                refdt = rsdetail.getString(6);
+        	 ResultSet rsdetail = stmt.executeQuery("select patientname,empn,sex,relation,age,to_char(opddate,'dd-mon-yyyy'),typ,empname from opd where srno = " + refno);
+             if (rsdetail.next()) {
+                 name = rsdetail.getString("patientname");
+                 empn = rsdetail.getInt("empn");
+                 sex = rsdetail.getString("sex");
+                 relation = rsdetail.getString("relation");
+                 age = rsdetail.getString("age");
+                 typ = rsdetail.getString("typ");
+                 empname = rsdetail.getString("empname");
+                 refdt = rsdetail.getString(6);
                 showDetails = true;
             }
         } else {
@@ -64,8 +66,8 @@ if (refno != null && !refno.trim().isEmpty()) {
 
 <% if (showDetails) { %>
 <!-- Details Form -->
-<form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Outref/dep/refdetailoutdep.jsp">
-    <p align="center"><font face="Tahoma" size="4" color="#0000FF"><b><span style="text-transform: uppercase"><u>Entry For OUT Reference</u></span></b></font></p>
+<form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Outrefoth/refdetailout2other.jsp">
+    <p align="center"><font face="Tahoma" size="4" color="#0000FF"><b><span style="text-transform: uppercase"><u>Entry For OUT Reference Others</u></span></b></font></p>
     <div align="center">
         <table border="0" width="44%" style="border-style: solid; border-width: 1">
             <!-- Details fields as before, using fetched values -->
@@ -78,6 +80,11 @@ if (refno != null && !refno.trim().isEmpty()) {
                 <td width="50%"><font face="Tahoma" size="2"><b>Patient Name </b></font></td>
                 <td width="50%"><font face="Tahoma" size="2" color="#0000FF"><b>
                     <input type="text" name="name" readonly  value="<%= name %>" size="21"></b></font></td>
+            </tr>
+            <tr>
+                <td width="50%"><font face="Tahoma" size="2"><b>Employee Name </b></font></td>
+                <td width="50%"><font face="Tahoma" size="2" color="#0000FF"><b>
+                    <input type="text" name="empname" readonly  value="<%= empname %>" size="21"></b></font></td>
             </tr>
             <tr>
                 <td width="50%"><font face="Tahoma" size="2"><b>Employee Code</b></font></td>
@@ -249,6 +256,10 @@ if (refno != null && !refno.trim().isEmpty()) {
     </tr>
  
         </table>
+        
+        
+        <input type="hidden" name="typ" value="<%= typ %>">
+        
     </div>
     <p align="center">
         <input type="submit" value="Save" name="B1">

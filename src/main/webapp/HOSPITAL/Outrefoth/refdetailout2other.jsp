@@ -1,4 +1,4 @@
-﻿<%@ page language="java" session="true"%>
+<%@ page language="java" session="true"%>
 <%@ page import="java.math.*" %>
 <%@ page import="oracle.jdbc.driver.*" %>
 <%@ page contentType="text/html" %>
@@ -38,12 +38,17 @@
 	String disease = request.getParameter("disease");
 	String referto = request.getParameter("referto");
 	String referby = request.getParameter("referby");
-	String desg ="";
-	String dept ="";
-	String ename ="";
+	String typ = request.getParameter("typ");
+	String empname = request.getParameter("empname");
+	String escort = request.getParameter("escort");
+
+
 	String referredto ="";
 		
-	
+	if(typ.equals("C"))
+		typ="CISF";
+	else if(typ.equals("O"))
+		typ="Other";
 	
 				
     Connection conn  = null; 
@@ -53,7 +58,7 @@
     	conn = DBConnect.getConnection();
     	conn1 = DBConnect.getConnection1();
            
-           Statement stmt1=conn1.createStatement(); //for employeemaster
+           /* Statement stmt1=conn1.createStatement(); //for employeemaster
     
 	       ResultSet rs1 = stmt1.executeQuery("select a.ename, a.DESIGNATION, c.DISCIPLINENAME from employeemaster a, FURNITUREDEPT b, FURNITUREDISCIPLINE c where a.DEPTCODE=b.DEPTCODE and b.SECTIONCODE=c.DISCIPLINECODE  and a.oldnewdata='N' and onpayroll='A' and a.empn="+empn+"");
             while(rs1.next())
@@ -61,14 +66,16 @@
 	                 ename=rs1.getString(1);
 	                 desg= rs1.getString(2);
 	                 dept= rs1.getString(3);
-	             }
+	             } */
             
            /*  System.out.println("ename: " + ename);
             System.out.println("desg: " + desg);
             System.out.println("dept: " + dept); */
-	   
+            
+/*           System.out.println("referto: " + referto);
+ */	   
             Statement stmt2=conn.createStatement();  //for localhospital
-	       ResultSet rs2 = stmt2.executeQuery("select hname,to_char(sysdate,'yyyy') from LOCALHOSPITAL where hcode='"+referto+"'");
+	       ResultSet rs2 = stmt2.executeQuery("select hname,to_char(sysdate,'yyyy') from OUTSTATIONHOSPITAL where hcode='"+referto+"'");
                while(rs2.next())
                     {
                         referredto=rs2.getString(1);
@@ -76,12 +83,14 @@
 
                     } 
                
-        System.out.println("referredto: " + referredto);
+   /*   System.out.println("referredto yr: " + yr);  */
      
-           ResultSet rs = stmt2.executeQuery("insert into LOACALREFDETAIL"+yr+"(REFNO,PATIENTNAME,EMPN,REL,AGE,REFDATE,SEX,DISEASE,DOC,specialist,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"',sysdate,'"+sex+"','"+disease+"','"+referby+"','"+referto+"','N')");
+     ResultSet rs = stmt2.executeQuery("insert into OUTREFDETAIL"+yr+"(REFNO,PATIENTNAME,EMPN,REL,AGE,REFDATE,HOSPITAL,SEX,DISEASE,DOC,ESCORT,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"',sysdate,'"+referto+"','"+sex+"','"+disease+"','"+referby+"','"+escort+"','N')");
                while(rs.next())
 	                {
 	                }
+               
+               System.out.println("inserted in out ref other");
 	              
 	   }
 	  
@@ -126,7 +135,7 @@
 -->
 <tr>
 <td width="5%" height="7" style="border-style: solid; border-width: 1">
-<img src="NFL.jpg" alt="NFL" >
+<img src="/hosp1/nflimage.png" alt="NFL" style="width:90px;height:70px;" >
 </td>
      <td width="95%" height="19" style="border-bottom-style: solid">
      <!-- <p align="center"><b><font size="3" color="#003300">NFL Hospital, Panipat </font><font size="3">OPD SLIP</font></b> -->
@@ -146,8 +155,8 @@
         
         <p style="line-height: 150%"><font face="Arial" size="2">&#2358;&#2381;&#2352;&#2368;/&#2358;&#2381;&#2352;&#2368;&#2350;&#2340;&#2368;/&#2358;&#2381;&#2352;&#2368;&#2350;&#2366;&#2344;/&#2360;&#2369;&#2358;&#2381;&#2352;&#2368;&#2358;&#2381;&#2352;&#2368;</font><font face="Arial" size="2">&nbsp;Sh/Smt/Mr/Ms :&nbsp;<%= name%></font>&nbsp;&nbsp;&nbsp;
         <font face="Arial" size="2">&#2360;&#2306;&#2348;&#2306;&#2343;</font>&nbsp;<font face="Arial" size="2"> Relation :&nbsp;<%=relation%> &nbsp;&nbsp; of &nbsp;&nbsp;<font face="Arial" size="2">&#2358;&#2381;&#2352;&#2368;&#2350;&#2366;&#2344;/&#2358;&#2381;&#2352;&#2368;&#2350;&#2340;&#2368;</font>&nbsp; Mr/Ms
-        :&nbsp;<%=ename%>  </font>&nbsp;<font face="Arial" size="2">&#2346;&#2342;&#2344;&#2366;&#2350;</font>&nbsp;&nbsp;<font face="Arial" size="2">Designation :&nbsp;<%= desg%>&nbsp;&nbsp;<font face="Arial" size="2">&#2357;&#2367;&#2349;&#2366;&#2327;</font>&nbsp;&nbsp;Deptt :&nbsp;<%=dept%>&nbsp;<font face="Arial" size="2">&#2325;&#2352;&#2381;&#2350;&#2330;&#2366;&#2352;&#2368; &#2360;&#2306;&#2326;&#2381;&#2351;&#2366;</font>&nbsp;<font face="Arial"><font size="2">
-        E.Code :&nbsp;<%=empn%></font>&nbsp;<font face="Arial" size="2">&#2325;&#2379; &#2352;&#2375;&#2347;&#2352;</font>&nbsp;referred to &nbsp;&nbsp;</font>&nbsp;<%=referto%>&nbsp;for&nbsp;&nbsp;<%=disease%>&nbsp;&nbsp;<font face="Arial" size="2">&#2325;&#2367;&#2351;&#2366; &#2332;&#2366;&#2340;&#2366; &#2361;&#2376;</font>.</p>
+        :&nbsp;<%=empname%>  </font>&nbsp;<font face="Arial" size="2">&#2346;&#2342;&#2344;&#2366;&#2350;</font>&nbsp;&nbsp;<font face="Arial" size="2">Designation :&nbsp;<%= typ%>&nbsp;&nbsp;<font face="Arial" size="2">&#2357;&#2367;&#2349;&#2366;&#2327;</font>&nbsp;&nbsp;Deptt :&nbsp;<%=typ%>&nbsp;<font face="Arial" size="2">&#2325;&#2352;&#2381;&#2350;&#2330;&#2366;&#2352;&#2368; &#2360;&#2306;&#2326;&#2381;&#2351;&#2366;</font>&nbsp;<font face="Arial"><font size="2">
+        E.Code :&nbsp;<%=empn%></font>&nbsp;<font face="Arial" size="2">&#2325;&#2379; &#2352;&#2375;&#2347;&#2352;</font>&nbsp;referred to &nbsp;&nbsp;</font>&nbsp;<%=referredto%>&nbsp;for&nbsp;&nbsp;<%=disease%>&nbsp;&nbsp;<font face="Arial" size="2">&#2325;&#2367;&#2351;&#2366; &#2332;&#2366;&#2340;&#2366; &#2361;&#2376;</font>.</p>
         <br/>
 		<br/>
 		<br/>

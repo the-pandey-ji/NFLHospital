@@ -68,7 +68,7 @@ if (refno != null && !refno.trim().isEmpty()) {
 <% if (showDetails) { %>
 <!-- Details Form -->
 <form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Localrefoth/refdetaillocal2other.jsp">
-    <p align="center"><font face="Tahoma" size="4" color="#0000FF"><b><span style="text-transform: uppercase"><u>Entry For Other Reference</u></span></b></font></p>
+    <p align="center"><font face="Tahoma" size="4" color="#0000FF"><b><span style="text-transform: uppercase"><u>Entry For Reference Others</u></span></b></font></p>
     <div align="center">
         <table border="0" width="44%" style="border-style: solid; border-width: 1">
             <!-- Details fields as before, using fetched values -->

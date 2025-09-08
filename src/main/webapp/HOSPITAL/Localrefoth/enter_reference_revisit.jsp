@@ -45,17 +45,13 @@
 
 <%@ include file="/navbar.jsp" %>
 
-<form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Localref/self/refdetaildeprevisit.jsp" target="_self" onsubmit="validate();" >
+<form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Localrefoth/refother2revisit.jsp" target="_self" onsubmit="validate();" >
     <p align="center" style="margin-top: -4; margin-bottom: -4">&nbsp;</p>
     <p align="center" style="margin-top: -4; margin-bottom: -4">&nbsp;</p>
     <p align="center" style="margin-top: -4; margin-bottom: -4"><b>
     <font face="Tahoma">Select Year</font><font size="3" face="Tahoma">&nbsp;
     <select size="1" name="D1">
-    <option value="2011">2011</option>
-    <option  value="2012">2012</option>
-    <option value="2013">2013</option>
-    <option value="2014">2014</option>
-    <option value="2015">2015</option>
+
 <option value="2016">2016</option>
 <option value="2017">2017</option>
 <option value="2018">2018</option>

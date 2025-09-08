@@ -18,8 +18,8 @@
 <title>Reference No</title>
 </head>
 <body>
-
-<%@ include file="/navbar.jsp" %>
+<%-- 
+<%@ include file="/navbar.jsp" %> --%>
 
 <%
 	String yr = "";
