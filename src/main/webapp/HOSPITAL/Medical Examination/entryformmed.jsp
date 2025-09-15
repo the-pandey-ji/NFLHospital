@@ -38,13 +38,16 @@
 	
 	
 				
-    Connection con1  = null;    
+    Connection con1  = null, con = null;    
     try 
         {
            con1 = DBConnect.getConnection1(); 
-           Statement stmt=con1.createStatement();
+           Statement stmt1=con1.createStatement();
            
-	          ResultSet rs = stmt.executeQuery("select ename,sex,to_char(sysdate,'yyyy')-(to_char(birthdate,'yyyy')),to_char(sysdate,'dd-mm-yyyy') from employeemaster where empn="+empn);
+           con = DBConnect.getConnection();
+           Statement stmt=con.createStatement();
+           
+	          ResultSet rs = stmt1.executeQuery("select ename,sex,to_char(sysdate,'yyyy')-(to_char(birthdate,'yyyy')),to_char(sysdate,'dd-mm-yyyy') from employeemaster where empn="+empn);
                while(rs.next())  
                     {
                          name = rs.getString("ENAME");

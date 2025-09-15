@@ -9,6 +9,7 @@
 <%@ page import="java.text.*" %>
 <%@ page import="java.util.Date" %>
 <%@ page import="java.io.*" %>
+<%@ page import="com.DB.DBConnect" %>
 <html>
 <head>
 <meta http-equiv="Content-Language" content="en-us">
@@ -60,14 +61,11 @@
 		String sex = "";
 		String age = "";
 		
-    String dataSourceName = "hosp";
-    String dbURL = "jdbc:odbc:"+ dataSourceName;
-				
+    
     Connection conn  = null;    
     try 
         {
-           Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-           conn = DriverManager.getConnection(dbURL,"","");
+           conn = DBConnect.getConnection();
            Statement stmt=conn.createStatement();
            
 	       ResultSet rs = stmt.executeQuery("select Format(dated,'dd-mm-yyyy'), name,empn,sex,age from medexam where meno="+meno);
@@ -87,10 +85,7 @@
        while((e = e.getNextException()) != null)
        out.println(e.getMessage() + "<BR>");
    }
- catch(ClassNotFoundException e) 
-      {
-          out.println("ClassNotFoundexception :" + e.getMessage() + "<BR>");
-      }
+
  finally
       {
           if(conn != null) 
@@ -105,8 +100,7 @@
   Connection conn1  = null;    
   try 
      {
-           Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-           conn1 = DriverManager.getConnection(dbURL,"","");
+              conn1 = DBConnect.getConnection();
            Statement stmt=conn1.createStatement();
            ResultSet rs1 = stmt.executeQuery("update MEDEXAM set DEPT='"+dept+"', HB='"+hb+"', ALB='"+alb+"', SUGAR='"+sugar+"', BLOODGRP='"+bloodgrp+"', XRAY='"+xray+"', ECG='"+ecg+"', OTHERINV='"+other+"', PULSE='"+pulse+"', BP='"+bp+"', HEART='"+heart+"', LUNG='"+lung+"', ABDOMEN='"+abdomen+"', OTHERMED='"+otherprob+"', HERNIA='"+hernia+"', HYDROCELE='"+hydrocele+"', PILES='"+piles+"', OTHERSUR='"+othersur+"', NEARVI='"+nearvi+"', DISTANTVI='"+distantvi+"', COLORVI='"+colorvi+"', ENT='"+ent+"', GYOBFEMALE='"+gynae+"', REMARKS='"+remarks+"', STATUS ='"+status+"', HEIGHT='"+ht+"', WEIGHT='"+wt+"' where meno="+meno);
      }//end of try block
@@ -116,10 +110,7 @@
        while((e = e.getNextException()) != null)
        out.println(e.getMessage() + "<BR>");
    }
- catch(ClassNotFoundException e) 
-      {
-          out.println("ClassNotFoundexception :" + e.getMessage() + "<BR>");
-      }
+
  finally
       {
           if(conn1 != null) 
