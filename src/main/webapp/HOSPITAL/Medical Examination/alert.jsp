@@ -78,7 +78,7 @@ while(rs.next())
   </center>
 </div>
 <%
-ResultSet rs1 = stmt.executeQuery("select count(*) nopd from production.opd where opddate > sysdate-1");   ////create table
+ResultSet rs1 = stmt.executeQuery("select count(*) nopd from opd where opddate > sysdate-1");   
 while(rs1.next())
 	{
 	no = rs1.getString("nopd");

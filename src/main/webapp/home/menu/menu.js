@@ -104,12 +104,12 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
         this.item5 = "Outstation Reference Revisit"
         this.item6 = "References-Others"
         this.item7 = "References - Others Revisit"
-        this.item8 = "New Registration"
+       	this.item8 = "New Registration"
         this.item9 = "Medical Certificate"
         this.item10 = "Medical Examination"
         this.item11 = "Reports"
-        this.item12 = "Billing"
-
+/*        this.item12 = "Billing"
+*/
         this.url0 = ""
         this.url1 = "../../HOSPITAL/OPDO/registration_fom.jsp"
         this.url_target1 = "_top"
@@ -124,9 +124,9 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
         this.url9 = "../../HOSPITAL/Medical%20Certificate/med_cert.jsp"
         this.url_target9 = "_top"
         this.url_target10 = "_top"
-        this.url12 = "../../HOSPITAL/sorry.htm"
+      /*  this.url12 = "../../HOSPITAL/sorry.htm"
         this.url_target12 = "_top"
-
+*/
 
 
 
@@ -234,7 +234,7 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
 
     //Sub Menu 8
 
-        this.menu_xy8 = "5,-25"
+        /*this.menu_xy8 = "5,-25"
         this.menu_width8 = 250
 
         this.item8_0 = "NFL Employee"
@@ -243,7 +243,7 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
         this.url8_0 = "../../HOSPITAL/New%20Registration/registration_fom.htm"
         this.url_target8_0 = "_top"
         this.url8_1 = "../../HOSPITAL/New%20Registration/dependent_form.htm"
-        this.url_target8_1 = "_top"
+        this.url_target8_1 = "_top"*/
 
 
 

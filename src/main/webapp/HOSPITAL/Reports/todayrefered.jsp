@@ -7,6 +7,7 @@
 <%@ page import="java.lang.*" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.*" %>
+<%@ page import="com.DB.DBConnect" %>
 <html>
 <head>
 <meta http-equiv="Content-Language" content="en-us">
@@ -51,34 +52,40 @@ String spc="";
 String yr="";
 String revisit="";
 
-    String dataSourceName = "hosp";
-    String dbURL = "jdbc:odbc:"+ dataSourceName;
+   
 				
     Connection conn  = null;    
     try 
         {
-           Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-           conn = DriverManager.getConnection(dbURL,"","");
+           conn = DBConnect.getConnection();
            Statement stmt=conn.createStatement();
 	       
-	       ResultSet rsyr = stmt.executeQuery("select Format(Date(),'yyyy') from opd");
-            while(rsyr.next())
+	       ResultSet rsyr = stmt.executeQuery("select to_char(sysdate,'yyyy') from opd");
+            if(rsyr.next())
 	            {
 	                yr = rsyr.getString(1);
+	                                   
                 }
 	       
-	       ResultSet rs = stmt.executeQuery("select a.REFNO, a.PATIENTNAME, a.EMPN, a.REL, a.AGE, Format(a.REFDATE,'dd-mm-yyyy'),b.doctor_name, c.hname, Switch(a.revisitflag='N','Refer',a.revisitflag='Y','Revisit',a.revisitflag is null,'Refer') from LOACALREFDETAIL"+yr+" a, doctor b, LOCALHOSPITAL c where a.DOC=b.code and a.SPECIALIST=c.hcode and Format(a.refdate,'dd-mm-yyyy')= Format(Date(),'dd-mm-yyyy') order by a.refno");
-            while(rs.next())
-	            {
-	                refno = rs.getInt(1);
-	                pname = rs.getString(2);
-	                empn = rs.getInt(3);
-	                relation = rs.getString(4);
-	                age = rs.getString(5);
-	                refdt = rs.getString(6);
-	                doctor = rs.getString(7);
-                    spc= rs.getString(8); 
-                    revisit= rs.getString(9); 
+	       ResultSet rs = stmt.executeQuery("SELECT a.REFNO, a.PATIENTNAME,a.EMPN, a.REL, a.AGE, TO_CHAR(a.REFDATE, 'DD-MM-YYYY'), a.doc, c.hname, CASE WHEN a.revisitflag = 'N' THEN 'Refer' WHEN a.revisitflag = 'Y' THEN 'Revisit' WHEN a.revisitflag IS NULL THEN 'Refer' ELSE NULL END AS revisit_status FROM LOACALREFDETAIL"+yr+" a JOIN LOCALHOSPITAL c ON a.SPECIALIST = c.hcode WHERE TO_CHAR(a.refdate, 'DD-MM-YYYY') = TO_CHAR(SYSDATE, 'DD-MM-YYYY') ORDER BY a.refno");
+	       
+	     
+	       
+	       if (rs == null) {
+	    	    System.out.println("No records found for today.");
+	    	} else {
+	    	    while (rs.next()) {
+	    	        refno = rs.getInt(1);
+	    	        pname = rs.getString(2);
+	    	        empn = rs.getInt(3);
+	    	        relation = rs.getString(4);
+	    	        age = rs.getString(5);
+	    	        refdt = rs.getString(6);
+	    	        doctor = rs.getString(7);
+	    	        spc = rs.getString(8); 
+	    	        revisit = rs.getString(9);
+
+                    
  %>	
   <tr>
     <td width="5%" height="19"><%=refno%></td>
@@ -92,7 +99,8 @@ String revisit="";
   </tr>
   
 <%
-                }
+        }           
+    }
 %>
   </table>
 <p align="center"><b>Local Referred Summary</b></p>
@@ -104,10 +112,7 @@ catch(SQLException e)
       while((e = e.getNextException()) != null)
       out.println(e.getMessage() + "<BR>");
    }
-catch(ClassNotFoundException e) 
-   {
-      out.println("ClassNotFoundexception :" + e.getMessage() + "<BR>");
-   }
+
 finally
    {
        if(conn != null) 
@@ -136,11 +141,10 @@ finally
       Connection conn1  = null;    
       try 
          {
-           Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-           conn1 = DriverManager.getConnection(dbURL,"","");
+           conn1 = DBConnect.getConnection();
            Statement stmt=conn1.createStatement();
            
-	       ResultSet rs = stmt.executeQuery("select b.hname, count(*) from LOACALREFDETAIL"+yr+" a, LOCALHOSPITAL b where a.specialist=b.hcode and Format(a.refdate,'dd-mm-yyyy')= Format(Date(),'dd-mm-yyyy') group by b.hname");
+	       ResultSet rs = stmt.executeQuery("select b.hname, count(*) from LOACALREFDETAIL"+yr+" a, LOCALHOSPITAL b where a.specialist=b.hcode and to_char(a.refdate,'dd-mm-yyyy')= to_char(sysdate,'dd-mm-yyyy') group by b.hname");
             while(rs.next())
 	           {
 	               hname = rs.getString(1);
@@ -152,7 +156,7 @@ finally
     </tr>
 <%	
               }
-          ResultSet rs1 = stmt.executeQuery("select count(*) from LOACALREFDETAIL"+yr+" where Format(refdate,'dd-mm-yyyy')= Format(Date(),'dd-mm-yyyy')");
+          ResultSet rs1 = stmt.executeQuery("select count(*) from LOACALREFDETAIL"+yr+" where to_char(refdate,'dd-mm-yyyy')= to_char(sysdate,'dd-mm-yyyy')");
             while(rs1.next())
 	          {
 	              total = rs1.getString(1);
@@ -173,10 +177,7 @@ catch(SQLException e)
       while((e = e.getNextException()) != null)
       out.println(e.getMessage() + "<BR>");
    }
-catch(ClassNotFoundException e) 
-   {
-      out.println("ClassNotFoundexception :" + e.getMessage() + "<BR>");
-   }
+
 finally
    {
        if(conn1 != null) 
@@ -222,12 +223,33 @@ String revisit1="";
  Connection conn2  = null;    
       try 
          {
-           Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-           conn2 = DriverManager.getConnection(dbURL,"","");
+           conn2 = DBConnect.getConnection();
            Statement stmt=conn2.createStatement();
            
-	        ResultSet rs = stmt.executeQuery("select a.REFNO, a.PATIENTNAME, a.EMPN, a.REL, a.AGE, Format(a.REFDATE,'dd-mm-yyyy'), c.doctor_name, b.hname, b.city, a.ESCORT, Switch(a.revisitflag='N','Refer',a.revisitflag='Y','Revisit',a.revisitflag is null,'Refer') from OUTREFDETAIL"+yr+" a, DOCTOR c, OUTSTATIONHOSPITAL b where a.doc=c.code and a.hospital=b.HCODE and Format(a.refdate,'dd-mm-yyyy')= Format(Date(),'dd-mm-yyyy')");
-               while(rs.next())
+           String query = "SELECT a.REFNO, " +
+                   "a.PATIENTNAME, " +
+                   "a.EMPN, " +
+                   "a.REL, " +
+                   "a.AGE, " +
+                   "TO_CHAR(a.REFDATE, 'DD-MM-YYYY'), " +
+                   "a.doc, " +
+                   "b.hname, " +
+                   "b.city, " +
+                   "a.ESCORT, " +
+                   "CASE " +
+                   "WHEN a.revisitflag = 'N' THEN 'Refer' " +
+                   "WHEN a.revisitflag = 'Y' THEN 'Revisit' " +
+                   "WHEN a.revisitflag IS NULL THEN 'Refer' " +
+                   "ELSE NULL " +
+                   "END AS revisit_status " +
+                   "FROM OUTREFDETAIL" + yr + " a " +
+                   "JOIN OUTSTATIONHOSPITAL b ON a.hospital = b.HCODE " +
+                   "WHERE TO_CHAR(a.refdate, 'DD-MM-YYYY') = TO_CHAR(SYSDATE, 'DD-MM-YYYY') " +
+                   "ORDER BY a.refno";
+
+    ResultSet rs = stmt.executeQuery(query);
+    
+    while(rs.next())
 	            {
                      refno1 = rs.getString(1);
                      pname1 = rs.getString(2);
@@ -265,10 +287,7 @@ catch(SQLException e)
       while((e = e.getNextException()) != null)
       out.println(e.getMessage() + "<BR>");
    }
-catch(ClassNotFoundException e) 
-   {
-      out.println("ClassNotFoundexception :" + e.getMessage() + "<BR>");
-   }
+
 finally
    {
        if(conn2 != null) 
