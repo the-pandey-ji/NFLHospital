@@ -9,6 +9,7 @@
 <%@ page import="java.text.*" %>
 <%@ page import="java.util.Date" %>
 <%@ page import="java.io.*" %>
+<%@ page import="com.DB.DBConnect" %>
 <html>
 <head>
 <meta http-equiv="Content-Language" content="en-us">
@@ -35,17 +36,15 @@
 	int meno =0;
 	int sr1=0,sr2=0;
 	
-	String dataSourceName = "hosp";
-    String dbURL = "jdbc:odbc:"+ dataSourceName;
+	
 				
-    Connection con  = null;    
+    Connection con1  = null;    
     try 
         {
-           Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-           con = DriverManager.getConnection(dbURL,"","");
-           Statement stmt=con.createStatement();
+           con1 = DBConnect.getConnection1(); 
+           Statement stmt=con1.createStatement();
            
-	          ResultSet rs = stmt.executeQuery("select ename,sex,Format(Date(),'yyyy')-(Format(birthdate,'yyyy')),format(Date(),'dd-mm-yyyy') from employeemaster where empn="+empn);
+	          ResultSet rs = stmt.executeQuery("select ename,sex,to_char(sysdate,'yyyy')-(to_char(birthdate,'yyyy')),to_char(sysdate,'dd-mm-yyyy') from employeemaster where empn="+empn);
                while(rs.next())  
                     {
                          name = rs.getString("ENAME");
@@ -68,7 +67,7 @@
                       sr1=1;
                    }
                    
-             ResultSet rs3 = stmt.executeQuery("insert into MEDEXAM(MENO, NAME, EMPN, AGE, SEX, dated) values('"+sr1+"','"+name+"','"+empn+"','"+age+"','"+sex+"',Format(Date(),'dd-mm-yyyy'))");
+             ResultSet rs3 = stmt.executeQuery("insert into MEDEXAM(MENO, NAME, EMPN, AGE, SEX, dated) values('"+sr1+"','"+name+"','"+empn+"','"+age+"','"+sex+"',to_char(sysdate,'dd-mm-yyyy'))");
                
             
    
@@ -79,17 +78,14 @@
                    while((e = e.getNextException()) != null)
                    System.out.println(e.getMessage());
             }
-            catch(ClassNotFoundException e) 
-			    {
-                   System.out.println("ClassNotFoundexception :" + e.getMessage());
-                }
+            
             finally
 			    {
-                   if(con != null) 
+                   if(con1 != null) 
 				    {
                        try
 					       {
-                              con.close();
+                              con1.close();
                            }
                        catch (Exception ignored) {}
                     }

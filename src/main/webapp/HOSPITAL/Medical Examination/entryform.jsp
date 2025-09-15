@@ -9,6 +9,7 @@
 <%@ page import="java.text.*" %>
 <%@ page import="java.util.Date" %>
 <%@ page import="java.io.*" %>
+<%@ page import="com.DB.DBConnect" %>
 <html>
 <head>
 <meta http-equiv="Content-Language" content="en-us">
@@ -29,17 +30,16 @@
 	String age = "";
 	String meno ="";
 					
-    String dataSourceName = "hosp";
-    String dbURL = "jdbc:odbc:"+ dataSourceName;
+    
 				
     Connection conn  = null;    
     try 
         {
-           Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-           conn = DriverManager.getConnection(dbURL,"","");
+    	conn = DBConnect.getConnection();
+           
            Statement stmt=conn.createStatement();
            
-	       ResultSet rs = stmt.executeQuery("select name,empn,sex,age,meno,Format(dated,'dd-mm-yyyy') from medexam where meno="+medexamno);
+	       ResultSet rs = stmt.executeQuery("select name,empn,sex,age,meno,to_char(dated,'dd-mm-yyyy') from medexam where meno="+medexamno);
              while(rs.next())  
             {
                name = rs.getString(1);
@@ -56,10 +56,7 @@
        while((e = e.getNextException()) != null)
        out.println(e.getMessage() + "<BR>");
    }
- catch(ClassNotFoundException e) 
-      {
-          out.println("ClassNotFoundexception :" + e.getMessage() + "<BR>");
-      }
+ 
  finally
       {
           if(conn != null) 

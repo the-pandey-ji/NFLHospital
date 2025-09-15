@@ -7,6 +7,7 @@
 <%@ page import="java.lang.*" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.*" %>
+<%@ page import="com.DB.DBConnect" %>
 <html>
 <head>
 <meta http-equiv="Content-Language" content="en-us">
@@ -23,8 +24,8 @@
 </style>
 </head>
 <body>
-<% 
-	String pname = request.getParameter("pname");
+<%
+String pname = request.getParameter("pname");
 	String relation = request.getParameter("relation");
 	String empn = request.getParameter("empn");
 	String desg = request.getParameter("desg");
@@ -37,45 +38,57 @@
 	String fitdt = request.getParameter("fitdt");
 	int srno = 0;
 	String dt="";
-					
-    String dataSourceName = "hosp";
-    String dbURL = "jdbc:odbc:"+ dataSourceName;
-				
+			
+   
+		
     Connection conn  = null;    
     try 
         {
-           Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-           conn = DriverManager.getConnection(dbURL,"","");
+           conn = DBConnect.getConnection();
            Statement stmt=conn.createStatement();
              
-           ResultSet rs = stmt.executeQuery("select max(srno)+1, format(Date(),'dd-mm-yyyy') from medicalcrt");
+           ResultSet rs = stmt.executeQuery("select max(srno)+1, to_char(sysdate,'dd-mm-yyyy') from medicalcrt");
 	           while(rs.next())
 	                {
 	                     srno=rs.getInt(1);
 	                     dt=rs.getString(2);
 	                }
 	          
-	       ResultSet rs1 = stmt.executeQuery("insert into medicalcrt(srno,patientname,relation,fathername,empn,desg,dept,disease,sdate,edate,ldays,mdate,fit) values('"+srno+"','"+pname+"','"+relation+"','"+father+"','"+empn+"','"+desg+"','"+dept+"','"+disease+"','"+fromdt+"','"+todt+"','"+days+"',format(Date(),'dd-mm-yyyy'),'"+fitdt+"')");
-	    }
-   catch(SQLException e) 
-      {
-          while((e = e.getNextException()) != null)
-          out.println(e.getMessage() + "<BR>");
-      }
-   catch(ClassNotFoundException e) 
-      {
-      }
-   finally
-      {
-         if(conn != null) 
-           {
-               try
-                  {
-                     conn.close();
-                  }
-               catch (Exception ignored) {}
-           }
-      }
+	     //  ResultSet rs1 = stmt.executeQuery("insert into medicalcrt(srno,patientname,relation,fathername,empn,desg,dept,disease,sdate,edate,ldays,mdate,fit) values('"+srno+"','"+pname+"','"+relation+"','"+father+"','"+empn+"','"+desg+"','"+dept+"','"+disease+"','"+fromdt+"','"+todt+"','"+days+"',to_char(sysdate,'dd-mm-yyyy'),'"+fitdt+"')");
+	   PreparedStatement ps = conn.prepareStatement(
+  "INSERT INTO medicalcrt (srno, patientname, relation, fathername, empn, desg, dept, disease, sdate, edate, ldays, mdate, fit) " +
+  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), TO_DATE(?, 'DD-MM-YYYY'), ?, SYSDATE, TO_DATE(?, 'DD-MM-YYYY'))");
+
+ps.setInt(1, srno);
+ps.setString(2, pname);
+ps.setString(3, relation);
+ps.setString(4, father);
+ps.setString(5, empn);
+ps.setString(6, desg);
+ps.setString(7, dept);
+ps.setString(8, disease);
+ps.setString(9, fromdt);
+ps.setString(10, todt);
+ps.setString(11, days); // Use setInt if ldays is NUMBER
+ps.setString(12, fitdt);
+
+ps.executeUpdate();
+
+
+		}
+    catch (SQLException e) {
+	while ((e = e.getNextException()) != null)
+		out.println(e.getMessage() + "<BR>");
+		}
+
+		finally {
+	if (conn != null) {
+		try {
+			conn.close();
+		} catch (Exception ignored) {
+		}
+	}
+		}
 %>
 <p>&nbsp;</p>
 <p>&nbsp;</p>

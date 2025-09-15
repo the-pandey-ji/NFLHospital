@@ -30,20 +30,20 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
 **********************************************************************************************/
 
 
-	this.menu_background_color = "#FFE680"
-	this.menu_border_color = "#662266"
+	this.menu_background_color = "#DBF5F8"
+	this.menu_border_color = "#000000"
 	this.menu_border_width = 1
 	this.menu_padding = "2,4,2,4"
 	this.menu_border_style = "solid"
 	this.divider_caps = false
 	this.divider_width = 2
 	this.divider_height = 2
-	this.divider_background_color = "#AA7D39"
+	this.divider_background_color = "#000000"
 	this.divider_border_style = "none"
 	this.divider_border_width = 0
 	this.divider_border_color = "#000000"
 	this.menu_is_horizontal = false
-	this.menu_width = "120"
+	this.menu_width = "320"
 	this.menu_xy = "-14,-19"
 	this.menu_scroll_direction = 4
 	this.menu_scroll_reverse_on_hide = true
@@ -61,18 +61,18 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
 
 
 	this.icon_rel = 0
-	this.menu_items_text_color = "#aa7239"
+	this.menu_items_text_color = "#000000"
 	this.menu_items_text_decoration = "none"
 	this.menu_items_font_family = "Arial"
-	this.menu_items_font_size = "12px"
+	this.menu_items_font_size = "25px"
 	this.menu_items_font_style = "normal"
 	this.menu_items_font_weight = "bold"
 	this.menu_items_text_align = "left"
 	this.menu_items_padding = "4,5,4,5"
 	this.menu_items_border_style = "solid"
 	this.menu_items_border_width = 0
-	this.menu_items_width = 110
-	this.menu_items_text_color_roll = "#aa4f39"
+	this.menu_items_width = 200
+	this.menu_items_text_color_roll = "#000000"
 
 
 
@@ -84,15 +84,15 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
 **********************************************************************************************/
 
 
-        this.menu_background_color_main = "#FFCC00"
-        this.menu_items_background_color_main = "#FFCC00"
-        this.menu_items_background_color_roll_main = "#FFE680"
-        this.menu_items_text_color_main = "#aa4f39"
-        this.menu_items_text_color_roll_main = "#aa7239"
+        this.menu_background_color_main = "#BFEAF9"
+        this.menu_items_background_color_main = "#BFEAF9"
+        this.menu_items_background_color_roll_main = "#DBF5F8"
+        this.menu_items_text_color_main = "#000000"
+        this.menu_items_text_color_roll_main = "#000000"
         this.menu_border_color_main = "#662266"
         this.menu_items_border_color_main = "#AA7D39"
         this.menu_items_border_color_roll_main = "#AA7D39"
-        this.menu_width_main = 197
+        this.menu_width_main = 400
         this.menu_is_horizontal_main = false
         this.divider_background_color_main = "#AA7D39"
 
@@ -140,7 +140,8 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
     //Sub Menu 0
 
         this.menu_xy0 = "7,-26"
-        this.menu_width0 = 154
+        this.menu_width0 = 290
+		
 
         this.item0_0 = "SELF"
         this.item0_1 = "DEPENDENTS"
@@ -155,7 +156,8 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
     //Sub Menu 1
 
         this.menu_xy1 = "5,-24"
-        this.menu_width1 = 176
+        this.menu_width1 = 350
+	
 
 
 
@@ -168,7 +170,7 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
     //Sub Menu 3
 
         this.menu_xy3 = "5,-24"
-        this.menu_width3 = 163
+        this.menu_width3 = 350
 
         this.item3_0 = "Enter Reference No."
         this.item3_1 = "Check History by Empn"
@@ -188,7 +190,7 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
     //Sub Menu 5
 
         this.menu_xy5 = "5,-25"
-        this.menu_width5 = 163
+        this.menu_width5 = 320
 
         this.item5_0 = "Enter Reference No."
         this.item5_1 = "Check History by Empn"
@@ -203,7 +205,7 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
     //Sub Menu 6
 
         this.menu_xy6 = "5,-25"
-        this.menu_width6 = 154
+        this.menu_width6 = 350
 
         this.item6_0 = "Local Reference"
         this.item6_1 = "Outstation Reference"
@@ -218,7 +220,7 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
     //Sub Menu 7
 
         this.menu_xy7 = "5,-25"
-        this.menu_width7 = 197
+        this.menu_width7 = 400
 
         this.item7_0 = "Local Reference Revisit"
         this.item7_1 = "Outstation Reference Revisit"
@@ -233,7 +235,7 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
     //Sub Menu 8
 
         this.menu_xy8 = "5,-25"
-        this.menu_width8 = 154
+        this.menu_width8 = 250
 
         this.item8_0 = "NFL Employee"
         this.item8_1 = "Dependents"
@@ -247,14 +249,14 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
 
     //Sub Menu 9
 
-        this.menu_width9 = 191
+        this.menu_width9 = 400
 
 
 
 
     //Sub Menu 10
 
-        this.menu_width10 = 191
+        this.menu_width10 = 400
 
         this.item10_0 = "Medical Examination Form"
         this.item10_1 = "Medical Examination Report"
@@ -272,7 +274,7 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
     //Sub Menu 11
 
         this.menu_xy11 = "6,-126"
-        this.menu_width11 = 228
+        this.menu_width11 = 450
 
         this.item11_0 = "No of OPD"
         this.item11_1 = "No of Medical Certificates"
