@@ -7,6 +7,7 @@
 <%@ page import="java.lang.*" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.*" %>
+<%@ page import="com.DB.DBConnect" %>
 <html>
 <head>
 <meta http-equiv="Content-Language" content="en-us">
@@ -46,18 +47,16 @@
     <td width="5%" align="center">Sex</td>
   </tr>
 <%				
-    String dataSourceName = "hosp";
-    String dbURL = "jdbc:odbc:"+ dataSourceName;
-				
-    Connection con  = null;    
+    
+    Connection con  = null,con1=null;    
     try 
         {
-           Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-           con = DriverManager.getConnection(dbURL,"","");
+           con = DBConnect.getConnection();
+           con1=DBConnect.getConnection1();
            Statement stmt=con.createStatement();
-           Statement stmt1=con.createStatement();
+           Statement stmt1=con1.createStatement();
            
-	       ResultSet rs = stmt.executeQuery("select srno,patientname,relation,age,empn,sex,empname,typ FROM opd where Format(opddate,'dd-mm-yyyy') = Format(date(),'dd-mm-yyyy') order by srno");
+	       ResultSet rs = stmt.executeQuery("select srno,patientname,relation,age,empn,sex,empname,typ FROM opd where to_char(opddate,'dd-mm-yyyy') = to_char(sysdate,'dd-mm-yyyy') order by srno");
             while(rs.next())
 	          {
 	             
@@ -94,7 +93,7 @@
 %>
 </table>
 <%
-      ResultSet rs1 = stmt.executeQuery("select count(*) from opd where Format(opddate,'dd-mm-yyyy') = Format(date(),'dd-mm-yyyy')");
+      ResultSet rs1 = stmt.executeQuery("select count(*) from opd where to_char(opddate,'dd-mm-yyyy') = to_char(sysdate,'dd-mm-yyyy')");
         while(rs1.next())
 	      {
 	          no = rs1.getString(1);
@@ -110,10 +109,7 @@ catch(SQLException e)
        while((e = e.getNextException()) != null)
        out.println(e.getMessage() + "<BR>");
    }
- catch(ClassNotFoundException e) 
-      {
-          out.println("ClassNotFoundexception :" + e.getMessage() + "<BR>");
-      }
+ 
  finally
       {
           if(con != null) 

@@ -7,6 +7,7 @@
 <%@ page import="java.lang.*" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.*" %>
+<%@ page import="com.DB.DBConnect" %>
 <html>
 <head>
 <meta http-equiv="Content-Language" content="en-us">
@@ -46,9 +47,7 @@
 <%				
 Connection conn  = null;    
 try {
-Class.forName("oracle.jdbc.driver.OracleDriver");
-DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());	
-	conn =DriverManager.getConnection("jdbc:oracle:thin:@127.0.0.1:1521:orcl2","production","prod");
+conn = DBConnect.getConnection();
 	Statement stmt=conn.createStatement();
 	stmt=conn.createStatement();
 	ResultSet rs = stmt.executeQuery("select name,sex,empn,(to_char(sysdate,'yyyy')-to_char(birthdate,'yyyy')) age FROM PRODUCTION.w_personal where empn between '2000' and '3500' or empn between '9000' and '9500'");
@@ -79,7 +78,7 @@ while(rs.next())
   </center>
 </div>
 <%
-ResultSet rs1 = stmt.executeQuery("select count(*) nopd from production.opd where opddate > sysdate-1");
+ResultSet rs1 = stmt.executeQuery("select count(*) nopd from production.opd where opddate > sysdate-1");   ////create table
 while(rs1.next())
 	{
 	no = rs1.getString("nopd");
@@ -98,9 +97,7 @@ out.println("SQLException : "+ e.getMessage() + "<BR>");
 while((e = e.getNextException()) != null)
 out.println(e.getMessage() + "<BR>");
 }
-catch(ClassNotFoundException e) {
-out.println("ClassNotFoundexception :" + e.getMessage() + "<BR>");
-}
+
 finally{
 if(conn != null) {
 try{
