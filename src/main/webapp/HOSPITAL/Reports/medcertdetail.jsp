@@ -7,6 +7,7 @@
 <%@ page import="java.lang.*" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.*" %>
+<%@ page import="com.DB.DBConnect" %>
 <html>
 <head>
 <meta http-equiv="Content-Language" content="en-us">
@@ -44,17 +45,15 @@
     <td width="18%" align="center">Relation</td>
   </tr>
 <%				
-    String dataSourceName = "hosp";
-    String dbURL = "jdbc:odbc:"+ dataSourceName;
+   
 				
     Connection conn  = null;    
     try 
         {
-           Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-           conn = DriverManager.getConnection(dbURL,"","");
+           conn = DBConnect.getConnection();
            Statement stmt=conn.createStatement();
            
-	       ResultSet rs = stmt.executeQuery("select patientname,ldays,relation,empn,Format(mdate,'dd-mm-yyyy'),srno FROM MEDICALCRT where Format(mdate,'ddmmyyyy') ='"+dt+"'");
+	       ResultSet rs = stmt.executeQuery("select patientname,ldays,relation,empn,to_char(mdate,'dd-mm-yyyy'),srno FROM MEDICALCRT where to_char(mdate,'ddmmyyyy') ='"+dt+"'");
            while(rs.next())
 	            {
 	                pname = rs.getString(1);
@@ -78,7 +77,7 @@
 %>
 </table>
 <%
-ResultSet rs1 = stmt.executeQuery("select count(*) from MEDICALCRT  where Format(mdate,'ddmmyyyy') ='"+dt+"'");
+ResultSet rs1 = stmt.executeQuery("select count(*) from MEDICALCRT  where to_char(mdate,'ddmmyyyy') ='"+dt+"'");
 while(rs1.next())
 	{
 	no = rs1.getString(1);
@@ -94,9 +93,7 @@ out.println("SQLException : "+ e.getMessage() + "<BR>");
 while((e = e.getNextException()) != null)
 out.println(e.getMessage() + "<BR>");
 }
-catch(ClassNotFoundException e) {
-out.println("ClassNotFoundexception :" + e.getMessage() + "<BR>");
-}
+
 finally{
 if(conn != null) {
 try{
