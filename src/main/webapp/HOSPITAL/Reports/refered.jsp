@@ -67,9 +67,11 @@ String revisit="";
 	                yr = rsyr.getString(1);
 	                                   
                }
-	       
+	     
+           
+           
 	       ResultSet rs = stmt.executeQuery("SELECT a.REFNO, a.PATIENTNAME,a.EMPN, a.REL, a.AGE, TO_CHAR(a.REFDATE, 'DD-MM-YYYY'), a.doc, c.hname, CASE WHEN a.revisitflag = 'N' THEN 'Refer' WHEN a.revisitflag = 'Y' THEN 'Revisit' WHEN a.revisitflag IS NULL THEN 'Refer' ELSE NULL END AS revisit_status FROM LOACALREFDETAIL"+yr+" a JOIN LOCALHOSPITAL c ON a.SPECIALIST = c.hcode WHERE TO_CHAR(a.refdate, 'DDMMYYYY')='"+dt+"'");
-            
+            System.out.println("result local query"+rs);
 	       if (rs == null) {
 	    	    System.out.println("No records found for today.");
 	    	} else {
@@ -80,12 +82,10 @@ String revisit="";
 	         empn = rs.getInt(3);
 	         relation = rs.getString(4);
 	         age = rs.getString(5);
-	         spc= rs.getString(6);
-	         refdt = rs.getString(7);
-	         sex = rs.getString(8);
-             disease = rs.getString(9);
-	         doctor = rs.getString(10);
-	         revisit= rs.getString(11); 
+	         refdt = rs.getString(6);
+	         spc= rs.getString(7);
+
+	         revisit= rs.getString(8); 
   %>
   <tr>
     <td width="5%" height="19"><%=refno%></td>
