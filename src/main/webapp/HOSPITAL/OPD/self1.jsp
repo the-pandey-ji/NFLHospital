@@ -206,13 +206,12 @@
     
     <div align="center" id="medicineDetailsContainer" style="margin:20px; display:none;">
   <h3>Medicine Details</h3>
-  <table border="1" cellpadding="5" cellspacing="0" width="80%" id="medicineDetailsTable">
+  <table border="1" cellpadding="5" cellspacing="0" width="50%" id="medicineDetailsTable">
     <thead>
       <tr>
         <th>Medicine Name</th>
         <th>Dosage</th>
-        <th>Frequency</th>
-        <th>Timing (Before/After Food)</th>
+        <th>Frequency & Timing</th>
         <th>Number of Days</th>
       </tr>
     </thead>
@@ -380,7 +379,7 @@
     	    },
     	    traditional: true, // This is key: sends arrays properly
     	    success: function (response) {
-    	      alert(response.trim());
+    	      //alert(response.trim());
 
     	      // ✅ Now generate the medicine detail table
     	      generateMedicineDetailsTable();

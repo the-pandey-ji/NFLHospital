@@ -262,24 +262,24 @@ try {
       </ul>
     </div>
   <% } else { %>
-    <p style="text-align: center;">No diseases found for this OPD ID.</p>
+    <p style="text-align: center;">No disease found for this OPD ID.</p>
   <% } %>
 </div>
 
 
 <!-- adding horizontal line -->
-<div align="center" style=" border: 1px solid #000;width:90%;"></div>
+<div align="center" style=" border: 1px solid #000;width:80%;"></div>
 
 <!-- Prescriptions List -->
 <% if (!prescriptionList.isEmpty()) { %>
     <h3 align="center"><font face="Arial" size="2.5">&#2344;&#2367;&#2351;&#2369;&#2325;&#2381;&#2340; &#2325;&#2368; &#2327;&#2312; &#2342;&#2357;&#2366;&#2311;&#2351;&#2366;&#2305;</font>&nbsp; Prescribed Medicines</h3>
-    <table border="1" width="90%" align="center" cellpadding="5">
+    <table border="1" width="80%" align="center" cellpadding="5">
       <thead>
         <tr>
           <th><font face="Arial" size="2.5">&#2342;&#2357;&#2366;</font> Medicine</th>
-          <th><font face="Arial" size="2.5"> &#2326;&#2369;&#2352;&#2366;&#2325;</font> Dosage</th>
-          <th><font face="Arial" size="2.5">&#2310;&#2357;&#2371;&#2340;&#2381;&#2340;&#2367;</font> Frequency</th>
-          <th><font face="Arial" size="2.5">&#2360;&#2350;&#2351;</font> Timing</th>
+          <th><font face="Arial" size="2.5"> &#2326;&#2369;&#2352;&#2366;&#2325;</font> Dose</th>
+    
+          <th><font face="Arial" size="2.5">&#2360;&#2350;&#2351;</font> Timing </th>
           <th><font face="Arial" size="2.5">&#2342;&#2367;&#2344;</font> No. of Days</th>
         </tr>
       <tbody>
@@ -289,7 +289,7 @@ try {
         <tr>
           <td><%= row.get("medicine") %></td>
           <td><%= row.get("dosage") %></td>
-          <td><%= row.get("frequency") %></td>
+    
           <td><%= row.get("timing") %></td>
           <td><%= row.get("days") %></td>
         </tr>

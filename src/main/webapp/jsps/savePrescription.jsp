@@ -124,7 +124,8 @@ String empnParam = request.getParameter("ovcode");
 
 		// Fetch details for this medicine
 		String dosage = request.getParameter("dosage_" + medCode);
-		String frequency = request.getParameter("frequency_" + medCode);
+		
+		//String frequency = request.getParameter("frequency_" + medCode);
 		String timing = request.getParameter("timing_" + medCode);
 		String daysStr = request.getParameter("days_" + medCode);
 
@@ -141,7 +142,7 @@ String empnParam = request.getParameter("ovcode");
 
 		// Now insert into the PRESCRIPTION table
 		ps = conn.prepareStatement(
-		"INSERT INTO HOSPITAL.PRESCRIPTION (OPD_ID,EMPN,DISEASECODE, MEDICINECODE, DOSAGE, FREQUENCY, TIMING, DAYS, NOTES) VALUES (?,?,?, ?, ?, ?, ?, ?, ?)");
+		"INSERT INTO HOSPITAL.PRESCRIPTION (OPD_ID,EMPN,DISEASECODE, MEDICINECODE, DOSAGE, TIMING, DAYS, NOTES) VALUES (?,?,?, ?, ?, ?, ?, ?)");
 		/*       ps.setInt(1, empn);
 		      ps.setString(2, medCode);
 		      ps.setString(3, dosage);
@@ -156,10 +157,10 @@ String empnParam = request.getParameter("ovcode");
 		ps.setString(3, diseaseCodeList);
 		ps.setString(4, medCode);
 		ps.setString(5, dosage);
-		ps.setString(6, frequency);
-		ps.setString(7, timing);
-		ps.setInt(8, days);
-		ps.setString(9, notes);
+		
+		ps.setString(6, timing);
+		ps.setInt(7, days);
+		ps.setString(8, notes);
 		ps.executeUpdate();
 		/*  ps.addBatch(); */
 		ps.close();

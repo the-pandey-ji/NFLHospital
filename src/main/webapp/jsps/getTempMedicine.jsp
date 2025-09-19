@@ -56,7 +56,9 @@
 <tr>
   <td><%= medName %><input type="hidden" name="medicineCodes" value="<%= medCode %>" /></td>
   <td><input type="text" name="dosage_<%= medCode %>" placeholder="e.g. 500mg" required /></td>
-  <td>
+  
+   <td><input type="text" name="timing_<%= medCode %>" placeholder="" required /></td>
+<%--   <td>
     <select name="frequency_<%= medCode %>" required>
       <option value="">Select</option>
       <option value="once">Once</option>
@@ -70,7 +72,7 @@
       <option value="before food">Before Food</option>
       <option value="after food">After Food</option>
     </select>
-  </td>
+  </td> --%>
   <td><input type="number" name="days_<%= medCode %>" min="1" required /></td>
 </tr>
 <%
