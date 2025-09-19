@@ -9,9 +9,10 @@
 <%@ page import="com.DB.DBConnect" %>
 <%@ page import="com.entity.User" %>
 
+
 <%
 
-    // Check if the user is logged in
+    // Check if the user is logged in comming from session
     User user = (User) session.getAttribute("Docobj");
     if (user == null) {
         // Redirect to login page if not logged in
