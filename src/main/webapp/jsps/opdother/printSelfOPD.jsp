@@ -275,7 +275,7 @@ try {
 
 <!-- Prescriptions List -->
 <% if (!prescriptionList.isEmpty()) { %>
-    <h3 align="center"><font face="Arial" size="2.5"> &#2354;&#2367;&#2326;&#2368; &#2327;&#2351;&#2368; &#2342;&#2357;&#2366;&#2311;&#2351;&#2366;&#2305;</font>&nbsp; Prescribed Medicines</h3>
+    <h3 align="center"><font face="Arial" size="2.5">&#x928;&#x93f;&#x930;&#x94d;&#x926;&#x93f;&#x937;&#x94d;&#x91f;&#x20;&#x914;&#x937;&#x927;&#x93f;</font>&nbsp; Prescribed Medicines</h3>
     <table border="1" width="100%" align="center" cellpadding="5">
       <thead>
         <tr>
@@ -314,13 +314,13 @@ try {
 
 <p align="right" style="margin-bottom:0; margin-top:0;margin-right:10px">&nbsp;</p>
 
-<p align="right" style="margin-bottom:0; margin-top:0;margin-right:10px"><font face="Arial" size="2.5">&#2337;&#2377;&#2325;&#2381;&#2335;&#2352; &#2325;&#2375;  &#2361;&#2360;&#2381;&#2340;&#2366;&#2325;&#2381;&#2359;&#2352;</font>&nbsp;_____________</p>
+<p align="right" style="margin-bottom:0; margin-top:0;margin-right:10px"><font face="Arial" size="3">&#2337;&#2377;&#2325;&#2381;&#2335;&#2352; &#2325;&#2375;  &#2361;&#2360;&#2381;&#2340;&#2366;&#2325;&#2381;&#2359;&#2352;</font>&nbsp;________________</p>
    
-<p align="right" style="margin-bottom:0; margin-right:10px; margin-top:0"><font face="Arial" size="2.5">&#2337;&#2377;&#2325;&#2381;&#2335;&#2352; &#2325;&#2366; &#2344;&#2366;&#2350;</font>&nbsp;<%=user1.getUsername() %></p>
+<p align="right" style="margin-bottom:0; margin-right:10px; margin-top:0"><font face="Arial" size="3">&#2337;&#2377;&#2325;&#2381;&#2335;&#2352; &#2325;&#2366; &#2344;&#2366;&#2350;</font>&nbsp;<%=user1.getUsername() %></p>
  
-
+<div align="center" style=" border: 1px solid #000;width:80%;margin-bottom:-5px;"></div>
      
-      <font size="2" face="Arial"><b>Prevention is better than cure</b></font> <font  size="3">( &#2311;&#2354;&#2366;&#2332; &#2360;&#2375; &#2348;&#2375;&#2361;&#2340;&#2352; &#2361;&#2376; &#2352;&#2379;&#2325;&#2341;&#2366;&#2350; )</font>
+      <font size="2" bold face="Arial"><b>Prevention is better than cure</b></font> <font  size="3">( &#2311;&#2354;&#2366;&#2332; &#2360;&#2375; &#2348;&#2375;&#2361;&#2340;&#2352; &#2361;&#2376; &#2352;&#2379;&#2325;&#2341;&#2366;&#2350; )</font>
   </center>
 </div>
 
