@@ -22,6 +22,32 @@
   try {
     conn = DBConnect.getConnection();
     ps = conn.prepareStatement(
+    					"WITH codes AS ( " +
+    				    "  SELECT TRIM( " +
+    				    "           SUBSTR( " +
+    				    "             t.MEDICINES_CODE, " +
+    				    "             CASE WHEN LEVEL = 1 THEN 1 ELSE INSTR(t.MEDICINES_CODE, ',', 1, LEVEL - 1) + 1 END, " +
+    				    "             CASE WHEN INSTR(t.MEDICINES_CODE, ',', 1, LEVEL) = 0 " +
+    				    "                  THEN LENGTH(t.MEDICINES_CODE) + 1 " +
+    				    "                  ELSE INSTR(t.MEDICINES_CODE, ',', 1, LEVEL) " +
+    				    "             END - " +
+    				    "             CASE WHEN LEVEL = 1 THEN 1 ELSE INSTR(t.MEDICINES_CODE, ',', 1, LEVEL - 1) + 1 END " +
+    				    "           ) " +
+    				    "         ) AS med_code " +
+    				    "  FROM HOSPITAL.TEMP_PRESCRIPTION t " +
+    				    "  WHERE t.EMPN = ? " +
+    				    "  CONNECT BY LEVEL <= LENGTH(t.MEDICINES_CODE) - LENGTH(REPLACE(t.MEDICINES_CODE, ',', '')) + 1 " +
+    				    "    AND PRIOR EMPN = EMPN " +
+    				    "    AND PRIOR SYS_GUID() IS NOT NULL " +
+    				    ") " +
+    				    "SELECT c.med_code, m.MEDICINENAME AS medicine_name " +
+    				    "FROM codes c " +
+    				    "INNER JOIN HOSPITAL.MEDICINEMASTER m ON TO_CHAR(m.MEDICINECODE) = c.med_code");
+    		
+    
+    
+    
+   /*  ps = conn.prepareStatement(
     		  "WITH codes AS ( " +
     		  "  SELECT TRIM( " +
     		  "           SUBSTR( " +
@@ -43,7 +69,7 @@
     		  "SELECT c.med_code, NVL(m.MEDICINENAME, 'Unknown Medicine') AS medicine_name " +
     		  "FROM codes c " +
     		  "LEFT JOIN HOSPITAL.MEDICINEMASTER m ON TO_CHAR(m.MEDICINECODE) = c.med_code"
-    		);
+    		); */
     ps.setInt(1, empn);
 
     rs = ps.executeQuery();
@@ -78,15 +104,7 @@
 <%
     }
     
-    %>
-    <tr>
-    <td colspan="5" style="text-align: center;">
-	<label for="notes">Additional Notes:</label><br>
-<textarea name="notes" id="notes" rows="3" placeholder="Enter additional details if any" style="width: 100%;"></textarea>
-    </td>
-		</tr>
-
-	<%   
+   
     if (!hasRows) {
 %>
 
@@ -96,6 +114,15 @@
 	</tr>
 	<%
     }
+    %>
+    <tr>
+    <td colspan="5" style="text-align: center;">
+	<label for="notes">Additional Notes:</label><br>
+<textarea name="notes" id="notes" rows="3" placeholder="Enter additional details if any" style="width: 100%;"></textarea>
+    </td>
+		</tr>
+
+	<%  
   } catch (Exception e) {
     out.println("<tr><td colspan='5' style='color:red;'>Error fetching medicines: " + e.getMessage() + "</td></tr>");
   } finally {
