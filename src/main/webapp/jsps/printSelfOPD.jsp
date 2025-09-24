@@ -56,7 +56,7 @@ String empname = "";
 
 List<Map<String, String>> prescriptionList = new ArrayList<Map<String, String>>();
 Set<String> diseaseCodesSet = new HashSet<String>();
-String note = null;  // Single note
+String note ="";  // Single note
 Map<String, String> diseaseMap = new HashMap<String, String>();
 
 Connection conn = null;
@@ -265,7 +265,7 @@ try {
       </ul>
     </div>
   <% } else { %>
-    <p style="text-align: center;">No disease found for this OPD ID.</p>
+    <p style="text-align: center;">No disease found for this OPD .</p>
   <% } %>
 </div>
 
@@ -274,37 +274,45 @@ try {
 <div align="center" style=" border: 1px solid #000;width:80%;margin-bottom:-10px;"></div>
 
 <!-- Prescriptions List -->
-<% if (!prescriptionList.isEmpty()) { %>
-    <h3 align="center"><font face="Arial" size="3"> &#x928;&#x93f;&#x930;&#x94d;&#x926;&#x93f;&#x937;&#x94d;&#x91f;&#x20;&#x914;&#x937;&#x927;&#x93f;  /</font> Prescribed Medicines</h3>
+<%
+List<Map<String, String>> validPrescriptionList = new ArrayList<Map<String, String>>();
+for (Map<String, String> row : prescriptionList) {
+    String medicine = row.get("medicine");
+    if (medicine != null && !medicine.trim().equalsIgnoreCase("Unknown Medicine")) {
+        validPrescriptionList.add(row);
+    }
+}
+%>
+
+<% if (!validPrescriptionList.isEmpty()) { %>
+    <h3 align="center">
+        <font face="Arial" size="3">
+            &#x928;&#x93f;&#x930;&#x94d;&#x926;&#x93f;&#x937;&#x94d;&#x91f;&#x20;&#x914;&#x937;&#x927;&#x93f; /
+        </font> Prescribed Medicines
+    </h3>
     <table border="1" width="100%" align="center" cellpadding="5">
       <thead>
         <tr>
           <th width="705"><font face="Arial" size="2.5">&#2342;&#2357;&#2366;</font> Medicine</th>
-          <th width="254"><font face="Arial" size="2.5"> &#2326;&#2369;&#2352;&#2366;&#2325;</font> Dose</th>
-    
-          <th width="253"><font face="Arial" size="2.5">&#2360;&#2350;&#2351;</font> Timing </th>
+          <th width="254"><font face="Arial" size="2.5">&#2326;&#2369;&#2352;&#2366;&#2325;</font> Dose</th>
+          <th width="253"><font face="Arial" size="2.5">&#2360;&#2350;&#2351;</font> Timing</th>
           <th width="165"><font face="Arial" size="2.5">&#2342;&#2367;&#2344;</font> Days</th>
         </tr>
+      </thead>
       <tbody>
-      <% for (int i = 0; i < prescriptionList.size(); i++) {
-            Map<String, String> row = prescriptionList.get(i);
-      %>
+      <% for (Map<String, String> row : validPrescriptionList) { %>
         <tr>
-          <td width="705"><%= row.get("medicine") %>&nbsp;</td>
-          <td width="254"><%= row.get("dosage") %>&nbsp;</td>
-    
-          <td width="253"><%= row.get("timing") %>&nbsp;</td>
-          <td width="165"><%= row.get("days") %>&nbsp;</td>
+          <td width="705"><%= row.get("medicine") %></td>
+          <td width="254"><%= row.get("dosage") %></td>
+          <td width="253"><%= row.get("timing") %></td>
+          <td width="165"><%= row.get("days") %></td>
         </tr>
-      <% }
-
-      %>
+      <% } %>
       </tbody>
     </table>
-    <%
-    }
-     else{ %>
-    <p align="center">No prescriptions found for this OPD ID.</p>
+<% } else { %>
+    <p align="center"><b>No medicines prescribed.</b></p>
+
     <%}User user1 = (User) session.getAttribute("Docobj"); %>
 	
 <div align="center" style=" margin:10px;  padding: -10px; width: 99%;height:39;box-sizing: border-box; display: flex; align-items: flex-start;">

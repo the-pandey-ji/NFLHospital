@@ -145,7 +145,7 @@ System.out.println("valid Medicine Codes: " + validMedCodes.isEmpty()); */
     
 
     System.out.println("disease Codes2: " + Arrays.toString(diseaseCodes));
-   response.sendRedirect(response.encodeRedirectURL("printSelfOPD.jsp?opdId=" + opdId));
+    response.sendRedirect(response.encodeRedirectURL("printSelfOPD.jsp?opdId=" + opdId));
     return; 
 }
 
@@ -154,14 +154,27 @@ System.out.println("valid Medicine Codes: " + validMedCodes.isEmpty()); */
 
 		for (int i = 0; i < medCodes.length; i++) {
 	String medCode = medCodes[i];
-
+	/* if (medCode == null || medCode.trim().isEmpty() || medCode.trim().equalsIgnoreCase("null")) {
+        // skip invalid med code
+        continue;
+        } */
 	// Fetch details for this medicine
 	//temp="dosage_" + medCode;
-	String dosage = request.getParameter(("dosage_" + medCode)==null?" ": "dosage_" + medCode);
-
-	//String frequency = request.getParameter("frequency_" + medCode);
-	String timing = request.getParameter(("timing_" + medCode)==null?" ": "timing_" + medCode);
-	String daysStr = request.getParameter(("days_" + medCode)==null?" ": "days_" + medCode);
+	String dosage = request.getParameter("dosage_" + medCode);
+		if (dosage == null || dosage.isEmpty()) dosage = " ";
+	
+	// Similarly for timing and days:
+	String timing = request.getParameter("timing_" + medCode);
+		if (timing == null||timing.isEmpty()) timing = " ";
+		
+	String daysStr = request.getParameter("days_" + medCode);
+	if (daysStr == null || daysStr.trim().isEmpty()) {
+		daysStr = "0"; // Default to 0 days if not provided
+	     /* out.println("Error: Number of days is required for medicine code: " + medCode);
+	    return; */ // Stop execution
+	}
+	
+	//System.out.println("Medicine:" + medCode +"'"+ ", Dosage:" + dosage +"'"+ ", Timing:" +"'"+ timing + ", Days: " + daysStr);
 
 	/*  if (dosage == null || frequency == null || timing == null || daysStr == null) {
 	   continue; // skip if any detail is missing
