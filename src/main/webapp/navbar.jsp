@@ -57,7 +57,7 @@
 	        User user1 = (User) session.getAttribute("Docobj");
 	        if (user1 != null) {
 	    %>
-	        <span class="text-white btn btn-success ml-2">Welcome, <%= user1.getUsername() %>!</span>
+	        <span class="text-white btn btn-success ml-2">Welcome, <%= user1.getUsername() %></span>
 	        <!-- <a data-toggle="modal" data-target="#exampleModalCenter" class="btn btn-danger ml-2 text-white"><i class="fas fa-sign-out-alt"></i> Logout</a> -->
 	        
 	        <a href="changePassword.jsp" class="btn btn-primary my-2 my-sm-2 ml-2 mr-2"

@@ -11,7 +11,7 @@ public class DBConnect {
 		
 		  try { Class.forName("oracle.jdbc.driver.OracleDriver"); 
 		  String url =
-		  "jdbc:oracle:thin:@10.3.126.84:1521:ORCL"; 
+		  "jdbc:oracle:thin:@10.3.111.120:1521:ORCL"; 
 		  con =
 		  java.sql.DriverManager.getConnection(url,"HOSPITAL","HOSPITAL");
 
@@ -27,7 +27,7 @@ public class DBConnect {
 		
 		  try { Class.forName("oracle.jdbc.driver.OracleDriver"); 
 		  String url =
-		  "jdbc:oracle:thin:@10.3.126.84:1521:ORCL"; 
+		  "jdbc:oracle:thin:@10.3.111.120:1521:ORCL"; 
 	
 		  con1 =
 				  java.sql.DriverManager.getConnection(url,"PERSONNEL","PERSONNEL");

@@ -3,8 +3,8 @@
 <%@ page import="com.entity.User" %>
 <%
     // Check if the user is logged in
-    User user = (User) session.getAttribute("Userobj");
-    if (user == null) {
+    User user2 = (User) session.getAttribute("Userobj");
+    if (user2 == null) {
         // Redirect to login page if not logged in
         response.sendRedirect("index.jsp");
         return;
@@ -18,7 +18,7 @@
     <%@ include file="allCss.jsp" %>
 </head>
 <body style="background-color: #f0f2f2;">
-    <%@ include file="navbar.jsp" %>
+    <%@include file="/navbar.jsp" %>
 
     <div class="container" style="margin-top: 30px;">
         <div class="row">

@@ -27,6 +27,8 @@
             if (opdId != null && !opdId.trim().isEmpty()) {
                 query.append(" AND SRNO = ?");
             }
+            
+            query.append(" ORDER BY SRNO DESC");
 
             ps = conn.prepareStatement(query.toString());
 
@@ -71,7 +73,7 @@
 <body style="font-family: Arial, sans-serif; margin: 20px;">
 <%@include file="/navbar.jsp" %>
 
-<h2 style="text-align:center;">OPD Search Report</h2>
+<h2 style="text-align:center;">OPD HISTORY</h2>
 
 <!-- Search Form -->
 <form method="get" style="text-align: center; margin-bottom: 20px;">
@@ -116,10 +118,10 @@
                 <td><%= row.get("empn") %></td>
                 <td><%= row.get("empname") %></td>
                  <td>
-            <%-- <a href="/hosp1/jsps/editPrescription.jsp?opdId=<%= row.get("srno") %>" 
+          <%-- <a href="/hosp1/jsps/editPrescription.jsp?opdId=<%= row.get("srno") %>" 
                style="padding: 4px 10px; background-color: #f0ad4e; color: white; text-decoration: none; border-radius: 3px;" disabled>
                 Edit
-            </a> --%>
+            </a>  --%>
         </td>
             </tr>
         <% } %>

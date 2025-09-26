@@ -104,7 +104,7 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
         this.item5 = "Outstation Reference Revisit"
         this.item6 = "References-Others"
         this.item7 = "References - Others Revisit"
-       	this.item8 = "OPD Reports"
+       	this.item8 = "OPD History"
         this.item9 = "Medical Certificate"
         this.item10 = "Medical Examination"
         this.item11 = "Reports"
