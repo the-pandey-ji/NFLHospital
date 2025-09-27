@@ -89,6 +89,8 @@ try {
     rs.close();
     pstmt.close();
     
+   sex=sex.trim();
+   
     
     if (sex.equalsIgnoreCase("M")) {
     	sex = "MALE";
@@ -96,6 +98,8 @@ try {
     	sex = "FEMALE";}
     		else
     			sex = "Unknown";
+    
+   
 
     // Fetch prescriptions and collect disease codes and notes
     String query2 = 

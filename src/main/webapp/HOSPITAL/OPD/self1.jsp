@@ -82,7 +82,7 @@
 	        <span class="text-white btn btn-success ml-2">Welcome, <%= user1.getUsername() %>!</span>
 	        <!-- <a data-toggle="modal" data-target="#exampleModalCenter" class="btn btn-danger ml-2 text-white"><i class="fas fa-sign-out-alt"></i> Logout</a> -->
 	        
-	        <a href="changePassword.jsp" class="btn btn-primary my-2 my-sm-2 ml-2 mr-2"
+	        <a href="/hosp1/changePassword.jsp" class="btn btn-primary my-2 my-sm-2 ml-2 mr-2"
 				type="submit"> <i class="fas "></i> Change Password
 			
 			</a>

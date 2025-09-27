@@ -3,7 +3,7 @@
 <%@ page import="com.entity.User" %>
 <%
     // Check if the user is logged in
-    User user2 = (User) session.getAttribute("Userobj");
+    User user2 = (User) session.getAttribute("Docobj");
     if (user2 == null) {
         // Redirect to login page if not logged in
         response.sendRedirect("index.jsp");
@@ -53,7 +53,7 @@
                             }
                         %>
 
-                        <form action="changePassword" method="post">
+                        <form action="ChangePassword" method="post">
                             <div class="form-group">
                                 <label for="currentPassword">Current Password</label>
                                 <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>

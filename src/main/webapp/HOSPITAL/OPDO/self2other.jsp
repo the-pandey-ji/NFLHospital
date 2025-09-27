@@ -223,7 +223,7 @@ String category = request.getParameter("category");
       </table>
     </div>
     
-    <input type="hidden" name="category" value="<%=ocategory %>">
+    <input type="hidden" name="ocategory" value="<%=category %>">
     
 <div style="display: flex;
     gap: 100px; /* space between divs */

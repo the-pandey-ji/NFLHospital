@@ -89,6 +89,7 @@ try {
     rs.close();
     pstmt.close();
     
+    sex=sex.trim();
     
     if (sex.equalsIgnoreCase("M")) {
     	sex = "MALE";

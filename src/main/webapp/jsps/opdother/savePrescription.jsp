@@ -49,9 +49,9 @@ String empnParam = request.getParameter("ovcode");
 		stmt.close();
 
 		// Get patient details
-		String pname = "", name = "", relation = "SELF", age = "", sex = "", typ = "N", dt = "";
+		String pname = "", name = "", relation = "SELF", age = "", sex = "", typ = "N", dt = "",ename="";
 
-		String empQuery = "SELECT ename, TO_CHAR(SYSDATE, 'yyyy') - TO_CHAR(birthdate, 'yyyy'), sex, TO_CHAR(SYSDATE, 'dd-mon-yyyy') FROM employeemaster WHERE empn = ?";
+		/* String empQuery = "SELECT ename, TO_CHAR(SYSDATE, 'yyyy') - TO_CHAR(birthdate, 'yyyy'), sex, TO_CHAR(SYSDATE, 'dd-mon-yyyy') FROM employeemaster WHERE empn = ?";
 		psEmp = con1.prepareStatement(empQuery);
 		psEmp.setInt(1, empn);
 		rsEmp = psEmp.executeQuery();
@@ -64,26 +64,39 @@ String empnParam = request.getParameter("ovcode");
 		}
 		rsEmp.close();
 		psEmp.close();
+		 */
+		
+		 pname = request.getParameter("opname");
+	 	age = request.getParameter("oage");
 
-		String dname = session.getAttribute("depname") != null ? session.getAttribute("depname").toString() : "";
+
+		 sex = request.getParameter("osex");
+		 ename = request.getParameter("oename");
+		relation= request.getParameter("orelation");
+		 typ = request.getParameter("ocategory");
+
+	/*	String dname = request.getParameter("Oname")
 		String drel = session.getAttribute("drel") != null ? session.getAttribute("drel").toString() : "";
-		String dage = session.getAttribute("dage") != null ? session.getAttribute("dage").toString() : "";
+		String dage = session.getAttribute("dage") != null ? session.getAttribute("dage").toString() : ""; */
 
-		if (drel != null && !drel.isEmpty()) {
+/* 		if (drel != null && !drel.isEmpty()) {
 	relation = drel;
 	pname = dname;
 	age = dage;
 	sex = session.getAttribute("dsex") != null ? session.getAttribute("dsex").toString() : "";
-		}
+		} */
 
-		/* 	System.out.println("Employee Name: " + name);
+		 	System.out.println("Employee Name: " + ename);
 		    System.out.println("Employee Age: " + age);
-		    System.out.println("Patient Name: " + pname); */
+		    System.out.println("Patient Name: " + pname); 
+		    System.out.println("Patient Name sex: " + sex); 
+		    System.out.println("Patient Name typ: " + typ); 
+		    System.out.println("Patient Name revl: " + relation); 
 
-		session.removeAttribute("depname");
+		/* session.removeAttribute("depname");
 		session.removeAttribute("drel");
 		session.removeAttribute("dage");
-		session.removeAttribute("dsex");
+		session.removeAttribute("dsex"); */
 
 		// Insert into OPD
 		String opdSql = "INSERT INTO OPD (SRNO, PATIENTNAME, RELATION, AGE, OPDDATE, SEX, EMPN, TYP, EMPNAME) "
@@ -96,7 +109,7 @@ String empnParam = request.getParameter("ovcode");
 		psOpd.setString(5, sex);
 		psOpd.setInt(6, empn);
 		psOpd.setString(7, typ);
-		psOpd.setString(8, name);
+		psOpd.setString(8, ename);
 		psOpd.executeUpdate();
 		psOpd.close();
 

@@ -13,21 +13,24 @@ import com.DAO.UserDAOImpl;
 import com.DB.DBConnect;
 import com.entity.User;
 
-@WebServlet("/changePassword")
+@WebServlet("/ChangePassword")
 public class ChangePassword extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    
+   
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {	 
+    	 
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("Userobj") == null) {
+        if (session == null || session.getAttribute("Docobj") == null) {
             response.sendRedirect("index.jsp");
             return;
         }
 
         try {
             UserDAOImpl userDAO = new UserDAOImpl(DBConnect.getConnection());
-            User user = (User) session.getAttribute("Userobj");
+            User user = (User) session.getAttribute("Docobj");
 
             String currentPassword = request.getParameter("currentPassword");
             String newPassword = request.getParameter("newPassword");
