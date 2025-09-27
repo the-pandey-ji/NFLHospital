@@ -25,7 +25,7 @@ body {
 	justify-content: center;
 	align-items: center;
 	color: #333;
-}
+} 
 
 .login {
 	display: flex;
