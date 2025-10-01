@@ -10,6 +10,7 @@
 <%@ page import="com.entity.User" %>
 
 
+
 <%
 
     // Check if the user is logged in comming from session
@@ -27,10 +28,25 @@
 <head>
   <meta charset="UTF-8">
   <title>OPD Slip</title>
+
   <style>
     body {
       font-family: 'Noto Sans Devanagari', 'Mangal', Arial, sans-serif;
     }
+    @media print {
+    @page {
+      size: A5;
+      margin: 5mm;
+    }
+
+    body {
+      zoom: 0.7; /* 70% scale */
+    }
+
+    .printbutton {
+      display: none !important; /* Hide print button during printing */
+    }
+  }
   </style>
 </head>
 <body>

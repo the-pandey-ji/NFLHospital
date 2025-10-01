@@ -17,6 +17,20 @@
 <meta name="ProgId" content="FrontPage.Editor.Document">
 <title>Reference No</title>
 <style type="text/css" media="print">
+ @media print {
+    @page {
+      size: A5;
+      margin: 5mm;
+    }
+
+    body {
+      zoom: 0.7; /* 70% scale */
+    }
+
+    .printbutton {
+      display: none !important; /* Hide print button during printing */
+    }
+  }
 .printbutton 
   {
     visibility: hidden;
