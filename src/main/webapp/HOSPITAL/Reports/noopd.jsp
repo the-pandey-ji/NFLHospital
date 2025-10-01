@@ -36,15 +36,17 @@
 	long empn=0;
 	String no="";
 	String typ="";
+	String doc="";
 %>	<table border="1" width="100%">
   <tr>
     <td width="11%" align="center">OPD No</td>
-    <td width="27%">Patient Name</td>
-    <td width="47%">Employee Name</td>
+    <td width="20%">Patient Name</td>
+    <td width="20%">Employee Name</td>
     <td width="9%" align="center">E.Code&nbsp;</td>
     <td width="10%" align="center">Relation</td>
     <td width="6%" align="center">Age</td>
     <td width="5%" align="center">Sex</td>
+    <td width="20%" align="center">Doctor</td>
   </tr>
 <%				
     
@@ -56,7 +58,7 @@
            Statement stmt=con.createStatement();
            Statement stmt1=con1.createStatement();
            
-	       ResultSet rs = stmt.executeQuery("select srno,patientname,relation,age,empn,sex,empname,typ FROM opd where to_char(opddate,'dd-mm-yyyy') = to_char(sysdate,'dd-mm-yyyy') order by srno");
+	       ResultSet rs = stmt.executeQuery("select srno,patientname,relation,age,empn,sex,empname,typ,doctor FROM opd where to_char(opddate,'dd-mm-yyyy') = to_char(sysdate,'dd-mm-yyyy') order by srno");
             while(rs.next())
 	          {
 	             
@@ -68,6 +70,7 @@
 	              sex = rs.getString(6);
 	              ename = rs.getString(7);
 	              typ=rs.getString(8);
+	              doc=rs.getString(9);
 	             
 	              if (typ.equals("N")) 
 	                          {
@@ -80,12 +83,13 @@
 %>	
    <tr>
     <td width="11%" align="center"><font face="Tahoma" size="2"><span style="text-transform: uppercase"><%=srno%></span></font>&nbsp;</td>
-    <td width="27%"><font face="Tahoma" size="2"><span style="text-transform: uppercase"><%=pname%></span></font>&nbsp;</td>
-    <td width="47%"><font face="Tahoma" size="2"><span style="text-transform: uppercase"><%=ename%></span></font>&nbsp;</td>
+    <td width="20%"><font face="Tahoma" size="2"><span style="text-transform: uppercase"><%=pname%></span></font>&nbsp;</td>
+    <td width="20%"><font face="Tahoma" size="2"><span style="text-transform: uppercase"><%=ename%></span></font>&nbsp;</td>
     <td width="9%" align="center"><font face="Tahoma" size="2"><span style="text-transform: uppercase"><%=empn%></span></font>&nbsp;</td>
     <td width="10%" align="center"><font face="Tahoma" size="2"><span style="text-transform: uppercase"><%=relation%></span></font>&nbsp;</td>
     <td width="6%" align="center"><font face="Tahoma" size="2"><span style="text-transform: uppercase"><%=age%></span></font>&nbsp;</td>
     <td width="5%" align="center"><font face="Tahoma" size="2"><span style="text-transform: uppercase"><%=sex%></span></font>&nbsp;</td>
+    <td width="20%" align="center"><font face="Tahoma" size="2"><span style="text-transform: uppercase"><%=doc%></span></font>&nbsp;</td>
   </tr>
 
 <%	

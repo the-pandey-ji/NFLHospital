@@ -2,8 +2,12 @@
 <%@ page import="java.util.*" %>
 <%@ page import="com.DB.DBConnect" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page import="com.entity.User" %>
 
 <%
+User user4 = (User) session.getAttribute("Docobj");
+
+
 String empnParam = request.getParameter("ovcode");
   String notes = request.getParameter("notes");
   if (notes == null) {
@@ -86,8 +90,8 @@ String empnParam = request.getParameter("ovcode");
 		session.removeAttribute("dsex");
 
 		// Insert into OPD
-		String opdSql = "INSERT INTO OPD (SRNO, PATIENTNAME, RELATION, AGE, OPDDATE, SEX, EMPN, TYP, EMPNAME) "
-		+ "VALUES (?, ?, ?, ?, SYSDATE, ?, ?, ?, ?)";
+		String opdSql = "INSERT INTO OPD (SRNO, PATIENTNAME, RELATION, AGE, OPDDATE, SEX, EMPN, TYP, EMPNAME, doctor) "
+		+ "VALUES (?, ?, ?, ?, SYSDATE, ?, ?, ?, ? , ?)";
 		psOpd = conn.prepareStatement(opdSql);
 		psOpd.setInt(1, opdId);
 		psOpd.setString(2, pname);
@@ -97,6 +101,7 @@ String empnParam = request.getParameter("ovcode");
 		psOpd.setInt(6, empn);
 		psOpd.setString(7, typ);
 		psOpd.setString(8, name);
+		psOpd.setString(9, user4.getUsername());
 		psOpd.executeUpdate();
 		psOpd.close();
 

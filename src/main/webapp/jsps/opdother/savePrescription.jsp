@@ -2,8 +2,12 @@
 <%@ page import="java.util.*" %>
 <%@ page import="com.DB.DBConnect" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page import="com.entity.User" %>
 
 <%
+User user4 = (User) session.getAttribute("Docobj");
+
+
 String empnParam = request.getParameter("ovcode");
   String notes = request.getParameter("notes");
   if (notes == null) {
@@ -85,22 +89,22 @@ String empnParam = request.getParameter("ovcode");
 	age = dage;
 	sex = session.getAttribute("dsex") != null ? session.getAttribute("dsex").toString() : "";
 		} */
-
+/* 
 		 	System.out.println("Employee Name: " + ename);
 		    System.out.println("Employee Age: " + age);
 		    System.out.println("Patient Name: " + pname); 
 		    System.out.println("Patient Name sex: " + sex); 
 		    System.out.println("Patient Name typ: " + typ); 
 		    System.out.println("Patient Name revl: " + relation); 
-
+ */
 		/* session.removeAttribute("depname");
 		session.removeAttribute("drel");
 		session.removeAttribute("dage");
 		session.removeAttribute("dsex"); */
 
 		// Insert into OPD
-		String opdSql = "INSERT INTO OPD (SRNO, PATIENTNAME, RELATION, AGE, OPDDATE, SEX, EMPN, TYP, EMPNAME) "
-		+ "VALUES (?, ?, ?, ?, SYSDATE, ?, ?, ?, ?)";
+		String opdSql = "INSERT INTO OPD (SRNO, PATIENTNAME, RELATION, AGE, OPDDATE, SEX, EMPN, TYP, EMPNAME,doctor) "
+		+ "VALUES (?, ?, ?, ?, SYSDATE, ?, ?, ?, ?,?)";
 		psOpd = conn.prepareStatement(opdSql);
 		psOpd.setInt(1, opdId);
 		psOpd.setString(2, pname);
@@ -110,6 +114,7 @@ String empnParam = request.getParameter("ovcode");
 		psOpd.setInt(6, empn);
 		psOpd.setString(7, typ);
 		psOpd.setString(8, ename);
+		psOpd.setString(9, user4.getUsername());
 		psOpd.executeUpdate();
 		psOpd.close();
 

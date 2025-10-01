@@ -26,6 +26,7 @@
 <body>
 <%
 String dt = request.getParameter("dt");
+System.out.println("Date "+dt);
 int refno=0;
 String pname="";
 int empn=0;
@@ -70,21 +71,21 @@ String revisit="";
 	     
            
            
-	       ResultSet rs = stmt.executeQuery("SELECT a.REFNO, a.PATIENTNAME,a.EMPN, a.REL, a.AGE, TO_CHAR(a.REFDATE, 'DD-MM-YYYY'), a.doc, c.hname, CASE WHEN a.revisitflag = 'N' THEN 'Refer' WHEN a.revisitflag = 'Y' THEN 'Revisit' WHEN a.revisitflag IS NULL THEN 'Refer' ELSE NULL END AS revisit_status FROM LOACALREFDETAIL"+yr+" a JOIN LOCALHOSPITAL c ON a.SPECIALIST = c.hcode WHERE TO_CHAR(a.refdate, 'DDMMYYYY')='"+dt+"'");
+	       ResultSet rs = stmt.executeQuery("SELECT a.REFNO, a.PATIENTNAME,a.EMPN, a.REL, a.AGE, TO_CHAR(a.REFDATE, 'DD-MM-YYYY'), a.doc, c.hname, CASE WHEN a.revisitflag = 'N' THEN 'Refer' WHEN a.revisitflag = 'Y' THEN 'Revisit' WHEN a.revisitflag IS NULL THEN 'Refer' ELSE NULL END AS revisit_status FROM LOACALREFDETAIL"+yr+" a JOIN LOCALHOSPITAL c ON a.SPECIALIST = c.hcode WHERE TO_CHAR(a.refdate, 'DDMMYYYY')<'"+dt+"' ORDER BY a.REFDATE DESC");
             System.out.println("result local query"+rs);
 	       if (rs == null) {
 	    	    System.out.println("No records found for today.");
 	    	} else {
 	       while(rs.next())
 	         {
-	         refno = rs.getInt(1);
-	         pname = rs.getString(2);
-	         empn = rs.getInt(3);
-	         relation = rs.getString(4);
-	         age = rs.getString(5);
-	         refdt = rs.getString(6);
-	         doctor=rs.getString(7);
-	         spc= rs.getString(8);
+	    	   refno = rs.getInt(1);
+		         pname = rs.getString(2);
+		         empn = rs.getInt(3);
+		         relation = rs.getString(4);
+		         age = rs.getString(5);
+		         refdt = rs.getString(6);
+		         doctor=rs.getString(7);
+		         spc= rs.getString(8);
 
 	         revisit= rs.getString(9); 
   %>
@@ -143,7 +144,7 @@ catch(SQLException e)
       {
 	   conn1 = DBConnect.getConnection();
          Statement stmt=conn1.createStatement();
-	     ResultSet rs = stmt.executeQuery("select b.hname, count(*) from LOACALREFDETAIL"+yr+" a, LOCALHOSPITAL b where a.SPECIALIST=b.hcode and to_char(a.refdate,'ddmmyyyy')='"+dt+"' group by b.hname");
+	     ResultSet rs = stmt.executeQuery("select b.hname, count(*) from LOACALREFDETAIL"+yr+" a, LOCALHOSPITAL b where a.SPECIALIST=b.hcode and to_char(a.refdate,'ddmmyyyy')>='"+dt+"' group by b.hname");
          while(rs.next())
 	          {
 		         special = rs.getString(1);
@@ -155,7 +156,7 @@ catch(SQLException e)
    </tr>
 <%	
               }
-                 ResultSet rs1 = stmt.executeQuery("select count(*) from LOACALREFDETAIL"+yr+" where to_char(refdate,'ddmmyyyy')='"+dt+"'");
+                 ResultSet rs1 = stmt.executeQuery("select count(*) from LOACALREFDETAIL"+yr+" where to_char(refdate,'ddmmyyyy')<'"+dt+"'");
                  while(rs1.next())
 	                  {
 		                  total = rs1.getString(1);
@@ -245,7 +246,7 @@ String revisit1="";
                   "END AS revisit_status " +
                   "FROM OUTREFDETAIL" + yr + " a " +
                   "JOIN OUTSTATIONHOSPITAL b ON a.hospital = b.HCODE " +
-                  "WHERE TO_CHAR(a.refdate, 'DDMMYYYY') = '"+dt+"' " +
+                  "WHERE TO_CHAR(a.refdate, 'DDMMYYYY') < '"+dt+"' " +
                   "ORDER BY a.refno";
 
    ResultSet rs = stmt.executeQuery(query);
