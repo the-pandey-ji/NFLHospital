@@ -47,7 +47,7 @@
 	String relation = request.getParameter("relation");
 	String age = request.getParameter("age");
 	String refdt = request.getParameter("refdt");
-	String refdt1 = request.getParameter("refdt1");
+	String refdt1 = "";
 	String sex = request.getParameter("sex");
 	String disease = request.getParameter("disease");
 	String referto = request.getParameter("referto");
@@ -86,11 +86,12 @@
             System.out.println("dept: " + dept); */
 	   
             Statement stmt2=conn.createStatement();  //for localhospital
-	       ResultSet rs2 = stmt2.executeQuery("select hname,to_char(sysdate,'yyyy') from LOCALHOSPITAL where hcode='"+hcode+"'");
+	       ResultSet rs2 = stmt2.executeQuery("select hname,to_char(sysdate,'yyyy'),TO_CHAR(SYSDATE, 'dd-mm-yyyy')  from LOCALHOSPITAL where hcode='"+hcode+"'");
                while(rs2.next())
                     {
                         referredto=rs2.getString(1);
                         yr=rs2.getString(2);
+                        refdt1=rs2.getString(3);
 
                     } 
                
@@ -163,7 +164,7 @@
 	 
 	 <p style="text-align:left;">
 <font face="Arial" size="2" >&nbsp;&nbsp;&#2325;&#2381;&#2352;&#2350; &#2360;&#2306;</font><font face="Arial" size="2">:&nbsp;<%= refno%></font>
-<span style="float:right;"><font face="Arial">&#2340;&#2366;&#2352;&#2368;&#2326;</font><font face="Arial" size="2">: <%=refdt%> &nbsp;&nbsp;&nbsp;</font></span>
+<span style="float:right;"><font face="Arial">&#2340;&#2366;&#2352;&#2368;&#2326;</font><font face="Arial" size="2">: <%=refdt1%> &nbsp;&nbsp;&nbsp;</font></span>
 </p>	 
         
         <p style="line-height: 150%"><font face="Arial" size="2">&#2358;&#2381;&#2352;&#2368;/&#2358;&#2381;&#2352;&#2368;&#2350;&#2340;&#2368;/&#2358;&#2381;&#2352;&#2368;&#2350;&#2366;&#2344;/&#2360;&#2369;&#2358;&#2381;&#2352;&#2368;&#2358;&#2381;&#2352;&#2368;</font><font face="Arial" size="2">&nbsp;Sh/Smt/Mr/Ms :&nbsp;<%= name%></font>&nbsp;&nbsp;&nbsp;

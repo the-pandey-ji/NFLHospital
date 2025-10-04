@@ -85,7 +85,7 @@ try {
     conn = DBConnect.getConnection();
 
     // Fetch patient details
-    String query = "select PATIENTNAME, RELATION, AGE, to_char(sysdate,'dd-MON-yyyy') as opddate, SEX, EMPN, EMPNAME from opd where srno=?";
+    String query = "select PATIENTNAME, RELATION, AGE, to_char(opddate,'dd-mm-yyyy') as opddate, SEX, EMPN, EMPNAME from opd where srno=?";
     pstmt = conn.prepareStatement(query);
     pstmt.setInt(1, opdId);
     rs = pstmt.executeQuery();
