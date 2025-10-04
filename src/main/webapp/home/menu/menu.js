@@ -291,7 +291,7 @@ function cdd_menu346080(){//////////////////////////Start Menu Data/////////////
         this.url_target11_2 = "_top"
         this.url11_3 = "../../HOSPITAL/Reports/todayrefered.jsp"
         this.url_target11_3 = "_top"
-        this.url11_4 = "../../HOSPITAL/Reports/noref.htm"
+        this.url11_4 = "../../HOSPITAL/Reports/noref.jsp"
         this.url_target11_4 = "_top"
 
 

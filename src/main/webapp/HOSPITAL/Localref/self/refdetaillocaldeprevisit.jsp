@@ -38,107 +38,99 @@
   }
 </style>
 </head>
+
 <body>
-<%@include file="/navbar.jsp" %>
- <%
-	String yr = "";
-	String refno = request.getParameter("refno");
-	String name = request.getParameter("name");
-	String empn = request.getParameter("empn");
-	String relation = request.getParameter("relation");
-	String age = request.getParameter("age");
-	String refdt = request.getParameter("refdt");
-	String refdt1 = "";
-	String sex = request.getParameter("sex");
-	String disease = request.getParameter("disease");
-	String referto = request.getParameter("referto");
-	String referby = request.getParameter("referby");
-	String hcode =request.getParameter("hcode");
-	String desg ="";
-	String dept ="";
-	String ename ="";
-	String referredto ="";
-		
-	
-	
-	
-	
-	 Connection conn  = null; 
-	    Connection conn1  = null;    
-	    try 
-	        {
-	    	conn = DBConnect.getConnection();
-	    	conn1 = DBConnect.getConnection1();
-	    	
-	    	
-           Statement stmt=conn.createStatement();
-           Statement stmt1=conn1.createStatement();
-           
-	       ResultSet rs1 = stmt1.executeQuery("select a.ename, a.DESIGNATION, c.DISCIPLINENAME from employeemaster a, FURNITUREDEPT b, FURNITUREDISCIPLINE c where a.DEPTCODE=b.DEPTCODE and b.SECTIONCODE=c.DISCIPLINECODE and a.empn="+empn+"");
-              while(rs1.next())
-	             {
-	                 ename=rs1.getString(1);
-	                 desg= rs1.getString(2);
-	                 dept= rs1.getString(3);
-	                
-	             }
-	   
-	        ResultSet rs2 = stmt.executeQuery("select hname,to_char(sysdate,'yyyy'),to_char(sysdate,'dd-mm-yyyy') from LOCALHOSPITAL where hcode='"+hcode+"'");
-               while(rs2.next())
-                    {
-                        referredto=rs2.getString(1);
-                        yr=rs2.getString(2);
-                        refdt1=rs2.getString(3);
-                    }  
-                    
-                  /*   System.out.println("refno .................................................... current="+refno);
-                	System.out.println("name="+name);
-                	System.out.println("empn="+empn);
-                	System.out.println("relation="+relation);
-                	System.out.println("age="+age);
-                	System.out.println("refdt="+refdt);
-                	System.out.println("sex: " +sex);
-                	System.out.println("disease="+disease);
-                	System.out.println("referto="+referto);
-                	System.out.println("referby="+referby);
-                	System.out.println("ename="+ename);
-                	System.out.println("desg="+desg);
-                	System.out.println("dept="+dept);
-                	System.out.println("referredto="+referredto);
-                	System.out.println("yr="+yr);
-                	System.out.println("refdt1="+refdt1); */
-     
-           ResultSet rs = stmt.executeQuery("insert into LOACALREFDETAIL"+yr+"(REFNO,PATIENTNAME,EMPN,REL,AGE,REFDATE,SEX,DISEASE,DOC,specialist,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"',to_char(sysdate,'dd-mm-yyyy'),'"+sex+"','"+disease+"','"+referby+"','"+hcode+"','Y')");
-               while(rs.next())
-	                {
-	                }
-               
-              
-               
-          /* System.out.println("insert into LOACALREFDETAIL"+yr+"(REFNO,PATIENTNAME,EMPN,REL,AGE,REFDATE,SEX,DISEASE,DOC,specialist,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"',sysdate,'"+sex+"','"+disease+"','"+referby+"','"+referto+"','Y')"); */
-	              
-	   }
-	  
-     catch(SQLException e) 
-        {
-             while((e = e.getNextException()) != null)
-             out.println(e.getMessage() + "<BR>");
+<%-- <%@include file="/navbar.jsp" %> --%>
+<%
+    String yr = "";
+    String refno = request.getParameter("refno");
+    String name = request.getParameter("name");
+    String empn = request.getParameter("empn");
+    String relation = request.getParameter("relation");
+    String age = request.getParameter("age");
+    String refdt = request.getParameter("refdt");
+    String refdt1 = "";
+    String sex = request.getParameter("sex");
+    String disease = request.getParameter("disease");
+    String referto = request.getParameter("referto");
+    String referby = request.getParameter("referby");
+    String hcode = request.getParameter("hcode");
+
+    String desg = "";
+    String dept = "";
+    String ename = "";
+    String referredto = "";
+
+    Connection conn = null;
+    Connection conn1 = null;
+
+    try {
+        conn = DBConnect.getConnection();
+        conn1 = DBConnect.getConnection1();
+
+        // Get employee details
+        String empQuery = "SELECT a.ename, a.DESIGNATION, c.DISCIPLINENAME " +
+                          "FROM employeemaster a, FURNITUREDEPT b, FURNITUREDISCIPLINE c " +
+                          "WHERE a.DEPTCODE = b.DEPTCODE AND b.SECTIONCODE = c.DISCIPLINECODE AND a.empn = ?";
+        PreparedStatement empStmt = conn1.prepareStatement(empQuery);
+        empStmt.setString(1, empn);
+        ResultSet rs1 = empStmt.executeQuery();
+
+        if (rs1.next()) {
+            ename = rs1.getString(1);
+            desg = rs1.getString(2);
+            dept = rs1.getString(3);
         }
-     
-     finally
-        {
-             if(conn != null) 
-               {
-                   try
-                        {
-                             conn.close();
-                             conn1.close();
-                        }
-                   catch (Exception ignored) {}
-               }
+
+        // Get hospital name and year
+        String hospQuery = "SELECT hname, TO_CHAR(SYSDATE, 'yyyy'), TO_CHAR(SYSDATE, 'dd-mm-yyyy') FROM LOCALHOSPITAL WHERE hcode = ?";
+        PreparedStatement hospStmt = conn.prepareStatement(hospQuery);
+        hospStmt.setString(1, hcode);
+        ResultSet rs2 = hospStmt.executeQuery();
+
+        if (rs2.next()) {
+            referredto = rs2.getString(1);
+            yr = rs2.getString(2);
+            refdt1 = rs2.getString(3);
         }
-       //out.print("result is: "+ename); 
+
+        // Build insert query using PreparedStatement
+        String tableName = "LOACALREFDETAIL" + yr;
+
+        String insertQuery = "INSERT INTO " + tableName +
+                " (REFNO, PATIENTNAME, EMPN, REL, AGE, REFDATE, SEX, DISEASE, DOC, specialist, REVISITFLAG) " +
+                "VALUES (?, ?, ?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), ?, ?, ?, ?, ?)";
+
+        PreparedStatement insertStmt = conn.prepareStatement(insertQuery);
+        insertStmt.setString(1, refno);
+        insertStmt.setString(2, name);
+        insertStmt.setString(3, empn);
+        insertStmt.setString(4, relation);
+        insertStmt.setString(5, age);
+        insertStmt.setString(6, refdt1); // Today's date
+        insertStmt.setString(7, sex);
+        insertStmt.setString(8, disease);
+        insertStmt.setString(9, referby);
+        insertStmt.setString(10, hcode);
+        insertStmt.setString(11, "Y");
+
+        int rowsInserted = insertStmt.executeUpdate();
+
+        if (rowsInserted == 0) {
+            out.println("<p style='color:red;'>Record not inserted. Please check your data.</p>");
+        }
+    } catch (SQLException e) {
+        e.printStackTrace(); // Log server-side
+        out.println("<p style='color:red;'>Database Error: " + e.getMessage() + "</p>");
+    } finally {
+        try {
+            if (conn != null) conn.close();
+            if (conn1 != null) conn1.close();
+        } catch (Exception ignored) {
+        }
+    }
 %>
+
 <div align="center">
   
   <p>&nbsp;</p>

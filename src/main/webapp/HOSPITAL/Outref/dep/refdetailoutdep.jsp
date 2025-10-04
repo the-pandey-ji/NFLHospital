@@ -40,85 +40,89 @@
 </head>
 <body>
  <%
-	String yr = "";
-	String refno = request.getParameter("refno");
-	String name = request.getParameter("name");
-	String empn = request.getParameter("empn");
-	String relation = request.getParameter("relation");
-	String age = request.getParameter("age");
-	String refdt = request.getParameter("refdt");
-	String refdt1 = request.getParameter("refdt1");
-	String sex = request.getParameter("sex");
-	String disease = request.getParameter("disease");
-	String referto = request.getParameter("referto");
-	String referby = request.getParameter("referby");
-	String escort = request.getParameter("escort");
-	String desg ="";
-	String dept ="";
-	String ename ="";
-	String referredto ="";
-		
-	
-	
-				
-    Connection conn  = null; 
-    Connection conn1  = null;    
-    try 
-        {
-    	conn = DBConnect.getConnection();
-    	conn1 = DBConnect.getConnection1();
-           
-           Statement stmt1=conn1.createStatement(); //for employeemaster
-    
-	       ResultSet rs1 = stmt1.executeQuery("select a.ename, a.DESIGNATION, c.DISCIPLINENAME from employeemaster a, FURNITUREDEPT b, FURNITUREDISCIPLINE c where a.DEPTCODE=b.DEPTCODE and b.SECTIONCODE=c.DISCIPLINECODE  and a.oldnewdata='N' and onpayroll='A' and a.empn="+empn+"");
-            while(rs1.next())
-	             {
-	                 ename=rs1.getString(1);
-	                 desg= rs1.getString(2);
-	                 dept= rs1.getString(3);
-	             }
-            
-           /*  System.out.println("ename: " + ename);
-            System.out.println("desg: " + desg);
-            System.out.println("dept: " + dept); */
-	   
-            Statement stmt2=conn.createStatement();  //for localhospital
-	       ResultSet rs2 = stmt2.executeQuery("select hname,to_char(sysdate,'yyyy') from OUTSTATIONHOSPITAL where hcode='"+referto+"'");
-               while(rs2.next())
-                    {
-                        referredto=rs2.getString(1);
-                        yr=rs2.getString(2);
+ String yr = "";
+ String refno = request.getParameter("refno");
+ String name = request.getParameter("name");
+ String empn = request.getParameter("empn");
+ String relation = request.getParameter("relation");
+ String age = request.getParameter("age");
+ String refdt = request.getParameter("refdt"); // from request
+ String refdt1 = ""; // will hold current date from DB
+ String sex = request.getParameter("sex");
+ String disease = request.getParameter("disease");
+ String referto = request.getParameter("referto");
+ String referby = request.getParameter("referby");
+ String escort = request.getParameter("escort");
 
-                    } 
-               
-      /*   System.out.println("referredto: " + referredto); */
-     
-           ResultSet rs = stmt2.executeQuery("insert into OUTREFDETAIL"+yr+"(REFNO,PATIENTNAME,EMPN,REL,AGE,REFDATE,HOSPITAL,SEX,DISEASE,DOC,ESCORT,REVISITFLAG) values ('"+refno+"','"+name+"','"+empn+"','"+relation+"','"+age+"',sysdate,'"+referto+"','"+sex+"','"+disease+"','"+referby+"','"+escort+"','N')");
-               while(rs.next())
-	                {
-	                }
-	              
-	   }
-	  
-     catch(SQLException e) 
-        {
-             while((e = e.getNextException()) != null)
-             out.println(e.getMessage() + "<BR>");
-        }
-    
-     finally
-        {
-             if(conn != null) 
-               {
-                   try
-                        {
-                             conn.close();
-                             conn1.close();
-                        }
-                   catch (Exception ignored) {}
-               }
-        }
-       //out.print("result is: "+ename); 
+ String desg = "";
+ String dept = "";
+ String ename = "";
+ String referredto = "";
+
+ Connection conn = null;
+ Connection conn1 = null;
+
+ try {
+     conn = DBConnect.getConnection();
+     conn1 = DBConnect.getConnection1();
+
+     // Get employee details
+     String empQuery = "SELECT a.ename, a.DESIGNATION, c.DISCIPLINENAME " +
+                       "FROM employeemaster a " +
+                       "JOIN FURNITUREDEPT b ON a.DEPTCODE = b.DEPTCODE " +
+                       "JOIN FURNITUREDISCIPLINE c ON b.SECTIONCODE = c.DISCIPLINECODE " +
+                       "WHERE a.oldnewdata = 'N' AND a.onpayroll = 'A' AND a.empn = ?";
+     PreparedStatement empStmt = conn1.prepareStatement(empQuery);
+     empStmt.setString(1, empn);
+     ResultSet rsEmp = empStmt.executeQuery();
+
+     if (rsEmp.next()) {
+         ename = rsEmp.getString(1);
+         desg = rsEmp.getString(2);
+         dept = rsEmp.getString(3);
+     }
+
+     // Get hospital details and current year
+     String hospQuery = "SELECT hname, TO_CHAR(SYSDATE, 'YYYY'), TO_CHAR(SYSDATE, 'DD-MM-YYYY') " +
+                        "FROM OUTSTATIONHOSPITAL WHERE hcode = ?";
+     PreparedStatement hospStmt = conn.prepareStatement(hospQuery);
+     hospStmt.setString(1, referto);
+     ResultSet rsHosp = hospStmt.executeQuery();
+
+     if (rsHosp.next()) {
+         referredto = rsHosp.getString(1);
+         yr = rsHosp.getString(2);
+         refdt1 = rsHosp.getString(3);
+     }
+
+     // Insert referral
+     String tableName = "OUTREFDETAIL" + yr;
+     String insertQuery = "INSERT INTO " + tableName + " " +
+             "(REFNO, PATIENTNAME, EMPN, REL, AGE, REFDATE, HOSPITAL, SEX, DISEASE, DOC, ESCORT, REVISITFLAG) " +
+             "VALUES (?, ?, ?, ?, ?, SYSDATE, ?, ?, ?, ?, ?, 'N')";
+     PreparedStatement insertStmt = conn.prepareStatement(insertQuery);
+     insertStmt.setString(1, refno);
+     insertStmt.setString(2, name);
+     insertStmt.setString(3, empn);
+     insertStmt.setString(4, relation);
+     insertStmt.setString(5, age);
+     insertStmt.setString(6, referto);
+     insertStmt.setString(7, sex);
+     insertStmt.setString(8, disease);
+     insertStmt.setString(9, referby);
+     insertStmt.setString(10, escort);
+
+     insertStmt.executeUpdate();
+
+ } catch (SQLException e) {
+     out.println("<p style='color:red;'>Error: " + e.getMessage() + "</p>");
+     e.printStackTrace();
+ } finally {
+     try {
+         if (conn != null) conn.close();
+         if (conn1 != null) conn1.close();
+     } catch (SQLException ignored) {}
+ }
 %>
 <div align="center">
   <center>
@@ -156,7 +160,7 @@
 	 
 	 <p style="text-align:left;">
 <font face="Arial" size="2" >&nbsp;&nbsp;&#2325;&#2381;&#2352;&#2350; &#2360;&#2306;</font><font face="Arial" size="2">:&nbsp;<%= refno%></font>
-<span style="float:right;"><font face="Arial">&#2340;&#2366;&#2352;&#2368;&#2326;</font><font face="Arial" size="2">: <%=refdt%> &nbsp;&nbsp;&nbsp;</font></span>
+<span style="float:right;"><font face="Arial">&#2340;&#2366;&#2352;&#2368;&#2326;</font><font face="Arial" size="2">: <%=refdt1%> &nbsp;&nbsp;&nbsp;</font></span>
 </p>	 
         
         <p style="line-height: 150%"><font face="Arial" size="2">&#2358;&#2381;&#2352;&#2368;/&#2358;&#2381;&#2352;&#2368;&#2350;&#2340;&#2368;/&#2358;&#2381;&#2352;&#2368;&#2350;&#2366;&#2344;/&#2360;&#2369;&#2358;&#2381;&#2352;&#2368;&#2358;&#2381;&#2352;&#2368;</font><font face="Arial" size="2">&nbsp;Sh/Smt/Mr/Ms :&nbsp;<%= name%></font>&nbsp;&nbsp;&nbsp;
