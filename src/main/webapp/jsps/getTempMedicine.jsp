@@ -81,7 +81,7 @@
 %>
 <tr>
   <td><%= medName %><input type="hidden" name="medicineCodes" value="<%= medCode %>" /></td>
-  <td><input type="text" name="dosage_<%= medCode %>" placeholder="e.g. 500mg"  /></td>
+  <td><input type="text" name="dosage_<%= medCode %>" placeholder=""  /></td>
   
    <td><input type="text" name="timing_<%= medCode %>" placeholder=""   required /></td>
 <%--   <td>

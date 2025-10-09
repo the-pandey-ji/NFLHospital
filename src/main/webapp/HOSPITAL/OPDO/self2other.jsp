@@ -270,7 +270,7 @@ String category = request.getParameter("category");
     <thead>
       <tr>
         <th>Medicine Name</th>
-        <th>Dosage</th>
+        <th>Dose</th>
         <th>Frequency & Timing</th>
         <th>Number of Days</th>
       </tr>
