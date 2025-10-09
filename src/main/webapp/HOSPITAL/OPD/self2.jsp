@@ -40,7 +40,7 @@ String dsex = "";
 Connection con1=DBConnect.getConnection1(); 
 Statement stmt1=con1.createStatement();
 
-ResultSet rs = stmt1.executeQuery("select a.DEPENDENTNAME, trim(b.sex), b.RELATIONNAME, to_char(sysdate,'yyyy') - to_char(dob,'yyyy') FROM dependents a, dependentrelation b  where A.RELATION =B.RELATIONCODE and  a.dependentname ='"+depname+"' and a.empn="+empn+"");
+ResultSet rs = stmt1.executeQuery("select a.DEPENDENTNAME, trim(b.sex), b.RELATIONNAME, to_char(sysdate,'yyyy') - to_char(dob,'yyyy') FROM dependents a, dependentrelation b  where A.RELATION =B.RELATIONCODE and  trim(a.dependentname) ='"+depname+"' and a.empn="+empn+"");
 while(rs.next())
      {
          depname = rs.getString(1);
