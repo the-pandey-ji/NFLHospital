@@ -153,12 +153,12 @@ while(rs.next())
   <div align="center" id="medicineDetailsContainer" style="margin:20px; display:none;">
    <h3>Medicine Details</h3>
   <table border="1" cellpadding="5" cellspacing="0" width="50%" id="medicineDetailsTable">
-    <thead>
+     <thead>
       <tr>
-        <th>Medicine Name</th>
-        <th>Dose</th>
-        <th>Frequency & Timing</th>
-        <th>Number of Days</th>
+        <th width="40%" >Medicine Name</th>
+        <th width="40%">Dose</th>
+        <!-- <th>Frequency & Timing</th> -->
+        <th width="20%">Number of Days</th>
       </tr>
     </thead>
     <tbody>
