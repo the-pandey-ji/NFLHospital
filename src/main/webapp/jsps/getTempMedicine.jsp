@@ -81,9 +81,9 @@
 %>
 <tr>
   <td><%= medName %><input type="hidden" name="medicineCodes" value="<%= medCode %>" /></td>
-  <td><input type="text" name="dosage_<%= medCode %>" placeholder=""  /></td>
+  <td><input type="text" name="dosage_<%= medCode %>" placeholder=""  style="width: 100%;"/></td>
   
-   <td><input type="text" name="timing_<%= medCode %>" placeholder=""   required /></td>
+   <%-- <td><input type="text" name="timing_<%= medCode %>" placeholder=""   required /></td> --%>
 <%--   <td>
     <select name="frequency_<%= medCode %>" required>
       <option value="">Select</option>
@@ -99,7 +99,7 @@
       <option value="after food">After Food</option>
     </select>
   </td> --%>
-  <td><input type="number" name="days_<%= medCode %>" min="1" required  /></td>
+  <td><input type="number" name="days_<%= medCode %>" min="1"   /></td>
 </tr>
 <%
     }

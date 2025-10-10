@@ -121,7 +121,7 @@
           <%-- <a href="/hosp1/jsps/editPrescription.jsp?opdId=<%= row.get("srno") %>" 
                style="padding: 4px 10px; background-color: #f0ad4e; color: white; text-decoration: none; border-radius: 3px;" disabled>
                 Edit
-            </a>  --%>
+            </a> --%>
         </td>
             </tr>
         <% } %>

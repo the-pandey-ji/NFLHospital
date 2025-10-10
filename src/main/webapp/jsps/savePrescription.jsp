@@ -55,7 +55,7 @@ String empnParam = request.getParameter("ovcode");
 		// Get patient details
 		String pname = "", name = "", relation = "SELF", age = "", sex = "", typ = "N", dt = "";
 
-		String empQuery = "SELECT ename, TO_CHAR(SYSDATE, 'yyyy') - TO_CHAR(birthdate, 'yyyy'), sex, TO_CHAR(SYSDATE, 'dd-mon-yyyy') FROM employeemaster WHERE empn = ?";
+		String empQuery = "SELECT ename, TO_CHAR(SYSDATE, 'yyyy') - TO_CHAR(birthdate, 'yyyy'), sex, TO_CHAR(SYSDATE, 'dd-mon-yyyy') FROM employeemaster WHERE  oldnewdata='N' and empn = ?";
 		psEmp = con1.prepareStatement(empQuery);
 		psEmp.setInt(1, empn);
 		rsEmp = psEmp.executeQuery();

@@ -315,19 +315,19 @@ for (Map<String, String> row : prescriptionList) {
     <table border="1" width="100%" align="center" cellpadding="5">
       <thead>
         <tr>
-          <th width="705"><font face="Arial" size="2.5">&#2342;&#2357;&#2366;</font> Medicine</th>
-          <th width="254"><font face="Arial" size="2.5">&#2326;&#2369;&#2352;&#2366;&#2325;</font> Dose</th>
-          <th width="253"><font face="Arial" size="2.5">&#2360;&#2350;&#2351;</font> Timing</th>
-          <th width="165"><font face="Arial" size="2.5">&#2342;&#2367;&#2344;</font> Days</th>
+          <th width="40%"><font face="Arial" size="2.5">&#2342;&#2357;&#2366;</font> Medicine</th>
+          <th width="40%"><font face="Arial" size="2.5">&#2326;&#2369;&#2352;&#2366;&#2325;</font> Dose</th>
+          <!-- <th width="253"><font face="Arial" size="2.5">&#2360;&#2350;&#2351;</font> Timing</th> -->
+          <th width="20%"><font face="Arial" size="2.5">&#2342;&#2367;&#2344;</font> Days</th>
         </tr>
       </thead>
       <tbody>
       <% for (Map<String, String> row : validPrescriptionList) { %>
         <tr>
-          <td width="705"><%= row.get("medicine") %></td>
-          <td width="254"><%= row.get("dosage") %></td>
-          <td width="253"><%= row.get("timing") %></td>
-          <td width="165"><%= row.get("days") %></td>
+          <td  width="705"><%= row.get("medicine") %></td>
+          <td align="center" width="254"><%= row.get("dosage") %></td>
+          <%-- <td width="253"><%= row.get("timing") %></td> --%>
+          <td align="center" width="165"><%= row.get("days") %></td>
         </tr>
       <% } %>
       </tbody>
