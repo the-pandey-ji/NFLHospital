@@ -57,7 +57,7 @@ try {
         "CASE WHEN a.revisitflag = 'N' THEN 'Refer' WHEN a.revisitflag = 'Y' THEN 'Revisit' ELSE 'Refer' END AS revisit_status " +
         "FROM LOACALREFDETAIL" + yr + " a " +
         "JOIN LOCALHOSPITAL c ON a.SPECIALIST = c.hcode " +
-        "WHERE a.refdate BETWEEN TO_DATE(?, 'YYYY-MM-DD') AND TO_DATE(?, 'YYYY-MM-DD') " +
+        "WHERE TRUNC(a.refdate) BETWEEN TO_DATE(?, 'YYYY-MM-DD') AND TO_DATE(?, 'YYYY-MM-DD') " +
         "ORDER BY a.REFDATE DESC";
 
     pstmt = conn.prepareStatement(localQuery);

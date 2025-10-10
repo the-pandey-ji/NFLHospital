@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Select Date Range</title>
- <script>
+     <script>
         window.onload = function () {
             const today = new Date().toISOString().split('T')[0]; // format: yyyy-mm-dd
             document.querySelector('input[name="fromDate"]').value = today;
             document.querySelector('input[name="toDate"]').value = today;
         };
     </script>
+
 </head>
 <body background="../Stationery/Clear%20Day%20Bkgrd.jpg">
-    <h2 align="center"><u>No of Referred Cases in Date Range</u></h2>
+    <h2 align="center"><u>No of OPD Cases in Date Range</u></h2>
 
-    <form method="POST" action="/hosp1/HOSPITAL/Reports/refered2all.jsp" >
+    <form method="POST" action="/hosp1/HOSPITAL/Reports/opd.jsp" >
         <p align="center">
             <label><b><font face="Tahoma" size="3" color="#003399">From Date:</font></b></label>
             <input type="date" name="fromDate">

@@ -1,136 +1,176 @@
 <%@ page language="java" session="true"%>
-<%@ page import="java.math.*" %>
-<%@ page import="oracle.jdbc.driver.*" %>
-<%@ page contentType="text/html" %>
-<%@ page import="java.util.*" %>
-<%@ page import="java.io.* "%>
-<%@ page import="java.lang.*" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.*" %>
 <%@ page import="com.DB.DBConnect" %>
 <html>
 <head>
-<meta http-equiv="Content-Language" content="en-us">
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
-<meta name="ProgId" content="FrontPage.Editor.Document">
-<title>Daily OPD List</title>
-<style type="text/css" media="print">
-.printbutton 
-  {
-    visibility: hidden;
-    display: none;
-  }
-</style>
+    <meta http-equiv="Content-Language" content="en-us">
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+    <title>OPD Report (Date Range)</title>
+    <style type="text/css" media="print">
+        .printbutton {
+            visibility: hidden;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-<% 
-	String dt = request.getParameter("dt");
-	String pname = "";
-	String ename = "";
-	String relation = "";
-	String age = "";
-	String srno ="";
-	String sex="";
-	long empn=0;
-	int no=0;
-	String typ="";
-	String doc="";
-%>	
-<table border="1" width="88%">
-   <p align="center"><b><font size="4">OPD Detail On <%=dt%></font>
-   <font size="5"> </font></b>  
- <tr>
-    <td width="11%" align="center">OPD No</td>
-    <td width="20%">Patient Name</td>
-    <td width="20%">Employee Name</td>
-    <td width="13%" align="center">E.Code&nbsp;</td>
-    <td width="15%" align="center">Relation</td>
-    <td width="5%" align="center">Age</td>
-    <td width="5%" align="center">Sex</td>
-     <td width="20%" align="center">doc</td>
-  </tr>
-<%				
-   
-				
-    Connection con  = null,con1=null;    
-    try 
-        {
-    	con = DBConnect.getConnection();
-    	con1= DBConnect.getConnection1();
-           Statement stmt=con.createStatement();
-           Statement stmt1=con1.createStatement();
 
-           
-	         ResultSet rs = stmt.executeQuery("select patientname,relation,age,sex,empn,srno,typ,empname,doctor FROM opd where to_char(opddate,'ddmmyyyy') ='"+dt+"' order by srno");
-              while(rs.next())
-	              {
-	                    pname = rs.getString(1);
-	                    relation = rs.getString(2);
-	                    age = rs.getString(3);
-	                    sex = rs.getString(4);
-	                    empn = rs.getLong(5);
-	                    srno = rs.getString(6);
-	                    typ = rs.getString(7);
-                        ename = rs.getString(8);
-                        doc = rs.getString(9);
-	                    
-	                       if (typ.equals("N")) 
-	                          {
-	                             ResultSet rs2 = stmt1.executeQuery("select ename from employeemaster where empn="+empn);
-	                              while(rs2.next())
-	                                 {
-                                        ename=rs2.getString("ename");
-                                     } 
-                              } 
-%>	
+<%
+String fromDate = request.getParameter("fromDate");
+String toDate = request.getParameter("toDate");
 
-  <tr>
-    <td width="11%" align="center"><font face="Tahoma" size="2"><span style="text-transform: uppercase"><%=srno%></span></font>&nbsp;</td>
-    <td width="20%"><font face="Tahoma" size="2"><span style="text-transform: uppercase"><%=pname%></span></font>&nbsp;</td>
-    <td width="20%"><font face="Tahoma" size="2"><span style="text-transform: uppercase"><%=ename%></span></font>&nbsp;</td>
-    <td width="13%" align="center"><font face="Tahoma" size="2"><span style="text-transform: uppercase"><%=empn%></span></font>&nbsp;</td>
-    <td width="15%" align="center"><font face="Tahoma" size="2"><span style="text-transform: uppercase"><%=relation%></span></font>&nbsp;</td>
-    <td width="5%" align="center"><font face="Tahoma" size="2"><span style="text-transform: uppercase"><%=age%></span></font>&nbsp;</td>
-    <td width="5%" align="center"><font face="Tahoma" size="2"><span style="text-transform: uppercase"><%=sex%></span></font>&nbsp;</td>
-    <td width="20%" align="center"><font face="Tahoma" size="2"><span style="text-transform: uppercase"><%=doc%></span></font>&nbsp;</td>
-  </tr>
-<%	                                 
-                 } 
+if (fromDate == null || toDate == null || fromDate.trim().isEmpty() || toDate.trim().isEmpty()) {
+    out.println("<h3 style='color:red;text-align:center;'>Date range is missing. Please go back and select both From and To dates.</h3>");
+    return;
+}
+
+String pname = "", ename = "", relation = "", age = "", srno = "", sex = "", doc = "", typ = "";
+long empn = 0;
+int totalCount = 0;
+
+Connection con = null, con1 = null;
+PreparedStatement pstmt = null, pstmt2 = null;
+ResultSet rs = null, rs2 = null;
+
+try {
+    con = DBConnect.getConnection();
+    con1 = DBConnect.getConnection1();
+
+    String query = "SELECT patientname, relation, age, sex, empn, srno, typ, empname, doctor " +
+                   "FROM opd " +
+                   "WHERE trunc(opddate) BETWEEN TO_DATE(?, 'YYYY-MM-DD') AND TO_DATE(?, 'YYYY-MM-DD') " +
+                   "ORDER BY opddate, srno";
+
+    pstmt = con.prepareStatement(query);
+    pstmt.setString(1, fromDate);
+    pstmt.setString(2, toDate);
+    rs = pstmt.executeQuery();
+%>
+
+<p align="center"><b><font size="4" face="Tahoma" color="#800000">
+OPD Details from <%= fromDate %> to <%= toDate %>
+</font></b></p>
+
+<table border="1" width="88%" align="center" style="border-collapse: collapse" bordercolor="#111111">
+    <tr>
+        <td align="center"><b>OPD No</b></td>
+        <td><b>Patient Name</b></td>
+        <td><b>Employee Name</b></td>
+        <td align="center"><b>E.Code</b></td>
+        <td align="center"><b>Relation</b></td>
+        <td align="center"><b>Age</b></td>
+        <td align="center"><b>Sex</b></td>
+        <td align="center"><b>Doctor</b></td>
+    </tr>
+
+<%
+    while (rs.next()) {
+        pname = rs.getString("patientname");
+        relation = rs.getString("relation");
+        age = rs.getString("age");
+        sex = rs.getString("sex");
+        empn = rs.getLong("empn");
+        srno = rs.getString("srno");
+        typ = rs.getString("typ");
+        ename = rs.getString("empname");
+        doc = rs.getString("doctor");
+
+        // If type is 'N', fetch empname from employeemaster
+        if ("N".equalsIgnoreCase(typ)) {
+            String empQuery = "SELECT ename FROM employeemaster WHERE empn = ?";
+            pstmt2 = con1.prepareStatement(empQuery);
+            pstmt2.setLong(1, empn);
+            rs2 = pstmt2.executeQuery();
+            if (rs2.next()) {
+                ename = rs2.getString("ename");
+            }
+            rs2.close();
+            pstmt2.close();
+        }
+
+        totalCount++;
+%>
+    <tr>
+        <td align="center"><%= srno %></td>
+        <td><%= pname.toUpperCase() %></td>
+        <td><%= ename != null ? ename.toUpperCase() : "" %></td>
+        <td align="center"><%= empn %></td>
+        <td align="center"><%= relation %></td>
+        <td align="center"><%= age %></td>
+        <td align="center"><%= sex %></td>
+        <td align="center"><%= doc != null ? doc.toUpperCase() : "" %></td>
+    </tr>
+<%
+    }
 %>
 </table>
-<%
-        
-         
-          ResultSet rs1 = stmt.executeQuery("select count(*) from opd where to_char(opddate,'ddmmyyyy') ='"+dt+"'");
-             while(rs1.next())
-	             {
-	                no = rs1.getInt(1);
-	             }
-%> 
-<p> 
-  Total Number OPD on <%=dt%> : <%=no%>
- </p>
+
+<p align="center"><b>Total Number of OPD Cases: <%= totalCount %></b></p>
+
+
+
+
+
+<p align="center"><font face="Tahoma" size="3" color="#800000"><b>Doctor-wise OPD Summary</b></font></p>
+
+<div align="center">
+  <table border="1" width="30%" style="border-collapse: collapse" bordercolor="#111111">
+    <tr>
+      <td bgcolor="#FFCCCC"><b><font face="Tahoma" size="2">Doctor</font></b></td>
+      <td bgcolor="#FFCCCC" align="center"><b><font face="Tahoma" size="2">No of OPD Cases</font></b></td>
+    </tr>
 
 <%
-	  }
-catch(SQLException e) 
-   {
-       while((e = e.getNextException()) != null)
-       out.println(e.getMessage() + "<BR>");
-   }
- 
- finally
-      {
-          if(con != null) 
-            {
-               try
-                  {
-                      con.close();
-                  }
-               catch (Exception ignored) {}
-            }
-      }
+PreparedStatement pstmtSummary = null;
+ResultSet rsSummary = null;
+
+try {
+    String summaryQuery = "SELECT UPPER(doctor) AS doc, COUNT(*) AS doc_count " +
+                          "FROM opd " +
+                          "WHERE trunc(opddate) BETWEEN TO_DATE(?, 'YYYY-MM-DD') AND TO_DATE(?, 'YYYY-MM-DD') " +
+                          "GROUP BY UPPER(doctor) " +
+                          "ORDER BY UPPER(doctor)";
+
+    pstmtSummary = con.prepareStatement(summaryQuery);
+    pstmtSummary.setString(1, fromDate);
+    pstmtSummary.setString(2, toDate);
+    rsSummary = pstmtSummary.executeQuery();
+
+    while (rsSummary.next()) {
+        String docName = rsSummary.getString("doc");
+        String count = rsSummary.getString("doc_count");
 %>
+    <tr>
+      <td><font face="Tahoma" size="2"><%= docName != null ? docName : "UNKNOWN" %></font></td>
+      <td align="center"><font face="Tahoma" size="2"><%= count %></font></td>
+    </tr>
+<%
+    }
+
+} catch (SQLException e) {
+    out.println("<pre style='color:red;'>SQL Error (Doctor Summary): " + e.getMessage() + "</pre>");
+} finally {
+    if (rsSummary != null) try { rsSummary.close(); } catch (Exception ignored) {}
+    if (pstmtSummary != null) try { pstmtSummary.close(); } catch (Exception ignored) {}
+}
+%>
+
+  </table>
+</div>
+
+
+<%
+} catch (SQLException e) {
+    out.println("<pre style='color:red;'>SQL Error: " + e.getMessage() + "</pre>");
+} finally {
+    if (rs != null) try { rs.close(); } catch (Exception ignored) {}
+    if (pstmt != null) try { pstmt.close(); } catch (Exception ignored) {}
+    if (pstmt2 != null) try { pstmt2.close(); } catch (Exception ignored) {}
+    if (con != null) try { con.close(); } catch (Exception ignored) {}
+    if (con1 != null) try { con1.close(); } catch (Exception ignored) {}
+}
+%>
+
 </body>
 </html>
