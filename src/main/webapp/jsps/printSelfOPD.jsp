@@ -69,6 +69,7 @@ String age = "";
 String sex = "";
 String dt = "";
 String empname = "";
+String doctorName = "";
 
 List<Map<String, String>> prescriptionList = new ArrayList<Map<String, String>>();
 Set<String> diseaseCodesSet = new HashSet<String>();
@@ -87,7 +88,7 @@ try {
     conn = DBConnect.getConnection();
 
     // Fetch patient details
-    String query = "select PATIENTNAME, RELATION, AGE, to_char(opddate,'dd-MON-yyyy') as opddate, SEX, EMPN, EMPNAME from opd where srno=?";
+    String query = "select PATIENTNAME, RELATION, AGE, to_char(opddate,'dd-MON-yyyy') as opddate, SEX, EMPN, EMPNAME,doctor from opd where srno=?";
     pstmt = conn.prepareStatement(query);
     pstmt.setInt(1, opdId);
     rs = pstmt.executeQuery();
@@ -100,6 +101,7 @@ try {
         dt = rs.getString("opddate");
         sex = rs.getString("SEX");
         empname = rs.getString("EMPNAME");
+        doctorName = rs.getString("doctor");
         
     }
     rs.close();
@@ -333,7 +335,7 @@ for (Map<String, String> row : prescriptionList) {
 <% } else { %>
     <p align="center"><b>No medicines prescribed.</b></p>
 
-    <%}User user1 = (User) session.getAttribute("Docobj"); %>
+    <%}/* User user1 = (User) session.getAttribute("Docobj");  */%>
 	
 <div align="center" style=" margin:10px;  padding: -10px; width: 99%;height:39;box-sizing: border-box; display: flex; align-items: flex-start;">
    <h3 align="left" style="margin-top: 0;width: 35%; margin-bottom: 0">Additional Notes (if any) : </h3>
@@ -344,9 +346,9 @@ for (Map<String, String> row : prescriptionList) {
 
 <p align="right" style="margin-bottom:0; margin-top:0;margin-right:10px"><font face="Arial" size="2.5">&#2337;&#2377;&#2325;&#2381;&#2335;&#2352; &#2325;&#2375;  &#2361;&#2360;&#2381;&#2340;&#2366;&#2325;&#2381;&#2359;&#2352;</font>&nbsp;_____________</p>
    
-<p align="right" style="margin-bottom:0; margin-right:10px; margin-top:0"><font face="Arial" size="2.5">&#2337;&#2377;&#2325;&#2381;&#2335;&#2352; &#2325;&#2366; &#2344;&#2366;&#2350;</font>&nbsp;<%=user1.getUsername() %></p>
+<p align="right" style="margin-bottom:0; margin-right:10px; margin-top:0"><font face="Arial" size="2.5">&#2337;&#2377;&#2325;&#2381;&#2335;&#2352; &#2325;&#2366; &#2344;&#2366;&#2350;</font>&nbsp;<%=doctorName %></p>
  
-<div align="center" style=" border: 1px solid #000;width:80%;margin-bottom:-5px;"></div>
+<div align="center" style=" border: 1px solid #000;width:80%;margin-bottom:-2px;"></div>
      
       <font size="2" face="Arial"><b>Prevention is better than cure</b></font> <font  size="3">( &#2311;&#2354;&#2366;&#2332; &#2360;&#2375; &#2348;&#2375;&#2361;&#2340;&#2352; &#2361;&#2376; &#2352;&#2379;&#2325;&#2341;&#2366;&#2350; )</font>
   </center>
