@@ -15,7 +15,7 @@
 <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
 <meta name="ProgId" content="FrontPage.Editor.Document">
 <title>Leaves Details</title>
-<title>Print Test</title>
+
 <style type="text/css" media="print">
 .printbutton {
   visibility: hidden;
@@ -47,15 +47,15 @@
 <%				
 Connection conn  = null;    
 try {
-conn = DBConnect.getConnection();
+conn = DBConnect.getConnection1();
 	Statement stmt=conn.createStatement();
 	stmt=conn.createStatement();
-	ResultSet rs = stmt.executeQuery("select name,sex,empn,(to_char(sysdate,'yyyy')-to_char(birthdate,'yyyy')) age FROM PRODUCTION.w_personal where empn between '2000' and '3500' or empn between '9000' and '9500'");
+	ResultSet rs = stmt.executeQuery("select ename,sex, empn, (to_char(sysdate,'yyyy')-to_char(birthdate,'yyyy')) age FROM personnel.employeemaster m where oldnewdata='N' and onpayroll='A'  AND NOT EXISTS ( SELECT empn FROM hospital.medexam em WHERE m.empn = em.empn  and TO_DATE(sysdate, 'YYYY-MM-DD') - TO_DATE(em.dated, 'YYYY-MM-DD')>365 )");
 while(rs.next())
 	{
 	
 	
-	ename = rs.getString("NAME");
+	ename = rs.getString("ENAME");
 	
 	by = rs.getString("age");
 	sex = rs.getString("sex");
@@ -77,13 +77,13 @@ while(rs.next())
 </table>
   </center>
 </div>
-<%
+<%-- <%
 ResultSet rs1 = stmt.executeQuery("select count(*) nopd from opd where opddate > sysdate-1");   
 while(rs1.next())
 	{
 	no = rs1.getString("nopd");
 	}
-%> 
+%>  --%>
 <p>&nbsp;</p>
 <p><font face="Arial" size="3">Note :Please intimate these employees</font></p>
 <p> 
