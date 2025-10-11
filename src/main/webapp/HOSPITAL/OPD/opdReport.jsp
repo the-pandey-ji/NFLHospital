@@ -118,10 +118,10 @@
                 <td><%= row.get("empn") %></td>
                 <td><%= row.get("empname") %></td>
                  <td>
-          <%-- <a href="/hosp1/jsps/editPrescription.jsp?opdId=<%= row.get("srno") %>" 
+          <a href="/hosp1/jsps/Edit_OPD.jsp?opdId=<%= row.get("srno") %>" 
                style="padding: 4px 10px; background-color: #f0ad4e; color: white; text-decoration: none; border-radius: 3px;" disabled>
                 Edit
-            </a> --%>
+            </a> 
         </td>
             </tr>
         <% } %>
