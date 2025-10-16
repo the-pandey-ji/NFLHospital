@@ -14,18 +14,8 @@
     String action = request.getParameter("action");
 
     if ("getEmployee".equals(action)) {
-    	
-    	
-    	//System.out.println("Raw query string: " + request.getQueryString());
-    	//System.out.println("getEmployee called");
-    	
         String empn = request.getParameter("empn");
         String category = request.getParameter("category");
-        
-        
-       //System.out.println("Parameters: empn=" + empn + ", category=" + category);
-        
-        
         
         JSONObject json = new JSONObject();
         Connection con = null;
@@ -38,9 +28,8 @@
             if ("NFL".equalsIgnoreCase(category)) {
                 ps = con.prepareStatement("SELECT e.ENAME, e.DESIGNATION, d.DEPTT FROM PERSONNEL.EMPLOYEEMASTER e JOIN Personnel.DEPARTMENT d ON e.DEPTCODE = d.DEPTCODE WHERE e.oldnewdata='N' and e.EMPN = ?");
             } else if ("CISF".equalsIgnoreCase(category)) {
-            	System.out.println("Fetching CISF employee details for EMPN: " + empn);
+                System.out.println("Fetching CISF employee details for EMPN: " + empn);
                 ps = con.prepareStatement("SELECT NAME AS ENAME, DESG AS DESIGNATION FROM PRODUCTION.CISFMAST WHERE EMPN = ?");
-                //System.out.println("Prepared statement created: " + ps.toString());
             }
 
             ps.setString(1, empn);
@@ -48,21 +37,14 @@
             
             if (rs.next()) {
                 json.put("ename", rs.getString("ENAME"));
-                //System.out.println("Employee Name: " + rs.getString("ENAME"));
-                
                 json.put("designation", rs.getString("DESIGNATION"));
-               // System.out.println("Designation: " + rs.getString("DESIGNATION"));
-                 if ("NFL".equalsIgnoreCase(category)){
-                	json.put("dept", rs.getString("DEPTT") != null ? rs.getString("DEPTT") : "");
-                	
-                 }
-                 else{
-                	 json.put("dept", "CISF");
-                 }
-               
+                if ("NFL".equalsIgnoreCase(category)){
+                    json.put("dept", rs.getString("DEPTT") != null ? rs.getString("DEPTT") : "");
+                }
+                else{
+                    json.put("dept", "CISF");
+                }
             }
-            
-           // System.out.println("Fetched Employee Details: " + json.toString());
         } catch (Exception e) {
             json.put("error", e.getMessage());
         } finally {
@@ -78,8 +60,6 @@
         String empn = request.getParameter("empn");
         String category = request.getParameter("category");
         
-        
-            //System.out.println("getDependents called with empn=" + empn + ", category=" + category);
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -132,7 +112,6 @@
             ps.setString(2, name);
             rs = ps.executeQuery();
             
-           // System.out.println("rs  "+rs);
             if (rs.next()) {
                 json.put("relation", rs.getString("RELATION"));
                 json.put("age", rs.getString("age"));
@@ -155,35 +134,67 @@
     <script>
         function onCategoryChange() {
             const category = document.getElementById("category").value;
-
+            const isOthers = category === "Others";
+            
+            // Clear all fields
             document.getElementById("empn").value = "";
             document.getElementById("ename").value = "";
             document.getElementById("desg").value = "";
             document.getElementById("dept").value = "";
-            document.getElementById("relation").value = "";
-            document.getElementById("age").value = "";
+            document.getElementById("patientName").value = "";
+            document.getElementById("patientRelation").value = "";
             document.getElementById("dependentName").innerHTML = "<option value=''>-- Select --</option>";
             document.getElementById("dependentRow").style.display = "none";
-
-            const readonly = category !== "Others";
-            document.getElementById("ename").readOnly = readonly;
-            document.getElementById("desg").readOnly = readonly;
-            document.getElementById("dept").readOnly = readonly;
+            
+         // Toggle required attributes dynamically
+            document.getElementById("patientName").required = isOthers;
+            document.getElementById("patientRelation").required = isOthers;
+            
+            // Handle Employee No field
+            const empnField = document.getElementById("empn");
+            const empnLabel = empnField.parentElement.previousElementSibling;
+            if (isOthers) {
+                empnField.removeAttribute("required");
+                empnField.readOnly = false;
+                empnLabel.textContent = "Employee No (Optional):";
+            } else {
+                empnField.setAttribute("required", "required");
+                empnLabel.textContent = "Employee No:";
+            }
+            
+            // Handle patient section
+            const patientSection = document.getElementById("patientSection");
+            const relationSection = document.getElementById("relationSection");
+            const selfDependentSection = document.getElementById("selfDependentSection");
+            
+            if (isOthers) {
+                patientSection.style.display = "";
+                relationSection.style.display = "";
+                selfDependentSection.style.display = "none";
+                document.getElementById("ename").readOnly = false;
+                document.getElementById("desg").readOnly = false;
+                document.getElementById("dept").readOnly = false;
+            } else {
+                patientSection.style.display = "none";
+                relationSection.style.display = "none";
+                selfDependentSection.style.display = "";
+                document.getElementById("ename").readOnly = true;
+                document.getElementById("desg").readOnly = true;
+                document.getElementById("dept").readOnly = true;
+            }
+            
+            
         }
 
         function fetchEmployeeDetails() {
             const empn = document.getElementById("empn").value;
             const category = document.getElementById("category").value;
-            //console.log("fetchEmployeeDetails called");
-            //alert(empn + " " + category);
             if (empn === "" || category === "Others") return;
 
             const url = "med_cert2.jsp?action=getEmployee"
                 + "&empn=" + encodeURIComponent(empn)
                 + "&category=" + encodeURIComponent(category);
             
-            //alert("URL: " + url);
-
             fetch(url)
                 .then(res => res.json())
                 .then(data => {
@@ -202,8 +213,6 @@
             const category = document.getElementById("category").value;
             const type = document.querySelector('input[name="relationType"]:checked').value;
             const dependentRow = document.getElementById("dependentRow");
-            
-
 
             if (type === "dependent" && category !== "Others") {
                 const empn = document.getElementById("empn").value;
@@ -212,7 +221,7 @@
                 const url = "med_cert2.jsp?action=getDependents"
                     + "&empn=" + encodeURIComponent(empn)
                     + "&category=" + encodeURIComponent(category);
-                //fetch(`med_cert2.jsp?action=getDependents&empn=${empn}&category=${category}`)
+                
                 fetch(url)
                     .then(res => res.text())
                     .then(html => {
@@ -229,21 +238,12 @@
             const depName = document.getElementById("dependentName").value;
             const category = document.getElementById("category").value;
             
-            
-            /* const encodedDepName = encodeURIComponent(depName);
-            const url = "med_cert2.jsp?action=getDependentDetails"
-                + "&empn=" + empn
-                + "&name=" + encodedDepName
-                + "&category=" + category; */
-            
             const url = "med_cert2.jsp?action=getDependentDetails"
                 + "&empn=" + encodeURIComponent(empn)
                 + "&name=" + encodeURIComponent(depName)
                 + "&category=" + encodeURIComponent(category);
                 
-                //alert(url);
-
-      			fetch(url)
+            fetch(url)
                 .then(res => res.json())
                 .then(data => {
                     document.getElementById("relation").value = data.relation || "";
@@ -260,10 +260,20 @@
             const to = document.querySelector('input[name="todt"]').value;
             const fit = document.querySelector('input[name="fitdt"]').value;
 
-            if (category === "Others" && (!ename || !desg || !dept)) {
-                alert("Please fill Employee Name, Designation, and Department for 'Others'.");
-                event.preventDefault();
-                return false;
+            if (category === "Others") {
+                const patientName = document.getElementById("patientName").value.trim();
+                const patientRelation = document.getElementById("patientRelation").value.trim();
+                
+                if (!ename || !desg || !dept) {
+                    alert("Please fill Employee Name, Designation, and Department.");
+                    event.preventDefault();
+                    return false;
+                }
+                if (!patientName || !patientRelation) {
+                    alert("Please fill Patient Name and Relation.");
+                    event.preventDefault();
+                    return false;
+                }
             }
 
             const fromDate = new Date(from);
@@ -302,9 +312,21 @@
         </tr>
         <tr>
             <td>Employee No:</td>
-            <td><input type="text" name="empn" id="empn" onblur="fetchEmployeeDetails(); toggleDependents();" required></td>
+            <td><input type="text" name="empn" id="empn" onblur="fetchEmployeeDetails(); toggleDependents();"></td>
         </tr>
-        <tr>
+        
+        <!-- Patient Name and Relation for Others -->
+        <tr id="patientSection" style="display:none;">
+            <td>Patient Name:</td>
+            <td><input type="text" name="patientName" id="patientName" ></td>
+        </tr>
+        <tr id="relationSection" style="display:none;">
+            <td>Relation:</td>
+            <td><input type="text" name="patientRelation" id="patientRelation" ></td>
+        </tr>
+        
+        <!-- Self/Dependent section for NFL/CISF -->
+        <tr id="selfDependentSection">
             <td>Is Patient:</td>
             <td>
                 <input type="radio" name="relationType" value="self" checked onclick="toggleDependents()"> Self
@@ -322,17 +344,18 @@
                 Age: <input type="text" id="age" name="age" readonly>
             </td>
         </tr>
+        
         <tr>
             <td>Employee Name:</td>
-            <td><input type="text" name="ename" id="ename" readonly></td>
+            <td><input type="text" name="ename" id="ename" required></td>
         </tr>
         <tr>
             <td>Designation:</td>
-            <td><input type="text" name="desg" id="desg" readonly></td>
+            <td><input type="text" name="desg" id="desg" required></td>
         </tr>
         <tr>
             <td>Department:</td>
-            <td><input type="text" name="dept" id="dept" readonly></td>
+            <td><input type="text" name="dept" id="dept" required></td>
         </tr>
         <tr>
             <td>Disease:</td>
