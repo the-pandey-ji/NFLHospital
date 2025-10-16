@@ -16,6 +16,7 @@
 <script language="JavaScript" type="text/javascript" src="/hosp1/Date/datetimepicker.js"></script>
 </head>
 <body background="../../Stationery/Clear%20Day%20Bkgrd.jpg">
+
 <form name="MyForm" method="POST" action="/hosp1/HOSPITAL/Medical Certificate/mcert.jsp" >
   <p align="center">&nbsp;&nbsp; <b><font size="4" face="Tahoma"> Entry For Medical Certificate</font></b></p>
   <div align="center">

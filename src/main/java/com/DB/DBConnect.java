@@ -6,6 +6,7 @@ public class DBConnect {
 	
 	private static Connection con;
 	private static Connection con1;
+
 	
 	public static Connection getConnection() {
 		
