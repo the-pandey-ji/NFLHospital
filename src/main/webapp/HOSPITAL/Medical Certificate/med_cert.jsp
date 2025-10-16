@@ -191,7 +191,7 @@
             const category = document.getElementById("category").value;
             if (empn === "" || category === "Others") return;
 
-            const url = "med_cert2.jsp?action=getEmployee"
+            const url = "med_cert.jsp?action=getEmployee"
                 + "&empn=" + encodeURIComponent(empn)
                 + "&category=" + encodeURIComponent(category);
             
@@ -218,7 +218,7 @@
                 const empn = document.getElementById("empn").value;
                 if (!empn) return;
                 
-                const url = "med_cert2.jsp?action=getDependents"
+                const url = "med_cert.jsp?action=getDependents"
                     + "&empn=" + encodeURIComponent(empn)
                     + "&category=" + encodeURIComponent(category);
                 
@@ -238,7 +238,7 @@
             const depName = document.getElementById("dependentName").value;
             const category = document.getElementById("category").value;
             
-            const url = "med_cert2.jsp?action=getDependentDetails"
+            const url = "med_cert.jsp?action=getDependentDetails"
                 + "&empn=" + encodeURIComponent(empn)
                 + "&name=" + encodeURIComponent(depName)
                 + "&category=" + encodeURIComponent(category);
