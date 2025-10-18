@@ -204,11 +204,11 @@ String category = request.getParameter("category");
         </tr>
         <tr>
         <td align="center">
-            <input type="text" name="opname" id="opname" size="24" readonly style="color:red; font-weight:bold" value=<%= opname%>>
+            <input type="text" name="opname" id="opname" size="24" readonly style="color:red; font-weight:bold" value="<%= opname%>">
           </td>
         
           <td align="center">
-            <input type="text" name="oename" id="oename" size="24" readonly style="color:red; font-weight:bold" value=<%= oename%>>
+            <input type="text" name="oename" id="oename" size="24" readonly style="color:red; font-weight:bold" value="<%= oename%>">
           </td>
           <td align="center">
             <input type="text" name="oage" id="oage" size="19" readonly style="color:red; font-weight:bold" value=<%= oage%>>
