@@ -320,7 +320,17 @@ for (Map<String, String> row : prescriptionList) {
           <td  width="705"><%= row.get("medicine") %></td>
           <td align="center" width="254"><%= row.get("dosage") %></td>
           <%-- <td width="253"><%= row.get("timing") %></td> --%>
-          <td align="center" width="165"><%= row.get("days") %></td>
+         <%--  <td align="center" width="165"><%= row.get("days") %></td> --%>
+         <td align="center" width="165">
+    <%
+        String days = row.get("days");
+        if (days == null || days.trim().isEmpty() || days.trim().equals("0")) {
+            out.print("");
+        } else {
+            out.print(days);
+        }
+    %>
+</td>
         </tr>
       <% } %>
       </tbody>
