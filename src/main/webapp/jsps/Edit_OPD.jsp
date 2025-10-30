@@ -78,6 +78,11 @@
             relation = rs1.getString("RELATION");
             empname = rs1.getString("EMPNAME");
         }
+        session.setAttribute("depname",name);
+    	session.setAttribute("drel", relation);
+    	session.setAttribute("dage", age);
+    	session.setAttribute("dsex",sex);
+    	session.setMaxInactiveInterval(-1);
 
        // Get prescriptions (medicines, diseases, notes)
         String sql2 = "SELECT p.MEDICINECODE, mm.MEDICINENAME, p.DOSAGE, p.TIMING, p.DAYS, p.NOTES, p.DISEASECODE " +
@@ -230,16 +235,20 @@
           <td align="center">Name</td>
           <td align="center">Age</td>
           <td align="center">Sex</td>
+          <td align="center">Relation</td>
         </tr>
         <tr>
           <td align="center">
-            <input type="text" name="ovname" id="ovname" value="<%= empname %>" size="24" readonly style="color:red; font-weight:bold" disabled/>
+            <input type="text" name="ovname" id="ovname" value="<%= name %>" size="24" readonly style="color:red; font-weight:bold" disabled/>
           </td>
           <td align="center">
             <input type="text" name="ovage" id="ovage" value ="<%= age %>" size="19" readonly style="color:red; font-weight:bold" disabled/>
           </td>
           <td align="center">
             <input type="text" name="ovsex" id="ovsex" value ="<%= sex %>" size="22" readonly style="color:red; font-weight:bold" disabled/>
+          </td>
+          <td>
+            <input type="text" name="ovrel" id="ovrel" value= <%= relation%> size="22" readonly style="color:red; font-weight:bold"  disabled>
           </td>
         </tr>
       </table>
@@ -292,7 +301,7 @@
       <tr>
         <th>Medicine Name</th>
         <th>Dose</th>
-        <th>Days</th>
+        <th>Number of Days</th>
       </tr>
     </thead>
     <tbody>
@@ -347,7 +356,7 @@
 	    loadMedicine();
 	  });
 
-	  // â€” Disease side (as before) â€”
+	  // Ã¢â‚¬â€� Disease side (as before) Ã¢â‚¬â€�
 	  function loadDisease() {
 	    $.ajax({
 	      url: '/hosp1/jsps/getDisease.jsp',
@@ -381,7 +390,7 @@
 	    $('#todoItemsDisease').html(listHtml);
 	  }
 
-	  // â€” Medicine side (with robust fallback) â€”
+	  // Ã¢â‚¬â€� Medicine side (with robust fallback) Ã¢â‚¬â€�
 	  function loadMedicine() {
 	    $.ajax({
 	      url: '/hosp1/jsps/getMedicine.jsp',
@@ -455,7 +464,7 @@
         }
       });
     }  */
-     function addNewMedicine() {
+     function addNewMedicine1() {
     	  let newMedicine = $('#newMedicine').val().trim();
     	  if (!newMedicine) return alert("Please enter a Medicine.");
     	  $.post('/hosp1/jsps/addMedicine.jsp', { medicineName: newMedicine }, function (response) {
@@ -521,7 +530,7 @@
             method: 'GET',
             data: { 
                 ovcode: ovcode,
-                opdno: opdno // 🔹 send OPD number here
+                opdno: opdno // ðŸ”¹ send OPD number here
             },
             success: function (response) {
                 $('#medicineDetailsTable tbody').html(response);
