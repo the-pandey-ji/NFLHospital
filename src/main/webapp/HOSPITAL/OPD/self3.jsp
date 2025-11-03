@@ -99,12 +99,7 @@
 		                "SELECT NAME AS ENAME, DESG AS DESIGNATION, 'CISF' AS DEPTT " +
 		                "FROM PRODUCTION.CISFMAST WHERE EMPN = ?"
 		            );
-		           /*  else if ("CISF".equalsIgnoreCase(category)) {
-			            ps = con.prepareStatement(
-			                "SELECT NAME AS ENAME, DESG AS DESIGNATION, 'CISF' AS DEPTT, SEX, " +
-			                "FLOOR(MONTHS_BETWEEN(SYSDATE, BIRTHYEAR)/12) AS AGE " +
-			                "FROM PRODUCTION.CISFMAST WHERE EMPN = ?"
-			            ); */
+		       
 		        }
 		
 		        ps.setString(1, empn);
@@ -227,43 +222,6 @@
     }
 
 
-  /*   if ("getDependentDetails".equals(action)) {
-        String empn = request.getParameter("empn");
-        String name = request.getParameter("name");
-        String category = request.getParameter("category");
-        JSONObject json = new JSONObject();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            con = DBConnect.getConnection1();
-
-            if ("NFL".equalsIgnoreCase(category)) {
-                ps = con.prepareStatement("SELECT b.RELATIONNAME as relation, FLOOR(MONTHS_BETWEEN(SYSDATE, DOB)/12) AS age FROM PERSONNEL.DEPENDENTS a, PERSONNEL.dependentrelation b WHERE A.RELATION =B.RELATIONCODE AND a.empn= ? AND TRIM(a.dependentname) =?");
-            } else if ("CISF".equalsIgnoreCase(category)) {
-                ps = con.prepareStatement("SELECT RELATION, FLOOR(MONTHS_BETWEEN(SYSDATE, BIRTHYEAR)/12) AS age FROM PRODUCTION.CISFDEPENDENTS WHERE EMPN = ? AND TRIM(DNAME) = ?");
-            }
-
-            ps.setString(1, empn);
-            ps.setString(2, name);
-            rs = ps.executeQuery();
-            
-            if (rs.next()) {
-                json.put("relation", rs.getString("RELATION"));
-                json.put("age", rs.getString("age"));
-            }
-        } catch (Exception e) {
-            json.put("error", e.getMessage());
-        } finally {
-            if (rs != null) rs.close();
-            if (ps != null) ps.close();
-            if (con != null) con.close();
-        }
-        out.print(json.toString());
-        return;
-    } */
 %>
 
 <%@include file="../../allCss.jsp"%>
@@ -649,41 +607,6 @@
 
 
 
-
-
-  <!--   <div align="center">
-      <table border="1" cellpadding="0" cellspacing="0" width="47%">
-        <tr>
-          <td align="center">
-            E.Code:
-            <input type="text" name="ovcode" id="ovcode" size="9" style="color: red; font-weight: bold" onkeydown="if (event.key === 'Enter') getOV();" />
-            <input type="button" value="GET" onclick="getOV();" />
-          </td>
-        </tr>
-      </table>
-    </div>
-
-    <div align="center">
-      <table border="1" cellpadding="0" cellspacing="0" width="47%">
-        <tr>
-          <td align="center">Name</td>
-          <td align="center">Age</td>
-          <td align="center">Sex</td>
-        </tr>
-        <tr>
-          <td align="center">
-            <input type="text" name="ovname" id="ovname" size="24" readonly style="color:red; font-weight:bold" />
-          </td>
-          <td align="center">
-            <input type="text" name="ovage" id="ovage" size="19" readonly style="color:red; font-weight:bold" />
-          </td>
-          <td align="center">
-            <input type="text" name="ovsex" id="ovsex" size="22" readonly style="color:red; font-weight:bold" />
-          </td>
-        </tr>
-      </table>
-    </div> -->
-
 <div style="display: flex;
     gap: 100px; /* space between divs */
     justify-content: center;
@@ -870,11 +793,6 @@
       });
       $('#todoItemsMedicine').html(listHtml);
     }
-    
-    
-    
-    
-
     
     
     
