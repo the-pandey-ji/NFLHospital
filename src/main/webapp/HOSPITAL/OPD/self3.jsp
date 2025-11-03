@@ -96,10 +96,15 @@
 		            );
 		        } else if ("CISF".equalsIgnoreCase(category)) {
 		            ps = con.prepareStatement(
-		                "SELECT NAME AS ENAME, DESG AS DESIGNATION, 'CISF' AS DEPTT, SEX, " +
-		                "FLOOR(MONTHS_BETWEEN(SYSDATE, BIRTHYEAR)/12) AS AGE " +
+		                "SELECT NAME AS ENAME, DESG AS DESIGNATION, 'CISF' AS DEPTT " +
 		                "FROM PRODUCTION.CISFMAST WHERE EMPN = ?"
 		            );
+		           /*  else if ("CISF".equalsIgnoreCase(category)) {
+			            ps = con.prepareStatement(
+			                "SELECT NAME AS ENAME, DESG AS DESIGNATION, 'CISF' AS DEPTT, SEX, " +
+			                "FLOOR(MONTHS_BETWEEN(SYSDATE, BIRTHYEAR)/12) AS AGE " +
+			                "FROM PRODUCTION.CISFMAST WHERE EMPN = ?"
+			            ); */
 		        }
 		
 		        ps.setString(1, empn);
@@ -108,9 +113,9 @@
 		        if (rs.next()) {
 		            json.put("ename", rs.getString("ENAME"));
 		            json.put("designation", rs.getString("DESIGNATION"));
-		            json.put("dept", rs.getString("DEPTT"));
+		           /*  json.put("dept", rs.getString("DEPTT"));
 		            json.put("sex", rs.getString("SEX"));
-		            json.put("age", rs.getString("AGE"));
+		            json.put("age", rs.getString("AGE")); */
 		        }
 		    } catch (Exception e) {
 		        json.put("error", e.getMessage());
@@ -278,6 +283,8 @@
             // Clear all fields
             document.getElementById("empn").value = "";
             document.getElementById("ename").value = "";
+            document.getElementById("age").value = "";
+            document.getElementById("sex").value = "";
             document.getElementById("patientName").value = "";
             document.getElementById("patientRelation").value = "";
             document.getElementById("dependentName").innerHTML = "<option value=''>-- Select --</option>";
@@ -583,6 +590,10 @@
       <label><input type="radio" name="relationType" value="dependent" onclick="toggleDependents()"> Dependent</label>
     </td>
   </tr>
+  
+  
+  
+
 
   <!-- Dependent Details -->
  <tr id="dependentRow" style="display:none;">
@@ -593,11 +604,24 @@
     </select>
     <br>
     Relation: <input type="text" id="relation" name="relation" readonly style="color:red; font-weight:bold" /><br>
-    Age: <input type="text" id="age" name="age" readonly style="color:red; font-weight:bold" /><br>
-    Sex: <input type="text" id="sex" name="sex" readonly style="color:red; font-weight:bold" />
+    <!-- Age: <input type="text" id="age" name="age" readonly style="color:red; font-weight:bold" /><br>
+    Sex: <input type="text" id="sex" name="sex" readonly style="color:red; font-weight:bold" /> -->
   </td>
 </tr>
 
+  <!-- Self Details (Age and Sex for Self) -->
+<tr id="selfDetailsRow">
+  <td align="center">Age:</td>
+  <td align="center">
+    <input type="text" name="age" id="age" readonly style="color:red; font-weight:bold" />
+  </td>
+</tr>
+<tr>
+  <td align="center">Sex:</td>
+  <td align="center">
+    <input type="text" name="sex" id="sex" readonly style="color:red; font-weight:bold" />
+  </td>
+</tr>
  
 
   <!-- Buttons -->
