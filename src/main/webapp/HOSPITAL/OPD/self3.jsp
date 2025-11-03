@@ -186,13 +186,23 @@
                     "WHERE A.RELATION = B.RELATIONCODE AND a.empn = ? AND TRIM(a.dependentname) = ?"
                 );
             } else if ("CISF".equalsIgnoreCase(category)) {
-                ps = con.prepareStatement(
+               /*  ps = con.prepareStatement(
                     "SELECT RELATION, FLOOR(MONTHS_BETWEEN(SYSDATE, BIRTHYEAR)/12) AS AGE, SEX " +
                     "FROM PRODUCTION.CISFDEPENDENTS WHERE EMPN = ? AND TRIM(DNAME) = ?"
-                );
+                ); */
+                
+            	 ps = con.prepareStatement(
+            		        "SELECT RELATION, FLOOR(MONTHS_BETWEEN(SYSDATE, BIRTHYEAR)/12) AS AGE, SEX " +
+            		        "FROM PRODUCTION.CISFDEPENDENTS " +
+            		        "WHERE EMPN = ? " +
+            		        "AND TRIM(REPLACE(REPLACE(DNAME, CHR(10), ''), CHR(13), '')) = ?"
+            		    );
             }
 
             ps.setString(1, empn);
+            if (name != null) {
+                name = name.replaceAll("[\\r\\n]+", " ").trim();
+            }
             ps.setString(2, name);
             rs = ps.executeQuery();
 
