@@ -29,7 +29,7 @@
 
     String action = request.getParameter("action");
 
-    if ("getEmployee".equals(action)) {
+/*     if ("getEmployee".equals(action)) {
         String empn = request.getParameter("empn");
         String category = request.getParameter("category");
         
@@ -70,7 +70,60 @@
         }
         out.print(json.toString());
         return;
-    }
+    } */
+		if ("getEmployee".equals(action)) {
+		    String empn = request.getParameter("empn");
+		    String category = request.getParameter("category");
+		
+		    response.setContentType("application/json");
+		    response.setCharacterEncoding("UTF-8");
+		
+		    JSONObject json = new JSONObject();
+		    Connection con = null;
+		    PreparedStatement ps = null;
+		    ResultSet rs = null;
+		
+		    try {
+		        con = DBConnect.getConnection1();
+		
+		        if ("NFL".equalsIgnoreCase(category)) {
+		            ps = con.prepareStatement(
+		                "SELECT e.ENAME, e.DESIGNATION, d.DEPTT, e.SEX, " +
+		                "FLOOR(MONTHS_BETWEEN(SYSDATE, e.BIRTHDATE)/12) AS AGE " +
+		                "FROM PERSONNEL.EMPLOYEEMASTER e " +
+		                "JOIN PERSONNEL.DEPARTMENT d ON e.DEPTCODE = d.DEPTCODE " +
+		                "WHERE e.oldnewdata='N' AND e.EMPN = ?"
+		            );
+		        } else if ("CISF".equalsIgnoreCase(category)) {
+		            ps = con.prepareStatement(
+		                "SELECT NAME AS ENAME, DESG AS DESIGNATION, 'CISF' AS DEPTT, SEX, " +
+		                "FLOOR(MONTHS_BETWEEN(SYSDATE, BIRTHYEAR)/12) AS AGE " +
+		                "FROM PRODUCTION.CISFMAST WHERE EMPN = ?"
+		            );
+		        }
+		
+		        ps.setString(1, empn);
+		        rs = ps.executeQuery();
+		
+		        if (rs.next()) {
+		            json.put("ename", rs.getString("ENAME"));
+		            json.put("designation", rs.getString("DESIGNATION"));
+		            json.put("dept", rs.getString("DEPTT"));
+		            json.put("sex", rs.getString("SEX"));
+		            json.put("age", rs.getString("AGE"));
+		        }
+		    } catch (Exception e) {
+		        json.put("error", e.getMessage());
+		    } finally {
+		        if (rs != null) rs.close();
+		        if (ps != null) ps.close();
+		        if (con != null) con.close();
+		    }
+		
+		    out.print(json.toString());
+		    return;
+		}
+
 
     if ("getDependents".equals(action)) {
         String empn = request.getParameter("empn");
@@ -104,8 +157,59 @@
         }
         return;
     }
-
+    
     if ("getDependentDetails".equals(action)) {
+        String empn = request.getParameter("empn");
+        String name = request.getParameter("name");
+        String category = request.getParameter("category");
+        JSONObject json = new JSONObject();
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = DBConnect.getConnection1();
+
+            if ("NFL".equalsIgnoreCase(category)) {
+                ps = con.prepareStatement(
+                    "SELECT b.RELATIONNAME AS RELATION, FLOOR(MONTHS_BETWEEN(SYSDATE, DOB)/12) AS AGE, SEX " +
+                    "FROM PERSONNEL.DEPENDENTS a, PERSONNEL.DEPENDENTRELATION b " +
+                    "WHERE A.RELATION = B.RELATIONCODE AND a.empn = ? AND TRIM(a.dependentname) = ?"
+                );
+            } else if ("CISF".equalsIgnoreCase(category)) {
+                ps = con.prepareStatement(
+                    "SELECT RELATION, FLOOR(MONTHS_BETWEEN(SYSDATE, BIRTHYEAR)/12) AS AGE, SEX " +
+                    "FROM PRODUCTION.CISFDEPENDENTS WHERE EMPN = ? AND TRIM(DNAME) = ?"
+                );
+            }
+
+            ps.setString(1, empn);
+            ps.setString(2, name);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                json.put("relation", rs.getString("RELATION"));
+                json.put("age", rs.getString("AGE"));
+                json.put("sex", rs.getString("SEX"));
+            }
+        } catch (Exception e) {
+            json.put("error", e.getMessage());
+        } finally {
+            if (rs != null) rs.close();
+            if (ps != null) ps.close();
+            if (con != null) con.close();
+        }
+
+        out.print(json.toString());
+        return;
+    }
+
+
+  /*   if ("getDependentDetails".equals(action)) {
         String empn = request.getParameter("empn");
         String name = request.getParameter("name");
         String category = request.getParameter("category");
@@ -141,7 +245,7 @@
         }
         out.print(json.toString());
         return;
-    }
+    } */
 %>
 
 <%@include file="../../allCss.jsp"%>
@@ -237,11 +341,14 @@
                 return JSON.parse(txt);
             })
             .then(data => {
-                if (data.error) {
-                    alert("Error: " + data.error);
-                    return;
-                }
-                document.getElementById("ename").value = data.ename || "";
+			    if (data.error) {
+			        alert("Error: " + data.error);
+			        return;
+			    }
+			    document.getElementById("ename").value = data.ename || "";
+			    document.getElementById("relation").value = "SELF";
+			    document.getElementById("age").value = data.age || "";
+			    document.getElementById("sex").value = data.sex || "";
             })
             .catch(err => {
                 console.error("Fetch error:", err);
@@ -253,6 +360,9 @@
         	
         	document.getElementById("relation").value = "";
             document.getElementById("age").value = "";
+            document.getElementById("sex").value = "";
+            
+            
         	const category = document.querySelector('input[name="category"]:checked').value;
 
             const type = document.querySelector('input[name="relationType"]:checked').value;
@@ -293,7 +403,9 @@
                 .then(data => {
                     document.getElementById("relation").value = data.relation || "";
                     document.getElementById("age").value = data.age || "";
+                    document.getElementById("sex").value = data.sex || "";
                 });
+
         }
 
         function validateForm(event) {
@@ -439,6 +551,14 @@
       <input type="text" name="empn" id="empn" onblur="fetchEmployeeDetails(); toggleDependents();" />
     </td>
   </tr>
+  
+   <!-- Employee Name -->
+  <tr>
+    <td align="center">Employee Name:</td>
+    <td align="center">
+      <input type="text" name="ename" id="ename" required />
+    </td>
+  </tr>
 
   <!-- Patient Section (Others) -->
   <tr id="patientSection" style="display:none;">
@@ -465,25 +585,20 @@
   </tr>
 
   <!-- Dependent Details -->
-  <tr id="dependentRow" style="display:none;">
-    <td align="center">Dependent Name:</td>
-    <td align="center">
-      <select id="dependentName" name="dependentName" onchange="fetchDependentDetails()">
-        <option value="">-- Select --</option>
-      </select>
-      <br>
-      Relation: <input type="text" id="relation" name="relation" readonly style="color:red; font-weight:bold" /><br>
-      Age: <input type="text" id="age" name="age" readonly style="color:red; font-weight:bold" />
-    </td>
-  </tr>
+ <tr id="dependentRow" style="display:none;">
+  <td align="center">Dependent Name:</td>
+  <td align="center">
+    <select id="dependentName" name="dependentName" onchange="fetchDependentDetails()">
+      <option value="">-- Select --</option>
+    </select>
+    <br>
+    Relation: <input type="text" id="relation" name="relation" readonly style="color:red; font-weight:bold" /><br>
+    Age: <input type="text" id="age" name="age" readonly style="color:red; font-weight:bold" /><br>
+    Sex: <input type="text" id="sex" name="sex" readonly style="color:red; font-weight:bold" />
+  </td>
+</tr>
 
-  <!-- Employee Name -->
-  <tr>
-    <td align="center">Employee Name:</td>
-    <td align="center">
-      <input type="text" name="ename" id="ename" required />
-    </td>
-  </tr>
+ 
 
   <!-- Buttons -->
   <tr>
