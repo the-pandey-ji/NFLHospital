@@ -113,9 +113,12 @@
 		        if (rs.next()) {
 		            json.put("ename", rs.getString("ENAME"));
 		            json.put("designation", rs.getString("DESIGNATION"));
-		           /*  json.put("dept", rs.getString("DEPTT"));
-		            json.put("sex", rs.getString("SEX"));
-		            json.put("age", rs.getString("AGE")); */
+                       
+		          /*   json.put("dept", rs.getString("DEPTT")); */
+		             if ("NFL".equalsIgnoreCase(category)) {
+		                json.put("sex", rs.getString("SEX"));
+		                json.put("age", rs.getString("AGE"));
+		            }
 		        }
 		    } catch (Exception e) {
 		        json.put("error", e.getMessage());
