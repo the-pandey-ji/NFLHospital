@@ -508,7 +508,7 @@
 <%-- <%@include file="/navbar.jsp" %> --%>
     
 
-<form method="post" action="/hosp1/jsps/savePrescription.jsp">
+<form method="post" action="/hosp1/jsps/savePrescription3.jsp">
 
 
 
@@ -584,13 +584,13 @@
 <tr id="selfDetailsRow">
   <td align="center">Age:</td>
   <td align="center">
-    <input type="text" name="age" id="age" readonly style="color:red; font-weight:bold" />
+    <input type="text" name="age" id="age"  style="color:red; font-weight:bold" />
   </td>
 </tr>
 <tr>
   <td align="center">Sex:</td>
   <td align="center">
-    <input type="text" name="sex" id="sex" readonly style="color:red; font-weight:bold" />
+    <input type="text" name="sex" id="sex"  style="color:red; font-weight:bold" />
   </td>
 </tr>
  
@@ -598,7 +598,7 @@
   <!-- Buttons -->
   <tr>
     <td colspan="2" align="center">
-      <input type="submit" value="Get Details" />
+    <!--   <input type="submit" value="Get Details" /> -->
       <input type="reset" value="Reset" />
     </td>
   </tr>
@@ -671,7 +671,7 @@
     </div>
   </form>
 
-  <script src="/hosp1/javascript/getOV.js"></script>
+  <!-- <script src="/hosp1/javascript/getOV.js"></script> -->
   <script>
     $(document).ready(function () {
       loadDisease();
@@ -798,20 +798,21 @@
     
     
     function saveTempPrescription() {
-    	  let ovcode = $('#ovcode').val().trim();
+    	  let empn = $('#empn').val().trim();
+    	  let category = $('input[name="category"]:checked').val();
     	  let diseases = $('#diseaseSelect').val();
     	  let medicines = $('#medicineSelect').val();
 
-    	  if (!ovcode) {
+    	  if (!empn && category !== "Others") {
     	    alert("Please enter Employee Code before saving.");
     	    return;
     	  }
 
     	  $.ajax({
-    	    url: '/hosp1/jsps/saveTempPrescription.jsp',
+    	    url: '/hosp1/jsps/saveTempPrescription3.jsp',
     	    method: 'POST',
     	    data: {
-    	      ovcode: ovcode,
+    	      empn: empn,
     	      diseaseSelect: diseases,
     	      medicineSelect: medicines
     	    },
@@ -830,16 +831,18 @@
     
     
     function generateMedicineDetailsTable() {
-    	  let empn = $('#ovcode').val().trim();
-    	  if (!empn) {
+    	
+    	  let empn = $('#empn').val().trim()!="" ? $('#empn').val().trim() : 1;
+    	  let category = $('input[name="category"]:checked').val();
+    	  if (!empn && category !== "Others") {
     	    alert("Please enter Employee Code first.");
     	    return;
     	  }
 
     	  $.ajax({
-    	    url: '/hosp1/jsps/getTempMedicine.jsp',
+    	    url: '/hosp1/jsps/getTempMedicine3.jsp',
     	    method: 'GET',
-    	    data: { ovcode: empn },
+    	    data: { empn: empn },
     	    success: function(html) {
     	      if (!html.trim()) {
     	        alert("No medicines found in temp prescription.");
@@ -858,12 +861,14 @@
 
     function submitFinalPrescription() {
     	
-    	  let empn = $('#ovcode').val();
+    	  let empn = $('#empn').val();
+    	  let category = $('input[name="category"]:checked').val();
     	  
-    	  if (!empn) {
-    	    alert("Employee Code is missing.");
+    	  if (category !== "Others" && !empn) {
+    	    alert("Please enter Employee Code before submitting.");
     	    return;
     	  }
+    	 
     	  /*
      	  // Validate that at least one disease is selected	
     	  alert("Submitting prescription for Employee Code: " + empn);
@@ -881,7 +886,7 @@
 
 				  // Gather medicine data
 				  let data = {
-				    ovcode: empn,
+				    empn: empn,
 				    notes: notes
 				  };
 
