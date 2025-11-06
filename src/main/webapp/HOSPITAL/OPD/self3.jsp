@@ -492,6 +492,7 @@
                 if (cells[2]) cells[2].style.display = "none"; // patientRelation
                 if (relationTypeRow) relationTypeRow.style.display = "";
                 if (relationType === "self" && cells[3]) cells[3].style.display = "none"; // dependentName
+                if (relationType === "self") fetchEmployeeDetails();
             }
             else if (category === "Others") {
                 if (relationTypeRow) relationTypeRow.style.display = "none";
@@ -624,7 +625,8 @@
   <!-- Second row: Employee No -->
   <tr>
     <td colspan="7" align="center">
-      Employee No: <input type="text" name="empn" id="empn" onblur="fetchEmployeeDetails(); toggleDependents();" />
+      Employee No: <input type="text" name="empn" id="empn" onblur="fetchEmployeeDetails(); toggleDependents();" 
+      onkeydown="if(event.keyCode===13){fetchEmployeeDetails(); toggleDependents(); return false;}"/>
     </td>
   </tr>
   <!-- Third row: Patient Type -->
