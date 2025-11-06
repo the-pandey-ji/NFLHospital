@@ -39,7 +39,7 @@ String patientRelation = request.getParameter("patientRelation")!=null ? request
 	}
  */
 	 
-	  if (!"Others".equalsIgnoreCase(category)) {
+	 
 		    if (empnParam != null && !empnParam.trim().isEmpty()) {
 		        try {
 		            empn = Integer.parseInt(empnParam.trim());
@@ -49,7 +49,7 @@ String patientRelation = request.getParameter("patientRelation")!=null ? request
 		    } else {
 		        empn = 0; // blank or missing -> default 0
 		    }
-		}
+		
 	 
 	  
 
