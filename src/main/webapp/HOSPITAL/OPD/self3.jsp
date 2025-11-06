@@ -29,48 +29,7 @@
 
     String action = request.getParameter("action");
 
-/*     if ("getEmployee".equals(action)) {
-        String empn = request.getParameter("empn");
-        String category = request.getParameter("category");
-        
-        JSONObject json = new JSONObject();
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
 
-        try {
-            con = DBConnect.getConnection1();
-
-            if ("NFL".equalsIgnoreCase(category)) {
-                ps = con.prepareStatement("SELECT e.ENAME, e.DESIGNATION, d.DEPTT FROM PERSONNEL.EMPLOYEEMASTER e JOIN Personnel.DEPARTMENT d ON e.DEPTCODE = d.DEPTCODE WHERE e.oldnewdata='N' and e.EMPN = ?");
-            } else if ("CISF".equalsIgnoreCase(category)) {
-                System.out.println("Fetching CISF employee details for EMPN: " + empn);
-                ps = con.prepareStatement("SELECT NAME AS ENAME, DESG AS DESIGNATION FROM PRODUCTION.CISFMAST WHERE EMPN = ?");
-            }
-
-            ps.setString(1, empn);
-            rs = ps.executeQuery();
-            
-            if (rs.next()) {
-                json.put("ename", rs.getString("ENAME"));
-                json.put("designation", rs.getString("DESIGNATION"));
-                if ("NFL".equalsIgnoreCase(category)){
-                    json.put("dept", rs.getString("DEPTT") != null ? rs.getString("DEPTT") : "");
-                }
-                else{
-                    json.put("dept", "CISF");
-                }
-            }
-        } catch (Exception e) {
-            json.put("error", e.getMessage());
-        } finally {
-            if (rs != null) rs.close();
-            if (ps != null) ps.close();
-            if (con != null) con.close();
-        }
-        out.print(json.toString());
-        return;
-    } */
 		if ("getEmployee".equals(action)) {
 		    String empn = request.getParameter("empn");
 		    String category = request.getParameter("category");
@@ -248,6 +207,7 @@
 
  <script>
         function onCategoryChange() {
+        	
         	const category = document.querySelector('input[name="category"]:checked').value;
             const isOthers = category === "Others";
             
@@ -258,8 +218,15 @@
             document.getElementById("sex").value = "";
             document.getElementById("patientName").value = "";
             document.getElementById("patientRelation").value = "";
+            document.getElementById("relation").value = "";
+
+            document.querySelector('input[name="relationType"][value="self"]').checked = true;
+
             document.getElementById("dependentName").innerHTML = "<option value=''>-- Select --</option>";
             document.getElementById("dependentRow").style.display = "none";
+            
+            
+        
             
          // Toggle required attributes dynamically
             document.getElementById("patientName").required = isOthers;
@@ -295,6 +262,9 @@
                 
             }
             
+
+        	updateFieldVisibility(); 
+        	
             
         }
 
@@ -363,6 +333,10 @@
             } else {
                 dependentRow.style.display = "none";
             }
+            
+
+        	updateFieldVisibility(); 
+        	
         }
 
         function fetchDependentDetails() {
@@ -387,7 +361,7 @@
         }
 
         function validateForm(event) {
-            const category = document.getElementById("category").value;
+        	const category = document.querySelector('input[name="category"]:checked').value;
             const ename = document.getElementById("ename").value.trim();
            
 
@@ -411,6 +385,51 @@
 
             return true;
         }
+        
+
+
+        function updateFieldVisibility() {
+            const category = document.querySelector('input[name="category"]:checked').value;
+            const relationType = document.querySelector('input[name="relationType"]:checked')?.value;
+
+            // Locate elements
+            const relationTypeRow = document.querySelector('input[name="relationType"]')?.closest('tr');
+            const tableRow = document.querySelector('form table tr:nth-child(4)');
+            if (!tableRow) return;
+
+            const cells = tableRow.children;
+
+            // Reset all columns visible by default
+            for (let i = 0; i < cells.length; i++) {
+                cells[i].style.display = "";
+            }
+
+            if (category === "NFL" || category === "CISF") {
+                // Hide patientName (col 2) and patientRelation (col 3)
+                if (cells[1]) cells[1].style.display = "none";
+                if (cells[2]) cells[2].style.display = "none";
+
+                // Show the “Is Patient” row
+                if (relationTypeRow) relationTypeRow.style.display = "";
+
+                // Hide dependentName (col 4) when "Self"
+                if (relationType === "self" && cells[3]) cells[3].style.display = "none";
+            }
+            else if (category === "Others") {
+                // Hide “Is Patient” (relationType) row completely
+                if (relationTypeRow) relationTypeRow.style.display = "none";
+
+                // Hide dependentName (col 4) and relation (col 5)
+                if (cells[3]) cells[3].style.display = "none";
+                if (cells[4]) cells[4].style.display = "none";
+
+                // Keep patientName & patientRelation visible for Others
+            }
+        }
+
+
+
+        
     </script>
    
 </head>
@@ -512,8 +531,77 @@
 
 
 
-	    <table border="1" cellpadding="5" cellspacing="0" width="60%" align="center">
-  <!-- Category Selection -->
+
+
+<table border="1" cellpadding="5" cellspacing="0" width="80%" align="center">
+  <!-- First row: Category Selection -->
+  <tr>
+    <td colspan="7" align="center">
+      <label><input type="radio" name="category" value="NFL" checked onclick="onCategoryChange()"> NFL</label>
+      <label><input type="radio" name="category" value="CISF" onclick="onCategoryChange()"> CISF</label>
+      <label><input type="radio" name="category" value="Others" onclick="onCategoryChange()"> OTHERS</label>
+    </td>
+  </tr>
+  <!-- Second row: Employee No -->
+  <tr>
+    <td colspan="7" align="center">
+      Employee No: <input type="text" name="empn" id="empn" onblur="fetchEmployeeDetails(); toggleDependents();" />
+    </td>
+  </tr>
+  <!-- Third row: Patient Type -->
+  <tr>
+    <td colspan="7" align="center">
+      Is Patient:
+      <label><input type="radio" name="relationType" value="self" checked onclick="toggleDependents()"> Self</label>
+      <label><input type="radio" name="relationType" value="dependent" onclick="toggleDependents()"> Dependent</label>
+    </td>
+  </tr>
+  <!-- Fourth row: All other fields horizontally -->
+  <tr>
+    <td align="center">Employee Name:<br>
+      <input type="text" name="ename" id="ename" required />
+    </td>
+    <td align="center">Patient Name:<br>
+      <input type="text" name="patientName" id="patientName" />
+    </td>
+    <td align="center">Relation:<br>
+      <input type="text" name="patientRelation" id="patientRelation" />
+    </td>
+    <td align="center">Dependent Name:<br>
+      <select id="dependentName" name="dependentName" onchange="fetchDependentDetails()">
+        <option value="">-- Select --</option>
+      </select>
+    </td>
+    <td align="center">Relation:<br>
+      <input type="text" id="relation" name="relation" readonly style="color:red; font-weight:bold" />
+    </td>
+    <td align="center">Age:<br>
+      <input type="text" name="age" id="age" style="color:red; font-weight:bold" />
+    </td>
+    <td align="center">Sex:<br>
+      <input type="text" name="sex" id="sex" style="color:red; font-weight:bold" />
+    </td>
+  </tr>
+  <!-- Buttons -->
+  <tr>
+    <td colspan="7" align="center">
+      <input type="reset" value="Reset" />
+    </td>
+  </tr>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+	   <!--  <table border="1" cellpadding="5" cellspacing="0" width="60%" align="center">
+  Category Selection
   <tr>
     <td colspan="2" align="center">
       <label><input type="radio" name="category" value="NFL" checked onclick="onCategoryChange()"> NFL</label>
@@ -522,7 +610,7 @@
     </td>
   </tr>
 
-  <!-- Employee Number -->
+  Employee Number
   <tr>
     <td align="center">Employee No:</td>
     <td align="center">
@@ -530,7 +618,7 @@
     </td>
   </tr>
   
-   <!-- Employee Name -->
+   Employee Name
   <tr>
     <td align="center">Employee Name:</td>
     <td align="center">
@@ -538,7 +626,7 @@
     </td>
   </tr>
 
-  <!-- Patient Section (Others) -->
+  Patient Section (Others)
   <tr id="patientSection" style="display:none;">
     <td align="center">Patient Name:</td>
     <td align="center">
@@ -553,7 +641,7 @@
     </td>
   </tr>
 
-  <!-- Self / Dependent Section -->
+  Self / Dependent Section
   <tr id="selfDependentSection">
     <td align="center">Is Patient:</td>
     <td align="center">
@@ -566,7 +654,7 @@
   
 
 
-  <!-- Dependent Details -->
+  Dependent Details
  <tr id="dependentRow" style="display:none;">
   <td align="center">Dependent Name:</td>
   <td align="center">
@@ -575,12 +663,12 @@
     </select>
     <br>
     Relation: <input type="text" id="relation" name="relation" readonly style="color:red; font-weight:bold" /><br>
-    <!-- Age: <input type="text" id="age" name="age" readonly style="color:red; font-weight:bold" /><br>
-    Sex: <input type="text" id="sex" name="sex" readonly style="color:red; font-weight:bold" /> -->
+    Age: <input type="text" id="age" name="age" readonly style="color:red; font-weight:bold" /><br>
+    Sex: <input type="text" id="sex" name="sex" readonly style="color:red; font-weight:bold" />
   </td>
 </tr>
 
-  <!-- Self Details (Age and Sex for Self) -->
+  Self Details (Age and Sex for Self)
 <tr id="selfDetailsRow">
   <td align="center">Age:</td>
   <td align="center">
@@ -595,15 +683,15 @@
 </tr>
  
 
-  <!-- Buttons -->
+  Buttons
   <tr>
     <td colspan="2" align="center">
-    <!--   <input type="submit" value="Get Details" /> -->
+      <input type="submit" value="Get Details" />
       <input type="reset" value="Reset" />
     </td>
   </tr>
 </table>
-
+ -->
 
 
 
@@ -674,8 +762,10 @@
   <!-- <script src="/hosp1/javascript/getOV.js"></script> -->
   <script>
     $(document).ready(function () {
+    	
       loadDisease();
       loadMedicine();
+      updateFieldVisibility();
     });
 
     function loadDisease() {
