@@ -187,9 +187,10 @@ System.out.println("valid Medicine Codes: " + validMedCodes.isEmpty()); */
 
 	int days = 0;
 	try {
+		if (daysStr != null)
 		days = Integer.parseInt(daysStr.trim());
 	} catch (NumberFormatException e) {
-		continue; // skip this medicine if days are invalid
+		; // Ignore and keep days as 0
 	}
 
 	// Now insert into the PRESCRIPTION table
