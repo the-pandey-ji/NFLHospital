@@ -77,7 +77,7 @@ String patientRelation = request.getParameter("patientRelation")!=null ? request
 		stmt.close();
 
 		// Get patient details
-		String pname = "", name = "", typ = "N";
+		String pname = "", typ = "N";
 
 		System.out.println("Category: " + category);
 		System.out.println("empn: " + empn);
@@ -89,150 +89,178 @@ String patientRelation = request.getParameter("patientRelation")!=null ? request
 		System.out.println("relation: " + relation);
 		System.out.println("patientName: " + patientName);
 		System.out.println("patientRelation: " + patientRelation);
-
-		// Insert into OPD
-		/* String opdSql = "INSERT INTO OPD (SRNO, PATIENTNAME, RELATION, AGE, OPDDATE, SEX, EMPN, TYP, EMPNAME, doctor) "
-		+ "VALUES (?, ?, ?, ?, SYSDATE, ?, ?, ?, ? , ?)";
-		psOpd = conn.prepareStatement(opdSql);
-		psOpd.setInt(1, opdId);
-		psOpd.setString(2, pname);
-		psOpd.setString(3, relation);
-		psOpd.setString(4, age);
-		psOpd.setString(5, sex);
-		psOpd.setInt(6, empn);
-		psOpd.setString(7, typ);
-		psOpd.setString(8, name);
-		psOpd.setString(9, user4.getUsername());
-		psOpd.executeUpdate();
-		psOpd.close(); */
-
-		// Step 1: Get all medicineCodes from the request
-		String[] medCodes = request.getParameterValues("medicineCodes");
-
-		/* 		System.out.println("Raw medicineCodes: " + Arrays.toString(medCodes));
 		
-		List<String> validMedCodes = new ArrayList<String>();
-		if (medCodes != null) {
-		    for (String code : medCodes) {
-		System.out.println("Checking code: " + code + " | isNull: " + (code == null));
-		if (code != null && !code.trim().isEmpty() && !"null".equalsIgnoreCase(code.trim())) {
-		    validMedCodes.add(code.trim());
-		}
-		 else {
-		    System.out.println("Skipping invalid code: " + code);
-		}
-		    }
-		}
-		
-		System.out.println("Valid Medicine Codes: " + validMedCodes);
-		
-		System.out.println("Medicine Codes: " + Arrays.toString(medCodes));
-		System.out.println("medicine Codes length: " + (medCodes != null ? medCodes.length : 0));
-		System.out.println("valid Medicine Codes: " + validMedCodes);
-		System.out.println("valid Medicine Codes: " + validMedCodes.isEmpty()); */
-
-		if (medCodes == null || medCodes.length == 0 || (medCodes[0] != null && medCodes[0].equalsIgnoreCase("null"))) {
-	System.out.println("No medicines selected, saving only diseases.");
-	// Save only diseases (no medicines)
-	/*  PreparedStatement psDisease = conn.prepareStatement(
-	     "INSERT INTO HOSPITAL.PRESCRIPTION (OPD_ID, EMPN, DISEASECODE, NOTES) VALUES (?, ?, ?, ?)"
-	 );
-	 psDisease.setInt(1, opdId);
-	 psDisease.setInt(2, empn);
-	 psDisease.setString(3, diseaseCodeList);
-	 psDisease.setString(4, notes);
-	 psDisease.executeUpdate();
-	 psDisease.close(); */
-
-	out.println("Prescription (disease only) saved successfully.");
-
-	System.out.println("disease Codes2: " + Arrays.toString(diseaseCodes));
-	response.sendRedirect(response.encodeRedirectURL("printSelfOPD.jsp?opdId=" + opdId));
-	return;
+		if("NFL".equalsIgnoreCase(category)) {
+			typ = "N";
+			if("self".equalsIgnoreCase(relationType)) {
+			pname = ename;
+			relation = "SELF";
+			} else {
+			pname = dependentName;
+			// relation is already set from request
+			}
+	 
+		} else if ("CISF".equalsIgnoreCase(category)) {
+			typ = "C";
+			if("self".equalsIgnoreCase(relationType)) {
+				pname = ename;
+				relation = "SELF";
+				} else {
+				pname = dependentName;
+				// relation is already set from request
+				}
+		} else if ("Others".equalsIgnoreCase(category)) {
+			typ = "O";
+			pname = patientName;
+			relation = patientRelation;
+		} else {
+			out.println("Invalid category.");
 		}
 
-		for (int i = 0; i < medCodes.length; i++) {
-	String medCode = medCodes[i];
-	/* if (medCode == null || medCode.trim().isEmpty() || medCode.trim().equalsIgnoreCase("null")) {
-	    // skip invalid med code
-	    continue;
-	    } */
-	// Fetch details for this medicine
-	//temp="dosage_" + medCode;
-	String dosage = request.getParameter("dosage_" + medCode);
-	if (dosage == null || dosage.isEmpty())
-		dosage = " ";
+	// Insert into OPD
+	 String opdSql = "INSERT INTO OPD (SRNO, PATIENTNAME, RELATION, AGE, OPDDATE, SEX, EMPN, TYP, EMPNAME, doctor) "
+	+ "VALUES (?, ?, ?, ?, SYSDATE, ?, ?, ?, ? , ?)";
+	psOpd = conn.prepareStatement(opdSql);
+	psOpd.setInt(1, opdId);
+	psOpd.setString(2, pname);
+	psOpd.setString(3, relation);
+	psOpd.setString(4, age);
+	psOpd.setString(5, sex);
+	psOpd.setInt(6, empn);
+	psOpd.setString(7, typ);
+	psOpd.setString(8, ename);
+	psOpd.setString(9, user4.getUsername());
+	psOpd.executeUpdate();
+	psOpd.close(); 
 
-	// Similarly for timing and days:
-	String timing = request.getParameter("timing_" + medCode);
-	if (timing == null || timing.isEmpty())
-		timing = " ";
+	// Step 1: Get all medicineCodes from the request
+	String[] medCodes = request.getParameterValues("medicineCodes");
 
-	String daysStr = request.getParameter("days_" + medCode);
-	if (daysStr == null || daysStr.trim().isEmpty()) {
-		daysStr = "0"; // Default to 0 days if not provided
-		/* out.println("Error: Number of days is required for medicine code: " + medCode);
-		return; */ // Stop execution
+	/* 		System.out.println("Raw medicineCodes: " + Arrays.toString(medCodes));
+	
+	List<String> validMedCodes = new ArrayList<String>();
+	if (medCodes != null) {
+	    for (String code : medCodes) {
+	System.out.println("Checking code: " + code + " | isNull: " + (code == null));
+	if (code != null && !code.trim().isEmpty() && !"null".equalsIgnoreCase(code.trim())) {
+	    validMedCodes.add(code.trim());
 	}
-
-	//System.out.println("Medicine:" + medCode +"'"+ ", Dosage:" + dosage +"'"+ ", Timing:" +"'"+ timing + ", Days: " + daysStr);
-
-	/*  if (dosage == null || frequency == null || timing == null || daysStr == null) {
-	   continue; // skip if any detail is missing
-	 } */
-
-	int days = 0;
-	try {
-		days = Integer.parseInt(daysStr.trim());
-	} catch (NumberFormatException e) {
-		continue; // skip this medicine if days are invalid
+	 else {
+	    System.out.println("Skipping invalid code: " + code);
 	}
+	    }
+	}
+	
+	System.out.println("Valid Medicine Codes: " + validMedCodes);
+	
+	System.out.println("Medicine Codes: " + Arrays.toString(medCodes));
+	System.out.println("medicine Codes length: " + (medCodes != null ? medCodes.length : 0));
+	System.out.println("valid Medicine Codes: " + validMedCodes);
+	System.out.println("valid Medicine Codes: " + validMedCodes.isEmpty()); */
 
-	// Now insert into the PRESCRIPTION table
-	ps = conn.prepareStatement(
-			"INSERT INTO HOSPITAL.PRESCRIPTION (OPD_ID,EMPN,DISEASECODE, MEDICINECODE, DOSAGE, TIMING, DAYS, NOTES) VALUES (?,?,?, ?, ?, ?, ?, ?)");
-	/*       ps.setInt(1, empn);
-	      ps.setString(2, medCode);
-	      ps.setString(3, dosage);
-	      ps.setString(4, frequency);
-	      ps.setString(5, timing);
-	      ps.setInt(6, days);
-	      ps.setString(7, notes);
-	      ps.executeUpdate();
-	      ps.close(); */
-	ps.setInt(1, opdId);
-	ps.setInt(2, empn);
-	ps.setString(3, diseaseCodeList);
-	ps.setString(4, medCode);
-	ps.setString(5, dosage);
+	if (medCodes == null || medCodes.length == 0 || (medCodes[0] != null && medCodes[0].equalsIgnoreCase("null"))) {
+		System.out.println("No medicines selected, saving only diseases.");
+		// Save only diseases (no medicines)
+		  PreparedStatement psDisease = conn.prepareStatement(
+		     "INSERT INTO HOSPITAL.PRESCRIPTION (OPD_ID, EMPN, DISEASECODE, NOTES) VALUES (?, ?, ?, ?)"
+		 );
+		 psDisease.setInt(1, opdId);
+		 psDisease.setInt(2, empn);
+		 psDisease.setString(3, diseaseCodeList);
+		 psDisease.setString(4, notes);
+		 psDisease.executeUpdate();
+		 psDisease.close(); 
 
-	ps.setString(6, timing);
-	ps.setInt(7, days);
-	ps.setString(8, notes);
-	ps.executeUpdate();
-	/*  ps.addBatch(); */
-	ps.close();
-		}
+		out.println("Prescription (disease only) saved successfully.");
 
-		out.println("Prescription saved successfully.");
-
+		System.out.println("disease Codes2: " + Arrays.toString(diseaseCodes));
 		response.sendRedirect(response.encodeRedirectURL("printSelfOPD.jsp?opdId=" + opdId));
+		return;
+	}
 
-	} catch (Exception e) {
-		out.println("Error saving prescription: " + e.getMessage());
-		e.printStackTrace();
-	} finally {
-		if (ps != null)
-	try {
+	for (int i = 0; i < medCodes.length; i++) {
+		String medCode = medCodes[i];
+		/* if (medCode == null || medCode.trim().isEmpty() || medCode.trim().equalsIgnoreCase("null")) {
+		    // skip invalid med code
+		    continue;
+		    } */
+		// Fetch details for this medicine
+		//temp="dosage_" + medCode;
+		String dosage = request.getParameter("dosage_" + medCode);
+		if (dosage == null || dosage.isEmpty())
+	dosage = " ";
+
+		// Similarly for timing and days:
+		String timing = request.getParameter("timing_" + medCode);
+		if (timing == null || timing.isEmpty())
+	timing = " ";
+
+		String daysStr = request.getParameter("days_" + medCode);
+		if (daysStr == null || daysStr.trim().isEmpty()) {
+	daysStr = "0"; // Default to 0 days if not provided
+	/* out.println("Error: Number of days is required for medicine code: " + medCode);
+	return; */ // Stop execution
+		}
+
+		//System.out.println("Medicine:" + medCode +"'"+ ", Dosage:" + dosage +"'"+ ", Timing:" +"'"+ timing + ", Days: " + daysStr);
+
+		/*  if (dosage == null || frequency == null || timing == null || daysStr == null) {
+		   continue; // skip if any detail is missing
+		 } */
+
+		int days = 0;
+		try {
+			if (daysStr != null)
+	days = Integer.parseInt(daysStr.trim());
+		} catch (NumberFormatException e) {
+		; // default to 0 if parsing fails
+		}
+
+		// Now insert into the PRESCRIPTION table
+		ps = conn.prepareStatement(
+		"INSERT INTO HOSPITAL.PRESCRIPTION (OPD_ID,EMPN,DISEASECODE, MEDICINECODE, DOSAGE, TIMING, DAYS, NOTES) VALUES (?,?,?, ?, ?, ?, ?, ?)");
+		/*       ps.setInt(1, empn);
+		      ps.setString(2, medCode);
+		      ps.setString(3, dosage);
+		      ps.setString(4, frequency);
+		      ps.setString(5, timing);
+		      ps.setInt(6, days);
+		      ps.setString(7, notes);
+		      ps.executeUpdate();
+		      ps.close(); */
+		ps.setInt(1, opdId);
+		ps.setInt(2, empn);
+		ps.setString(3, diseaseCodeList);
+		ps.setString(4, medCode);
+		ps.setString(5, dosage);
+
+		ps.setString(6, timing);
+		ps.setInt(7, days);
+		ps.setString(8, notes);
+		ps.executeUpdate();
+		/*  ps.addBatch(); */
 		ps.close();
-	} catch (Exception e) {
 	}
-		if (conn != null)
-	try {
-		conn.close();
-	} catch (Exception e) {
-	}
-	}
+
+	out.println("Prescription saved successfully.");
+
+	response.sendRedirect(response.encodeRedirectURL("printSelfOPD.jsp?opdId=" + opdId));
+
+} catch (Exception e) {
+	out.println("Error saving prescription: " + e.getMessage());
+	e.printStackTrace();
+} finally {
+	if (ps != null)
+		try {
+	ps.close();
+		} catch (Exception e) {
+		}
+	if (conn != null)
+		try {
+	conn.close();
+		} catch (Exception e) {
+		}
+}
 %>
 
 
