@@ -50,10 +50,7 @@ String patientRelation = request.getParameter("patientRelation")!=null ? request
 		        empn = 0; // blank or missing -> default 0
 		    }
 		}
-	  else {
-		  empn = 0; // for others category
-		  
-	  }
+	 
 	  
 
 	Connection conn = null, con1 = null;

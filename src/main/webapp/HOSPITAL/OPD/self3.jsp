@@ -208,44 +208,57 @@
  <script>
  
  function onCategoryChange() {
-	    const category = document.querySelector('input[name="category"]:checked').value;
+	    const categoryRadio = document.querySelector('input[name="category"]:checked');
+	    if (!categoryRadio) return; // Safety guard
+
+	    const category = categoryRadio.value;
 	    const isOthers = category === "Others";
 
 	    // ✅ Reset all text fields
-	    document.querySelectorAll('input[type="text"]').forEach(input => {
-	        input.value = "";
-	    });
+	    document.querySelectorAll('input[type="text"]').forEach(input => input.value = "");
 
-	    // ✅ Reset dropdowns
-	    document.getElementById("dependentName").innerHTML = "<option value=''>-- Select --</option>";
+	    // ✅ Reset dependent dropdown
+	    const dependentSelect = document.getElementById("dependentName");
+	    if (dependentSelect) dependentSelect.innerHTML = "<option value=''>-- Select --</option>";
 
-	    // ✅ Always hide dependent row
+	    // ✅ Hide dependent row immediately
 	    const dependentRow = document.getElementById("dependentRow");
 	    if (dependentRow) dependentRow.style.display = "none";
 
-	    // ✅ Reset "Is Patient" radio to Self
+	    // ✅ Reset "Is Patient" to Self
 	    const selfRadio = document.querySelector('input[name="relationType"][value="self"]');
 	    if (selfRadio) selfRadio.checked = true;
 
-	    // ✅ Adjust readOnly and required attributes
-	    document.getElementById("ename").readOnly = !isOthers;
-	    document.getElementById("patientName").required = isOthers;
-	    document.getElementById("patientRelation").required = isOthers;
+	    // ✅ Adjust name and relation fields
+	    const ename = document.getElementById("ename");
+	    const patientName = document.getElementById("patientName");
+	    const patientRelation = document.getElementById("patientRelation");
+	    if (ename) ename.readOnly = !isOthers;
+	    if (patientName) patientName.required = isOthers;
+	    if (patientRelation) patientRelation.required = isOthers;
 
 	    // ✅ Handle Employee No field
 	    const empnField = document.getElementById("empn");
-	    const empnLabel = empnField.parentElement.previousElementSibling;
-	    if (isOthers) {
-	        empnField.removeAttribute("required");
-	        empnField.readOnly = false;
-	        empnLabel.textContent = "Employee No (Optional):";
-	    } else {
-	        empnField.setAttribute("required", "required");
-	        empnLabel.textContent = "Employee No:";
+	    if (empnField) {
+	        const empnLabel = empnField.parentElement?.previousElementSibling;
+	        if (isOthers) {
+	            empnField.removeAttribute("required");
+	            empnField.readOnly = false;
+	            if (empnLabel) empnLabel.textContent = "Employee No (Optional):";
+	        } else {
+	            empnField.setAttribute("required", "required");
+	            if (empnLabel) empnLabel.textContent = "Employee No:";
+	        }
 	    }
 
-	    // ✅ Re-apply correct field visibility rules
+	    // ✅ Re-apply field visibility rules
 	    updateFieldVisibility();
+
+	    // ✅ Ensure dependent row stays hidden for Others
+	    if (isOthers && dependentRow) dependentRow.style.display = "none";
+
+	    // ✅ Move focus to Employee No field
+	    if (empnField) setTimeout(() => empnField.focus(), 50);
 	}
 
 
@@ -657,10 +670,10 @@
       <input type="text" id="relation" name="relation" readonly style="color:red; font-weight:bold" />
     </td>
     <td align="center">Age:<br>
-      <input type="text" name="age" id="age" style="color:red; font-weight:bold" />
+      <input type="text" name="age" id="age" style="color:red; font-weight:bold" maxlength="10"/>
     </td>
     <td align="center">Sex:<br>
-      <input type="text" name="sex" id="sex" style="color:red; font-weight:bold" />
+      <input type="text" name="sex" id="sex" style="color:red; font-weight:bold" maxlength="1" />
     </td>
   </tr>
   <!-- Buttons -->
@@ -970,6 +983,9 @@
     
     function saveTempPrescription() {
     	  let empn = $('#empn').val().trim();
+    	  let age = $('#age').val().trim();
+    	  let sex = $('#sex').val().trim();
+    	  let relationType = $('input[name="relationType"]:checked').val();
     	  let category = $('input[name="category"]:checked').val();
     	  let diseases = $('#diseaseSelect').val();
     	  let medicines = $('#medicineSelect').val();
@@ -977,6 +993,39 @@
     	  if (!empn && category !== "Others") {
     	    alert("Please enter Employee Code before saving.");
     	    return;
+    	  }
+    	  
+    	  if (relationType === "dependent" ) {
+    	      let relation = $('#relation').val().trim();
+        	  if(!relation){
+        		  alert("Please select Dependent Name to before saving.");
+           	    return;
+        	  }
+    	    return;
+    	  }
+    	  if(category === "Others"){
+    		  empn = empn ? empn : 1; // default to 1 if empty
+    		  let ename = $('#ename').val().trim();
+    		  let patientName = $('#patientName').val().trim();
+    		  let patientRelation = $('#patientRelation').val().trim();
+    		  if(!ename){
+    			  alert("Please enter Employee Name before saving.");
+           	    return;
+    		  }
+    		  if(!patientName || !patientRelation){
+    			  alert("Please enter Patient Name and Relation before saving.");
+           	    return;
+    		  }
+    		  
+    	  }
+    	  
+    	  if(!age){
+    		  alert("Please enter Age before saving.");
+       	    return;
+    	  }
+    	  if(!sex){
+    		  alert("Please enter Sex before saving.");
+       	    return;
     	  }
 
     	  $.ajax({
