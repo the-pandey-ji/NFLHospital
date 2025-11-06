@@ -206,7 +206,52 @@
 
 
  <script>
-        function onCategoryChange() {
+ 
+ function onCategoryChange() {
+	    const category = document.querySelector('input[name="category"]:checked').value;
+	    const isOthers = category === "Others";
+
+	    // ✅ Reset all text fields
+	    document.querySelectorAll('input[type="text"]').forEach(input => {
+	        input.value = "";
+	    });
+
+	    // ✅ Reset dropdowns
+	    document.getElementById("dependentName").innerHTML = "<option value=''>-- Select --</option>";
+
+	    // ✅ Always hide dependent row
+	    const dependentRow = document.getElementById("dependentRow");
+	    if (dependentRow) dependentRow.style.display = "none";
+
+	    // ✅ Reset "Is Patient" radio to Self
+	    const selfRadio = document.querySelector('input[name="relationType"][value="self"]');
+	    if (selfRadio) selfRadio.checked = true;
+
+	    // ✅ Adjust readOnly and required attributes
+	    document.getElementById("ename").readOnly = !isOthers;
+	    document.getElementById("patientName").required = isOthers;
+	    document.getElementById("patientRelation").required = isOthers;
+
+	    // ✅ Handle Employee No field
+	    const empnField = document.getElementById("empn");
+	    const empnLabel = empnField.parentElement.previousElementSibling;
+	    if (isOthers) {
+	        empnField.removeAttribute("required");
+	        empnField.readOnly = false;
+	        empnLabel.textContent = "Employee No (Optional):";
+	    } else {
+	        empnField.setAttribute("required", "required");
+	        empnLabel.textContent = "Employee No:";
+	    }
+
+	    // ✅ Re-apply correct field visibility rules
+	    updateFieldVisibility();
+	}
+
+
+ 
+ 
+      /*   function onCategoryChange() {
         	
         	const category = document.querySelector('input[name="category"]:checked').value;
             const isOthers = category === "Others";
@@ -266,7 +311,7 @@
         	updateFieldVisibility(); 
         	
             
-        }
+        } */
 
         function fetchEmployeeDetails() {
             const empn = document.getElementById("empn").value;
@@ -303,8 +348,50 @@
                 alert("Failed to fetch employee details.");
             });
         }
-
+        
+        
         function toggleDependents() {
+            const category = document.querySelector('input[name="category"]:checked').value;
+            const relationType = document.querySelector('input[name="relationType"]:checked').value;
+            const dependentRow = document.getElementById("dependentRow");
+
+            // ✅ Always clear dependent-related fields
+            document.getElementById("dependentName").innerHTML = "<option value=''>-- Select --</option>";
+            document.getElementById("relation").value = "";
+            document.getElementById("age").value = "";
+            document.getElementById("sex").value = "";
+
+            // ✅ If "Dependent" is selected and not Others
+            if (relationType === "dependent" && category !== "Others") {
+                const empn = document.getElementById("empn").value.trim();
+                if (!empn) {
+                    dependentRow.style.display = "none";
+                    return;
+                }
+
+                const url = "self3.jsp?action=getDependents"
+                    + "&empn=" + encodeURIComponent(empn)
+                    + "&category=" + encodeURIComponent(category);
+                fetch(url)
+                    .then(res => res.text())
+                    .then(html => {
+                        document.getElementById("dependentName").innerHTML = "<option value=''>-- Select --</option>" + html;
+                        dependentRow.style.display = ""; // show dropdown
+                    })
+                    .catch(() => {
+                        dependentRow.style.display = "none";
+                    });
+            } else {
+                // ✅ Hide dependents row when switching to self or Others
+                dependentRow.style.display = "none";
+            }
+
+            updateFieldVisibility(); // always refresh visibility logic
+        }
+
+
+
+        /* function toggleDependents() {
         	
         	document.getElementById("relation").value = "";
             document.getElementById("age").value = "";
@@ -337,7 +424,7 @@
 
         	updateFieldVisibility(); 
         	
-        }
+        } */
 
         function fetchDependentDetails() {
             const empn = document.getElementById("empn").value;
@@ -392,41 +479,33 @@
             const category = document.querySelector('input[name="category"]:checked').value;
             const relationType = document.querySelector('input[name="relationType"]:checked')?.value;
 
-            // Locate elements
             const relationTypeRow = document.querySelector('input[name="relationType"]')?.closest('tr');
             const tableRow = document.querySelector('form table tr:nth-child(4)');
+            const dependentRow = document.getElementById("dependentRow");
             if (!tableRow) return;
 
             const cells = tableRow.children;
-
-            // Reset all columns visible by default
-            for (let i = 0; i < cells.length; i++) {
-                cells[i].style.display = "";
-            }
+            for (let i = 0; i < cells.length; i++) cells[i].style.display = "";
 
             if (category === "NFL" || category === "CISF") {
-                // Hide patientName (col 2) and patientRelation (col 3)
-                if (cells[1]) cells[1].style.display = "none";
-                if (cells[2]) cells[2].style.display = "none";
-
-                // Show the “Is Patient” row
+                if (cells[1]) cells[1].style.display = "none"; // patientName
+                if (cells[2]) cells[2].style.display = "none"; // patientRelation
                 if (relationTypeRow) relationTypeRow.style.display = "";
-
-                // Hide dependentName (col 4) when "Self"
-                if (relationType === "self" && cells[3]) cells[3].style.display = "none";
+                if (relationType === "self" && cells[3]) cells[3].style.display = "none"; // dependentName
             }
             else if (category === "Others") {
-                // Hide “Is Patient” (relationType) row completely
                 if (relationTypeRow) relationTypeRow.style.display = "none";
+                if (cells[3]) cells[3].style.display = "none"; // dependentName
+                if (cells[4]) cells[4].style.display = "none"; // relation
+            }
 
-                // Hide dependentName (col 4) and relation (col 5)
-                if (cells[3]) cells[3].style.display = "none";
-                if (cells[4]) cells[4].style.display = "none";
-
-                // Keep patientName & patientRelation visible for Others
+            // ✅ Always hide dependentRow in "Others" or "Self"
+            if (dependentRow) {
+                if (category === "Others" || relationType === "self") {
+                    dependentRow.style.display = "none";
+                }
             }
         }
-
 
 
         
@@ -519,7 +598,7 @@
   </div>
 </div>
 
-<div class="container-fluid" style="height: 5px; background-color: #303f9f; margin-bottom:50px; margin-top:30px"></div>
+<div class="container-fluid" style="height: 5px; background-color: #303f9f; margin-bottom:10px; margin-top:30px"></div>
 
 
 
@@ -567,7 +646,7 @@
     <td align="center">Relation:<br>
       <input type="text" name="patientRelation" id="patientRelation" />
     </td>
-    <td align="center">Dependent Name:<br>
+    <td id="dependentRow" align="center">Dependent Name:<br>
       <select id="dependentName" name="dependentName" onchange="fetchDependentDetails()">
         <option value="">-- Select --</option>
       </select>
