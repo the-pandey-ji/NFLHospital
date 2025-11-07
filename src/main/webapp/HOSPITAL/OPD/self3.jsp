@@ -9,7 +9,7 @@
 <%@ page import="org.json.JSONObject" %>
 
 
-<%-- <%
+ <%
 
     // Check if the user is logged in
     User user = (User) session.getAttribute("Docobj");
@@ -19,7 +19,7 @@
         
         return;
     }
-%> --%>
+%> 
 <%
     User user2 = (User) session.getAttribute("Docobj");
     if (user2 == null) {

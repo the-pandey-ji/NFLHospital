@@ -11,7 +11,7 @@ String category = request.getParameter("category"); // self, dependent, other
 
 String empnParam = request.getParameter("empn");
 System.out.println("empnParam: " + empnParam);
-int empn = 0;
+int empn = 1;
 
 String ename = request.getParameter("ename");
 String relationType = request.getParameter("relationType");   //self or dependent
@@ -44,10 +44,10 @@ String patientRelation = request.getParameter("patientRelation")!=null ? request
 		        try {
 		            empn = Integer.parseInt(empnParam.trim());
 		        } catch (NumberFormatException e) {
-		            empn = 0; // fallback if invalid number
+		            empn = 1; // fallback if invalid number
 		        }
 		    } else {
-		        empn = 0; // blank or missing -> default 0
+		        empn = 1; // blank or missing -> default 0
 		    }
 		
 	 
