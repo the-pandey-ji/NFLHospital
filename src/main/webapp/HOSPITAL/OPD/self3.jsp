@@ -489,35 +489,50 @@
 
 
         function updateFieldVisibility() {
-            const category = document.querySelector('input[name="category"]:checked').value;
-            const relationType = document.querySelector('input[name="relationType"]:checked')?.value;
+            const categoryRadio = document.querySelector('input[name="category"]:checked');
+            const relationTypeRadio = document.querySelector('input[name="relationType"]:checked');
+            if (!categoryRadio) return; // no category selected yet
 
-            const relationTypeRow = document.querySelector('input[name="relationType"]')?.closest('tr');
-            const tableRow = document.querySelector('form table tr:nth-child(4)');
+            const category = categoryRadio.value;
+            const relationType = relationTypeRadio ? relationTypeRadio.value : null;
+
             const dependentRow = document.getElementById("dependentRow");
-            if (!tableRow) return;
+            const patientName = document.getElementById("patientName");
+            const patientRelation = document.getElementById("patientRelation");
 
-            const cells = tableRow.children;
-            for (let i = 0; i < cells.length; i++) cells[i].style.display = "";
-
-            if (category === "NFL" || category === "CISF") {
-                if (cells[1]) cells[1].style.display = "none"; // patientName
-                if (cells[2]) cells[2].style.display = "none"; // patientRelation
-                if (relationTypeRow) relationTypeRow.style.display = "";
-                if (relationType === "self" && cells[3]) cells[3].style.display = "none"; // dependentName
-                if (relationType === "self") fetchEmployeeDetails();
-            }
-            else if (category === "Others") {
-                if (relationTypeRow) relationTypeRow.style.display = "none";
-                if (cells[3]) cells[3].style.display = "none"; // dependentName
-                if (cells[4]) cells[4].style.display = "none"; // relation
+            // --- Handle dependent vs self visibility ---
+            if (relationType === "dependent") {
+                if (dependentRow) dependentRow.style.display = "";
+                if (patientName) patientName.removeAttribute("required");
+                if (patientRelation) patientRelation.removeAttribute("required");
+            } else {
+                if (dependentRow) dependentRow.style.display = "none";
+                if (patientName) patientName.setAttribute("required", "required");
+                if (patientRelation) patientRelation.setAttribute("required", "required");
             }
 
-            // ✅ Always hide dependentRow in "Others" or "Self"
-            if (dependentRow) {
-                if (category === "Others" || relationType === "self") {
-                    dependentRow.style.display = "none";
+            // --- Handle category-specific logic ---
+            const tableRow = document.querySelector('form table tr:nth-child(4)');
+            if (tableRow) {
+                const cells = tableRow.children;
+                for (let i = 0; i < cells.length; i++) cells[i].style.display = "";
+
+                if (category === "NFL" || category === "CISF") {
+                    if (cells[1]) cells[1].style.display = "none"; // patientName
+                    if (cells[2]) cells[2].style.display = "none"; // patientRelation
+
+                    if (relationType === "self" && cells[3]) cells[3].style.display = "none"; // dependentName
+                    if (relationType === "self") fetchEmployeeDetails();
+                } 
+                else if (category === "Others") {
+                    if (cells[3]) cells[3].style.display = "none"; // dependentName
+                    if (cells[4]) cells[4].style.display = "none"; // relation
                 }
+            }
+
+            // --- Always hide dependentRow in "Others" or "Self" ---
+            if (dependentRow && (category === "Others" || relationType === "self")) {
+                dependentRow.style.display = "none";
             }
         }
 
@@ -653,7 +668,7 @@
   <!-- Fourth row: All other fields horizontally -->
   <tr>
     <td align="center">Employee Name:<br>
-      <input type="text" name="ename" id="ename" required />
+      <input type="text" name="ename" id="ename" />
     </td>
     <td align="center">Patient Name:<br>
       <input type="text" name="patientName" id="patientName" />
@@ -1001,7 +1016,7 @@
         		  alert("Please select Dependent Name to before saving.");
            	    return;
         	  }
-    	    return;
+    	   
     	  }
     	  if(category === "Others"){
     		  empn = empn ? empn : 1; // default to 1 if empty

@@ -12,10 +12,10 @@
         String diseaseCodes = (diseases != null) ? String.join(",", diseases) : "";
         String medicineCodes = (medicines != null) ? String.join(",", medicines) : "";
         
-        System.out.println("EMP Number: " + empn);
+      /*   System.out.println("EMP Number: " + empn);
         System.out.println("Selected Diseases: " + diseaseCodes);
         System.out.println("Selected Medicines: " + medicineCodes);
-        
+         */
 
         Connection conn = DBConnect.getConnection();
 
