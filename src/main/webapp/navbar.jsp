@@ -7,8 +7,8 @@
 <%
 
     // Check if the user is logged in
-    User user = (User) session.getAttribute("Docobj");
-    if (user == null) {
+    User user10 = (User) session.getAttribute("Docobj");
+    if (user10 == null) {
         // Redirect to login page if not logged in
         response.sendRedirect("/hosp1/index.jsp");
         
@@ -51,21 +51,21 @@
 		
 		
 		
-		<div class="col-md-3 ml-auto  ">
+		<div class="col-md-3 ml-auto align-right ">
 		 <%
 		   
-	        User user1 = (User) session.getAttribute("Docobj");
-	        if (user1 != null) {
+	        User user11 = (User) session.getAttribute("Docobj");
+	        if (user11 != null) {
 	    %>
-	        <span class="text-white btn btn-success ml-2">Welcome, <%= user1.getUsername() %></span>
+	        <span class="text-white btn btn-success ml-5 ">Welcome, <%= user11.getUsername() %></span>
 	        <!-- <a data-toggle="modal" data-target="#exampleModalCenter" class="btn btn-danger ml-2 text-white"><i class="fas fa-sign-out-alt"></i> Logout</a> -->
 	        
-	        <a href="/hosp1/changePassword.jsp" class="btn btn-primary my-2 my-sm-2 ml-2 mr-2"
+	        <!-- <a href="/hosp1/changePassword.jsp" class="btn btn-primary my-2 my-sm-2 ml-2 mr-2"
 				type="submit"> <i class="fas "></i> Change Password
 			
-			</a>
-	        <a data-toggle="modal" data-target="#logoutModal" class="btn btn-danger ml-2 text-white"><i class="fas fa-sign-out-alt"></i> Logout</a>
-	        
+			</a> -->
+	       <!--  <a data-toggle="modal" data-target="#logoutModal" class="btn btn-danger ml-2 text-white"><i class="fas fa-sign-out-alt"></i> Logout</a>
+	        --> 
 	     
 			
 	
@@ -111,7 +111,41 @@
   </div>
 </div>
 
-<div class="container-fluid" style="height: 5px; background-color: #303f9f; margin-bottom:50px; margin-top:30px"></div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-custom navbar-custom">
+    <a class="navbar-brand" href="#"><i class="fas fa-home"></i></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item mr-2 active <%-- <%= request.getRequestURI().contains("/hosp1/home/rep1.jsp") ? "active" : "" %> --%>">
+                <a class="nav-link" href="/hosp1/home/rep1.jsp">Home</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/hosp1/HOSPITAL/OPD/self3.jsp">OPD</a>
+            </li>
+            <%-- <li class="nav-item dropdown">
+                <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> View Complaints </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="allComplaints.jsp">All Complaints</a>
+                    <a class="dropdown-item" href="civilComplaints.jsp">Civil Complaints</a>
+                    <a class="dropdown-item" href="eComplaints.jsp">Electrical Complaints</a>
+                </div>
+            </li>
+            <li class="nav-item <%= request.getRequestURI().contains("all_old_book.jsp") ? "active" : "" %>">
+                <a class="nav-link disabled" href="all_old_book.jsp"><i class="fas fa-book-open"></i> Old Complaint</a>
+            </li> --%>
+        </ul>
+        <div class="form-inline my-2 my-lg-0">
+            <a href="/hosp1/changePassword.jsp" class="btn btn-primary my-2 my-sm-2 ml-2 mr-2">Change Password</a>
+        
+         <a data-toggle="modal" data-target="#logoutModal" class="btn btn-danger ml-2 text-white"><i class="fas fa-sign-out-alt"></i> Logout</a>
+	       </div>
+    </div>
+</nav>
+
+<div class="container-fluid" style="height: 5px; background-color: #303f9f; margin-bottom:10px; margin-top:10px"></div>
 
 <!-- 
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

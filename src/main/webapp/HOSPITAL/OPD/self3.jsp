@@ -542,8 +542,7 @@
    
 </head>
 <body>
-
-
+ 
 <div class="container-fluid p-3 bg-light">
 
 	<div class="row">
@@ -632,7 +631,7 @@
 
 
 
-<%-- <%@include file="/navbar.jsp" %> --%>
+ <%-- <%@include file="../../navbar.jsp" %>  --%>
     
 
 <form method="post" action="/hosp1/jsps/savePrescription3.jsp">
