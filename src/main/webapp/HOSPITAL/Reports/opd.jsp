@@ -75,6 +75,15 @@ OPD Details from <%= fromDate %> to <%= toDate %>
         typ = rs.getString("typ");
         ename = rs.getString("empname");
         doc = rs.getString("doctor");
+        
+        // Check if the values are null and replace with empty string or default value
+        pname = (pname != null && !pname.trim().isEmpty()) ? pname : "UNKNOWN";
+        relation = (relation != null && !relation.trim().isEmpty()) ? relation : "N/A";
+        age = (age != null && !age.trim().isEmpty()) ? age : "Unknown";
+        sex = (sex != null && !sex.trim().isEmpty()) ? sex : "Unknown";
+        srno = (srno != null && !srno.trim().isEmpty()) ? srno : "N/A";
+        ename = (ename != null && !ename.trim().isEmpty()) ? ename : "Unknown";
+        doc = (doc != null && !doc.trim().isEmpty()) ? doc : "Not Assigned";
 
         // If type is 'N', fetch empname from employeemaster
         if ("N".equalsIgnoreCase(typ)) {
