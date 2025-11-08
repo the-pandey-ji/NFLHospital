@@ -29,7 +29,7 @@
     }
 
     body {
-      zoom: 0.7; /* 70% scale */
+      zoom: 1; /* 100% scale */
     }
 
     .printbutton {
