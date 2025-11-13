@@ -1,5 +1,5 @@
 
-<%@include file="allCss.jsp"%>
+<%@include file="/allCss.jsp"%>
 <%@page import="java.util.List"%>
 <%@page import="com.DB.DBConnect"%>
 <%@ page import="com.entity.User" %>
@@ -125,17 +125,31 @@
             <li class="nav-item active">
                 <a class="nav-link" href="/hosp1/HOSPITAL/OPD/self3.jsp">OPD</a>
             </li>
-            <%-- <li class="nav-item dropdown">
-                <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> View Complaints </a>
+            
+             <li class="nav-item dropdown">
+                <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Local Refer </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="allComplaints.jsp">All Complaints</a>
-                    <a class="dropdown-item" href="civilComplaints.jsp">Civil Complaints</a>
-                    <a class="dropdown-item" href="eComplaints.jsp">Electrical Complaints</a>
+                    <a class="dropdown-item " href="/hosp1/HOSPITAL/Localref/self/local_refer_revisit.jsp">Local Hospital refer</a>
+                    <a class="dropdown-item" href="/hosp1/HOSPITAL/Localref/self/local_revisit.jsp">Local Hospital Revisit</a>
+                    
                 </div>
             </li>
-            <li class="nav-item <%= request.getRequestURI().contains("all_old_book.jsp") ? "active" : "" %>">
+            <li class="nav-item dropdown">
+                <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> OutStation Refer </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="/hosp1/HOSPITAL/Outref/dep/out_refer_revisit.jsp">Outstation refer</a>
+                    <a class="dropdown-item" href="/hosp1/HOSPITAL/Outref/dep/out_revisit.jsp">Outstation Revisit</a>
+                    
+                </div>
+            </li>
+            
+             <li class="nav-item active">
+                <a class="nav-link disabled" href="/hosp1/HOSPITAL/OPD/opdReport.jsp"><i class="fas fa-book-open"></i> OPD History</a>
+            </li>
+            <%-- <li class="nav-item <%= request.getRequestURI().contains("all_old_book.jsp") ? "active" : "" %>">
                 <a class="nav-link disabled" href="all_old_book.jsp"><i class="fas fa-book-open"></i> Old Complaint</a>
-            </li> --%>
+            </li>  --%>
+            
         </ul>
         <div class="form-inline my-2 my-lg-0">
             <a href="/hosp1/changePassword.jsp" class="btn btn-primary my-2 my-sm-2 ml-2 mr-2">Change Password</a>

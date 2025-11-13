@@ -174,7 +174,6 @@
 
 %>
 
-<%@include file="../../../allCss.jsp"%>
 
 <html>
 <head>
@@ -460,7 +459,8 @@
 <body>
  
 
- <%@include file="../../../navbar.jsp" %> 
+ <%@include file="/navbar.jsp" %> 
+ <h2 style="text-align:center;">OUTSTATION HOSPITAL REFER</h2>
     
 
 <form method="post" action="/hosp1/HOSPITAL/Outref/dep/out_refer_revisit_print.jsp" onsubmit="return validateForm(event);">

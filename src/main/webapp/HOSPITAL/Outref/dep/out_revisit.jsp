@@ -29,6 +29,7 @@ function validateSearch() {
 
 <body style="font-family: Tahoma; background-color: #f5f5f5; margin: 20px;">
 <%@ include file="/navbar.jsp" %>
+<!-- <h2 style="text-align:center;">OUTSTATION HOSPITAL REVISIT</h2> -->
 
 <h2 align="center" style="color:#0000FF; text-transform:uppercase;">Search Outstation Reference</h2>
 

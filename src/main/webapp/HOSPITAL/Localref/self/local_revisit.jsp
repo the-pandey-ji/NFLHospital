@@ -29,6 +29,7 @@ function validateSearch() {
 
 <body style="font-family: Tahoma; background-color: #f5f5f5; margin: 20px;">
 <%@ include file="/navbar.jsp" %>
+<!-- <h2 style="text-align:center;">LOCAL HOSPITAL REFER</h2> -->
 
 <h2 align="center" style="color:#0000FF; text-transform:uppercase;">Search Local Reference</h2>
 
