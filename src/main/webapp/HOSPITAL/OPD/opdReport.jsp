@@ -70,7 +70,7 @@
 <head>
     <title>OPD Search Report</title>
 </head>
-<body style="font-family: Arial, sans-serif; margin: 20px;">
+<body >
 <%@include file="/navbar.jsp" %>
 
 <h2 style="text-align:center;">OPD HISTORY</h2>

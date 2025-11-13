@@ -25,6 +25,7 @@
 </style>
 </head>
 <body>
+<%@include file="/navbar.jsp" %>
 <p align="center"><u><b>Details of Local References</b></u></p>
 <table border="1" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="89%" height="38">
   <tr>

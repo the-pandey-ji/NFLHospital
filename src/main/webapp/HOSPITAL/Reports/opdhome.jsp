@@ -13,6 +13,7 @@
 
 </head>
 <body background="../Stationery/Clear%20Day%20Bkgrd.jpg">
+<%@include file="/navbar.jsp" %>
     <h2 align="center"><u>No of OPD Cases in Date Range</u></h2>
 
     <form method="POST" action="/hosp1/HOSPITAL/Reports/opd.jsp" >

@@ -25,6 +25,7 @@
 </style>
 </head>
 <body>
+<%@include file="/navbar.jsp" %>
 <p align="center"><b><font size="4">Today's OPD Detail</font><font size="5"> </font></b>
 <% 
 	String pname = "";

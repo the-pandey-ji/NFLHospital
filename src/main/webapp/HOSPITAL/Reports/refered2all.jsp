@@ -15,6 +15,7 @@
 </style>
 </head>
 <body>
+<%@include file="/navbar.jsp" %>
 
 <%
 String fromDate = request.getParameter("fromDate");

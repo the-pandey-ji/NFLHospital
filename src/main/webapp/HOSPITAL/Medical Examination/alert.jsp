@@ -24,6 +24,7 @@
 </style>
 </head>
 <body>
+ <%@include file="/navbar.jsp" %> 
 <p align="center"><b><font size="4">&nbsp;</font><font face="Arial" size="3">Alert For Medical Examination
 </font></b><% 
 	
