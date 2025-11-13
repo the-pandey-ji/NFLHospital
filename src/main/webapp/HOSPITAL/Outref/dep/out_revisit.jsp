@@ -27,7 +27,7 @@ function validateSearch() {
 </script>
 </head>
 
-<body style="font-family: Tahoma; background-color: #f5f5f5; margin: 20px;">
+<body >
 <%@ include file="/navbar.jsp" %>
 <!-- <h2 style="text-align:center;">OUTSTATION HOSPITAL REVISIT</h2> -->
 
