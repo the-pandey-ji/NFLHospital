@@ -183,7 +183,7 @@
 
 %>
 
-<%@include file="../../allCss.jsp"%>
+<%@include file="/allCss.jsp"%>
 
 <html>
 <head>
