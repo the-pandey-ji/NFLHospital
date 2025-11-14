@@ -7,8 +7,8 @@
 <%
 
     // Check if the user is logged in
-    User user = (User) session.getAttribute("Docobj");
-    if (user == null) {
+    User user100 = (User) session.getAttribute("Docobj");
+    if (user100 == null) {
         // Redirect to login page if not logged in
         response.sendRedirect("/hosp1/index.jsp");
         
@@ -54,10 +54,10 @@
 		<div class="col-md-3 ml-auto align-right ">
 		 <%
 		   
-	        User user1 = (User) session.getAttribute("Docobj");
-	        if (user1 != null) {
+	        User user101 = (User) session.getAttribute("Docobj");
+	        if (user101 != null) {
 	    %>
-	        <span class="text-white btn btn-success ml-5 ">Welcome, <%= user1.getUsername() %></span>
+	        <span class="text-white btn btn-success ml-5 ">Welcome, <%= user101.getUsername() %></span>
 	        <!-- <a data-toggle="modal" data-target="#exampleModalCenter" class="btn btn-danger ml-2 text-white"><i class="fas fa-sign-out-alt"></i> Logout</a> -->
 	        
 	        <!-- <a href="/hosp1/changePassword.jsp" class="btn btn-primary my-2 my-sm-2 ml-2 mr-2"
