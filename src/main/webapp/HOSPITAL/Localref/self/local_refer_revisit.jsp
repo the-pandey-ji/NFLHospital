@@ -416,6 +416,13 @@
             const dependentRow = document.getElementById("dependentRow");
             const patientName = document.getElementById("patientName");
             const patientRelation = document.getElementById("patientRelation");
+            
+            const isPatientRow = document.getElementById("isPatientRow");
+
+            // Hide "Is Patient" row for Others
+            if (isPatientRow) {
+                isPatientRow.style.display = (category === "Others") ? "none" : "";
+            }
 
             // --- Handle dependent vs self visibility ---
             if (relationType === "dependent") {
@@ -487,7 +494,7 @@
     </td>
   </tr>
   <!-- Third row: Patient Type -->
-  <tr>
+  <tr id="isPatientRow">
     <td colspan="7" align="center">
       Is Patient:
       <label><input type="radio" name="relationType" value="self" checked onclick="toggleDependents()"> Self</label>
