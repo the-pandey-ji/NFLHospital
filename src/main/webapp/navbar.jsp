@@ -7,8 +7,8 @@
 <%
 
     // Check if the user is logged in
-    User user100 = (User) session.getAttribute("Docobj");
-    if (user100 == null) {
+    User user = (User) session.getAttribute("Docobj");
+    if (user == null) {
         // Redirect to login page if not logged in
         response.sendRedirect("/hosp1/index.jsp");
         
@@ -54,10 +54,10 @@
 		<div class="col-md-3 ml-auto align-right ">
 		 <%
 		   
-	        User user101 = (User) session.getAttribute("Docobj");
-	        if (user101 != null) {
+	        User user1 = (User) session.getAttribute("Docobj");
+	        if (user1 != null) {
 	    %>
-	        <span class="text-white btn btn-success ml-5 ">Welcome, <%= user101.getUsername() %></span>
+	        <span class="text-white btn btn-success ml-5 ">Welcome, <%= user1.getUsername() %></span>
 	        <!-- <a data-toggle="modal" data-target="#exampleModalCenter" class="btn btn-danger ml-2 text-white"><i class="fas fa-sign-out-alt"></i> Logout</a> -->
 	        
 	        <!-- <a href="/hosp1/changePassword.jsp" class="btn btn-primary my-2 my-sm-2 ml-2 mr-2"
@@ -122,7 +122,7 @@
                 <a class="nav-link" href="/hosp1/HOSPITAL/OPD/self3.jsp"><i class="fa fa-stethoscope" style="font-size:20px;"></i>OPD</a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link disabled" href="/hosp1/HOSPITAL/OPD/opdReport.jsp"><i class="fa fa-book"></i> OPD History</a>
+                <a class="nav-link" href="/hosp1/HOSPITAL/OPD/opdReport.jsp"><i class="fa fa-book"></i> OPD History</a>
             </li>
             
             <li class="nav-item dropdown">
@@ -141,7 +141,7 @@
             </li>
             
             <li class="nav-item active">
-                <a class="nav-link disabled" href="/hosp1/HOSPITAL/OPD/opdReport.jsp"><i class="fa fa-heartbeat" style="font-size:20px"></i> Med Certificate</a>
+                <a class="nav-link " href="/hosp1/HOSPITAL/Medical%20Certificate/med_cert.jsp"><i class="fa fa-heartbeat" style="font-size:20px"></i> Med Certificate</a>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" aria-haspopup="true" aria-expanded="false"> <i class="fa fa-medkit" style="font-size:24px"></i> Med Examination </a>
