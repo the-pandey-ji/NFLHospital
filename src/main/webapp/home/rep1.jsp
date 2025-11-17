@@ -153,7 +153,7 @@ function alert()
                 <a href="/hosp1/HOSPITAL/Medical Examination/alert.jsp" class="dashboard-card bg-danger text-white">
                     <i class="fa fa-medkit card-icon" style="font-size: 40px"></i>
                     <div class="card-body text-center">
-                        <h5 class="card-title">Exams Due This Month</h5>
+                        <h5 class="card-title">Med Exams Due This Month</h5>
 						   <%
 						    // Variable to hold the count
 						    String examsDueCount = "N/A";
