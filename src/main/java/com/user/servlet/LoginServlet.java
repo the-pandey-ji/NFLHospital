@@ -1,4 +1,3 @@
-
 package com.user.servlet;
 
 import java.io.IOException;
@@ -9,63 +8,63 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.entity.EndUser;
 import com.entity.User;
 import com.DAO.UserDAOImpl;
 import com.DB.DBConnect;
 
-/**
- * Servlet implementation class LoginServlet
- */
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public LoginServlet() {
         super();
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        UserDAOImpl userDAO = new UserDAOImpl(DBConnect.getConnection());
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
         HttpSession session = request.getSession();
 
         try {
             long empn = Long.parseLong(request.getParameter("empn"));
             String password = request.getParameter("password");
-            
-//            System.out.println("Employee Number: " + empn);
 
-            if (empn > 0 && password != null && !password.isEmpty()) {
-                User us = userDAO.userLogin(empn, password);
-  //             System.out.println("User object: " + us);
-
-                if (us != null) {
-                	
-                    session.setAttribute("Docobj", us);
-                    
-   //                 System.out.println("User object: 2 " + us);
-                    
-//                    System.out.println("User object after login: ");
-
-                    
-                        response.sendRedirect("/hosp1/home/rep1.jsp");
-                    
-                }
-				else {
-					// Invalid credentials
-					session.setAttribute("errorMsg", "Invalid Employee Number or Password.");
-					response.sendRedirect("index.jsp");
-				}
-            } else {
-                // Invalid input
+            // Basic validation
+            if (empn <= 0 || password == null || password.trim().isEmpty()) {
                 session.setAttribute("errorMsg", "Invalid Employee Number or Password.");
                 response.sendRedirect("index.jsp");
+                return;
             }
 
-            //System.out.println("Employee Number: " + empn + ", Password: " + password);
+            // 1️⃣ Try default user login
+            UserDAOImpl userDAO = new UserDAOImpl(DBConnect.getConnection());
+            User us = userDAO.userLogin(empn, password);
+
+            if (us != null) {
+                session.setAttribute("Docobj", us);
+                response.sendRedirect("/hosp1/home/rep1.jsp");
+                return;
+            }
+
+            // 2️⃣ Try EndUser login in another DB
+            userDAO = new UserDAOImpl(DBConnect.getConnection1());
+            boolean isEndUser = userDAO.enduserLogin(empn, password);
+			/* System.out.println("EndUser Login Attempt: " + isEndUser); */
+
+            if (isEndUser) {
+				/* System.out.println("EndUser Login Successful for empn: " + empn); */
+                EndUser eus = userDAO.endUserDetail(empn);
+                session.setAttribute("EndUserObj", eus);
+                response.sendRedirect("/hosp1/home/endUser.jsp");
+                return;
+            }
+
+            // 3️⃣ If both fail → show error
+            session.setAttribute("errorMsg", "Invalid Employee Number or Password.");
+            response.sendRedirect("index.jsp");
+
         } catch (Exception e) {
             e.printStackTrace();
             session.setAttribute("errorMsg", "An error occurred while processing your request.");

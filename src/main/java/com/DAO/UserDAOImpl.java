@@ -2,6 +2,7 @@ package com.DAO;
 
 import java.sql.Connection;
 
+import com.entity.EndUser;
 import com.entity.User;
 
 public class UserDAOImpl implements UserDAO{
@@ -12,6 +13,8 @@ public class UserDAOImpl implements UserDAO{
 		super();
 		this.conn = conn;
 	}
+	
+	
 
 	
 	public boolean userRegister(User us) {
@@ -135,7 +138,75 @@ public class UserDAOImpl implements UserDAO{
 
 		return false;
 	}
+
+
+	@Override
+	public boolean enduserLogin(long empn, String password) {
+		boolean flag = false;
+		
+		try {
+			String query = "select * from usrpass where username=? and passwd=?";
+			java.sql.PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setLong(1, empn);
+			pstmt.setString(2, password);
+
+			java.sql.ResultSet rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				flag = true;
+				System.out.println("End User Login Successful");
+
+				// You can set other fields if needed
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return flag;
+	}
 	
+	
+
+
+	@Override
+	public EndUser endUserDetail(long empn) {
+		EndUser eus = null;
+		try {
+			String query = "SELECT empn, e.ENAME, e.DESIGNATION, d.DEPTT, e.SEX, " +
+	                "FLOOR(MONTHS_BETWEEN(SYSDATE, e.BIRTHDATE)/12) AS AGE " +
+	                "FROM PERSONNEL.EMPLOYEEMASTER e " +
+	                "JOIN PERSONNEL.DEPARTMENT d ON e.DEPTCODE = d.DEPTCODE " +
+	                "WHERE e.oldnewdata='N' AND e.EMPN = ?";
+			java.sql.PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setLong(1, empn);
+
+			java.sql.ResultSet rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				eus = new EndUser();
+				eus.setEmpn(rs.getString("EMPN"));
+				eus.setUsername(rs.getString("ENAME"));
+				eus.setDesignation(rs.getString("DESIGNATION"));
+				eus.setDepartment(rs.getString("DEPTT"));
+				eus.setAge(rs.getInt("AGE"));
+				eus.setSex(rs.getString("sex"));
+				
+				
+				
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return eus;
+	}
+
+
+
+
 	
 
 }
