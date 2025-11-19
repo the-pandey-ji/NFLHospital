@@ -1,297 +1,258 @@
 <%@ page language="java" session="true"%>
-<%@ page import="java.math.*"%>
-<%@ page import="oracle.jdbc.driver.*"%>
-<%@ page contentType="text/html"%>
-<%@ page import="java.util.*"%>
-<%@ page import="java.io.* "%>
-<%@ page import="java.lang.*"%>
 <%@ page import="java.sql.*"%>
-<%@ page import="java.text.*"%>
-<%@ page import="java.util.Date"%>
-<%@ page import="java.io.*"%>
+<%@ page import="java.util.List"%>
+<%@ page import="com.DB.DBConnect"%>
+<%@ page import="com.entity.EndUser" %>
+<%@ page import="java.util.Optional" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+
+<%
+    // --- 1. Authentication Check ---
+    // Assuming the User object retrieved contains the USERID/EMPN
+    EndUser user3 = (EndUser) session.getAttribute("EndUserObj"); // Still using Docobj from the previous code, but it represents the logged-in User
+    if (user3 == null) {
+        response.sendRedirect("/hosp1/index.jsp");
+        return;
+    }
+    
+    // The key identifier for the user's data
+    String empn = user3.getEmpn(); 
+    
+    // Initialize variables for personal metrics
+    String totalOPDVisits = "N/A";
+    String totalReferrals = "N/A";
+    String lastMedicalExamDate = "N/A";
+    boolean isMedicalExamDue = false;
+    
+    Connection con = null;
+    Statement stmt = null;
+    ResultSet rs = null;
+
+    try {
+        con = DBConnect.getConnection();
+        stmt = con.createStatement();
+        
+        // --- 2. Fetch Total OPD Visits for the User ---
+        String opdSql = "SELECT COUNT(*) FROM opd WHERE empn = '" + empn + "'";
+        rs = stmt.executeQuery(opdSql);
+        if (rs.next()) {
+            totalOPDVisits = rs.getString(1);
+        }
+        rs.close(); // Close the first ResultSet
+
+        // --- 3. Fetch Total Referrals for the User (Local & Outstation) ---
+        // This is complex due to dynamic year tables, simplifying for a total count placeholder
+        // In a real application, you'd iterate through years or use a view/partitioned table.
+        // For this example, we'll only count from the current year's table as a placeholder
+        
+        // First get the current year for the dynamic table name
+        String currentYear = "";
+ResultSet rsYr = null;
+try {
+    rsYr = stmt.executeQuery("SELECT TO_CHAR(SYSDATE, 'YYYY') FROM DUAL");
+    if (rsYr.next()) {
+        currentYear = rsYr.getString(1);
+    }
+} catch (SQLException e) {
+    System.out.println("Error getting current year: " + e.getMessage());
+} finally {
+    if (rsYr != null) try { rsYr.close(); } catch (SQLException ignore) {}
+}
+        
+        // Count Local Referrals (assuming table name LOACALREFDETAILYYYY)
+        String localRefSql = "SELECT COUNT(*) FROM LOACALREFDETAIL" + currentYear + " WHERE empn = '" + empn + "'";
+        rs = stmt.executeQuery(localRefSql);
+        int localCount = 0;
+        if (rs.next()) {
+            localCount = rs.getInt(1);
+        }
+        rs.close();
+        
+        // Count Outstation Referrals (assuming table name OUTREFDETAILYYYY)
+        String outRefSql = "SELECT COUNT(*) FROM OUTREFDETAIL" + currentYear + " WHERE empn = '" + empn + "'";
+        rs = stmt.executeQuery(outRefSql);
+        int outCount = 0;
+        if (rs.next()) {
+            outCount = rs.getInt(1);
+        }
+        rs.close();
+        
+        totalReferrals = String.valueOf(localCount + outCount);
+
+
+        // --- 4. Fetch Last Medical Examination Date and Check Due Status ---
+        // Retrieves the latest exam date for the user
+        String medExamSql = "SELECT dated FROM hospital.medexam WHERE empn = '" + empn + "' ORDER BY dated DESC";
+        rs = stmt.executeQuery(medExamSql);
+        
+        if (rs.next()) {
+            java.util.Date lastExamDate = rs.getDate("dated");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+            lastMedicalExamDate = sdf.format(lastExamDate);
+
+            // Check if exam is due (more than 365 days ago)
+            long diff = new java.util.Date().getTime() - lastExamDate.getTime();
+            long diffDays = diff / (24 * 60 * 60 * 1000);
+            
+            if (diffDays > 365) {
+                isMedicalExamDue = true;
+            }
+        } else {
+             // User has never had an exam recorded, assumed due
+             isMedicalExamDue = true; 
+        }
+
+    } catch (SQLException e) {
+        System.out.println("Error fetching user dashboard data: " + e.getMessage());
+        totalOPDVisits = totalReferrals = lastMedicalExamDate = "Error";
+        isMedicalExamDue = true; // Assume due/error is safest
+    } finally {
+        // Clean up resources
+        if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
+        if (stmt != null) try { stmt.close(); } catch (SQLException ignore) {}
+        if (con != null) try { con.close(); } catch (SQLException ignore) {}
+    }
+%>
+
 
 <html>
 
 <head>
-<meta http-equiv="Content-Type"
-	content="text/html; charset=windows-1252">
-<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
-<meta name="ProgId" content="FrontPage.Editor.Document">
-<title>NFL Hospital</title>
-<script language="JavaScript1.2">
-	
-function alert()
-{
-}
- 
-</script>
-<style>
-/* Custom styles for the dashboard cards */
-.dashboard-card {
-	transition: transform 0.3s ease-in-out;
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-	border-radius: 10px;
-	min-height: 150px;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	margin-bottom: 20px;
-	text-decoration: none !important;
-	color: inherit;
-}
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+    <title>User Health Dashboard</title>
+    <%@include file="/allCss.jsp"%>
+    <style>
+        .user-dashboard-card {
+            transition: transform 0.3s ease-in-out;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            color: white;
+        }
 
-.dashboard-card:hover {
-	transform: scale(1.03);
-	box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.3);
-}
+        .user-dashboard-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.3);
+        }
 
-.card-title {
-	font-weight: bold;
-	margin-top: 10px;
-}
+        .card-title {
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
 
-.card-icon {
-	font-size: 40px;
-}
-</style>
+        .card-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+        
+        .alert-due {
+            animation: pulse 2s infinite;
+        }
 
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 0, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+        }
+    </style>
 </head>
 
 <body background="/hosp1/Stationery/Clear%20Day%20Bkgrd.jpg">
 
-	<%@include file="/endUserNavbar.jsp"%>
+    <%-- Include the user-specific navigation bar --%>
+    <%@include file="/endUserNavbar.jsp"%> 
 
+    <div class="container mt-5">
+        <h2 class="text-center mb-5">
+            <i class="fa fa-user-md" style="font-size: 40px; color: #303f9f;"></i>
+            Your Personal Health Dashboard
+        </h2>
+        
+        <%-- Display Personal Alerts --%>
+        <div class="row mb-5">
+            <div class="col-12">
+                <h3><i class="fa fa-bell" style="font-size: 25px; color: orange"></i> Health Alerts</h3>
+                <div class="list-group">
+                
+                    <% if (isMedicalExamDue) { %>
+                        <div class="list-group-item list-group-item-danger alert-due">
+                            <i class="fa fa-warning"></i> 
+                            <strong>URGENT:</strong> Your Annual Medical Examination is **PENDING** or was last done more than a year ago! 
+                            Please contact the Hospital administration immediately. 
+                            (Last Exam: <%= lastMedicalExamDate %>)
+                        </div>
+                    <% } else { %>
+                        <div class="list-group-item list-group-item-success">
+                            <i class="fa fa-check-circle"></i> 
+                            Your Medical Examination status is **CURRENT**. 
+                            (Last Exam: <%= lastMedicalExamDate %>)
+                        </div>
+                    <% } %>
+                    
+                    <a href="#" class="list-group-item list-group-item-info">
+                        <i class="fa fa-info-circle"></i> Total OPD Visits: <%= totalOPDVisits %>
+                    </a>
+                </div>
+            </div>
+        </div>
 
+        <%-- Display Personal Metrics --%>
+        <div class="row">
 
+            <div class="col-md-4">
+                <div class="user-dashboard-card bg-primary"> 
+                    <i class="fa fa-notes-medical card-icon"></i>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Total OPD Visits</h5>
+                        <p class="h1"><%= totalOPDVisits %></p>
+                        <small>Since Record Start</small>
+                    </div>
+                </div>
+            </div>
 
-	<div class="container mt-5">
-		<h2 class="text-center mb-4">
-			<i class="fa fa-stethoscope card-icon" style="font-size: 40px"></i>
-			Doctor Dashboard
-		</h2>
-		<div class="row">
+            <div class="col-md-4">
+                <div class="user-dashboard-card bg-warning">
+                    <i class="fa fa-share-square-o card-icon"></i>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Total Referrals</h5>
+                        <p class="h1"><%= totalReferrals %></p>
+                        <small>Local & Outstation (Current Year)</small>
+                    </div>
+                </div>
+            </div>
 
-			<div class="col-md-4">
-				<a href="/hosp1/HOSPITAL/Reports/noopd.jsp"
-					class="dashboard-card bg-primary text-white"> <i
-					class="fa fa-stethoscope card-icon" style="font-size: 40px"></i>
-					<div class="card-body text-center">
-						<h5 class="card-title">Today's OPD</h5>
+            <div class="col-md-4">
+                <div class="user-dashboard-card bg-success"> 
+                    <i class="fa fa-calendar-check card-icon"></i>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Last Medical Exam</h5>
+                        <p class="h2"><%= lastMedicalExamDate %></p>
+                        <small>Status: <%= isMedicalExamDue ? "DUE" : "CURRENT" %></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <%-- Action Links for the User --%>
+        <div class="row mt-5">
+            <div class="col-md-6">
+                <a href="/hosp1/HOSPITAL/OPD/opdReport.jsp?empn=<%= empn %>" class="btn btn-info btn-block py-3">
+                    <i class="fa fa-history"></i> View Detailed OPD History
+                </a>
+            </div>
+             <div class="col-md-6">
+                <a href="/hosp1/HOSPITAL/Reports/referralHistory.jsp?empn=<%= empn %>" class="btn btn-secondary btn-block py-3">
+                    <i class="fa fa-clipboard-list"></i> View Referral History
+                </a>
+            </div>
+        </div>
 
-
-						<%
-						// Initialize count variable
-						String todayOPDCount = "N/A";
-						Connection con = null;
-						Statement stmt = null;
-						ResultSet rs = null;
-
-						try {
-							// Use the connection you usually use for OPD data
-							con = DBConnect.getConnection();
-							stmt = con.createStatement();
-
-							// SQL to get today's OPD count
-							// String sql = "SELECT COUNT(*) FROM opd WHERE TO_CHAR(opddate, 'DD-MM-YYYY') = TO_CHAR(SYSDATE, 'DD-MM-YYYY') and doctor = '" + session.getAttribute("username") + "'";
-							String sql = "SELECT COUNT(*) FROM opd WHERE TO_CHAR(opddate, 'DD-MM-YYYY') = TO_CHAR(SYSDATE, 'DD-MM-YYYY') ";
-							rs = stmt.executeQuery(sql);
-
-							if (rs.next()) {
-								todayOPDCount = rs.getString(1);
-							}
-						} catch (SQLException e) {
-							System.out.println("Error fetching OPD count: " + e.getMessage());
-							todayOPDCount = "Error"; // Indicate failure on dashboard
-						} finally {
-							// Clean up resources
-							if (rs != null)
-								try {
-							rs.close();
-								} catch (SQLException ignore) {
-								}
-							if (stmt != null)
-								try {
-							stmt.close();
-								} catch (SQLException ignore) {
-								}
-							if (con != null)
-								try {
-							con.close();
-								} catch (SQLException ignore) {
-								}
-						}
-
-						// The variable 'todayOPDCount' now holds the value and can be used on the dashboard.
-						%>
-						<p class="h3"><%=todayOPDCount%></p>
-					</div>
-				</a>
-			</div>
-
-			<div class="col-md-4">
-				<a href="/hosp1/HOSPITAL/Reports/todayrefered.jsp"
-					class="dashboard-card bg-warning text-dark"> <i
-					class="fa fa-share card-icon" style="font-size: 40px"></i>
-					<div class="card-body text-center">
-						<h5 class="card-title">Today's Local Referrals</h5>
-
-						<%
-						String localRefCount = "N/A";
-						String localRefYear = "";
-						Connection conLocal = null;
-						Statement stmtLocal = null;
-						ResultSet rsLocal = null;
-
-						try {
-							conLocal = DBConnect.getConnection();
-							stmtLocal = conLocal.createStatement();
-
-							// 1. Get the current year (required for your dynamic table names)
-							ResultSet rsYr = stmtLocal.executeQuery("SELECT TO_CHAR(SYSDATE, 'YYYY') FROM DUAL");
-							if (rsYr.next()) {
-								localRefYear = rsYr.getString(1);
-							}
-
-							// 2. Execute the count query using the fetched year
-							String sql = "SELECT COUNT(*) FROM LOACALREFDETAIL" + localRefYear
-							+ " WHERE TO_CHAR(refdate, 'DD-MM-YYYY') = TO_CHAR(SYSDATE, 'DD-MM-YYYY')";
-
-							rsLocal = stmtLocal.executeQuery(sql);
-
-							if (rsLocal.next()) {
-								localRefCount = rsLocal.getString(1);
-							}
-						} catch (SQLException e) {
-							System.out.println("Error fetching Local Ref count: " + e.getMessage());
-							localRefCount = "Error";
-						}
-						%>
-						<p class="h3"><%=localRefCount%></p>
-					</div>
-				</a>
-			</div>
-
-			<div class="col-md-4">
-				<a href="/hosp1/HOSPITAL/Medical Examination/alert.jsp"
-					class="dashboard-card bg-danger text-white"> <i
-					class="fa fa-medkit card-icon" style="font-size: 40px"></i>
-					<div class="card-body text-center">
-						<h5 class="card-title">Med Exams Due This Month</h5>
-						<%
-						// Variable to hold the count
-						String examsDueCount = "N/A";
-						/* Connection con = null;
-						Statement stmt = null;
-						ResultSet rs = null; */
-
-						try {
-							// Use getConnection1() as seen in the provided alert.jsp
-							con = DBConnect.getConnection1();
-							stmt = con.createStatement();
-
-							// --- ACTUAL SQL QUERY FROM alert.jsp, converted to COUNT(*) ---
-							// This query counts employees who are 'oldnewdata='N'', 'onpayroll='A'', 
-							// AND have NOT had a medical exam in the last 365 days.
-							String sql = "SELECT COUNT(*) " + "FROM personnel.employeemaster m " + "WHERE m.oldnewdata='N' AND m.onpayroll='A' "
-							+ "AND NOT EXISTS ( " + "    SELECT 1 FROM hospital.medexam em " + "    WHERE m.empn = em.empn "
-							+ "    AND TO_DATE(SYSDATE, 'YYYY-MM-DD') - TO_DATE(em.dated, 'YYYY-MM-DD') <= 365 " + ")";
-
-							rs = stmt.executeQuery(sql);
-
-							if (rs.next()) {
-								examsDueCount = rs.getString(1);
-							}
-						} catch (SQLException e) {
-							System.out.println("Error fetching Exams Due count: " + e.getMessage());
-							// You might log this error instead of showing it to the user
-							examsDueCount = "Error";
-						} finally {
-							// Clean up resources
-							if (rs != null)
-								try {
-							rs.close();
-								} catch (SQLException ignore) {
-								}
-							if (stmt != null)
-								try {
-							stmt.close();
-								} catch (SQLException ignore) {
-								}
-							if (con != null)
-								try {
-							con.close();
-								} catch (SQLException ignore) {
-								}
-						}
-
-						// The variable 'examsDueCount' is now ready for use in the dashboard.
-						%>
-						<p class="h3"><%=examsDueCount%></p>
-					</div>
-				</a>
-			</div>
-
-		</div>
-
-		<div class="row mt-4">
-			<div class="col-md-4">
-				<div class="card" style="min-height: 200px;">
-					<div class="card-body text-center">
-						<h4 class="card-title">Start New Consultation</h4>
-						<p class="card-text">Quickly register a patient for an OPD
-							visit.</p>
-						<a href="/hosp1/HOSPITAL/OPD/self3.jsp"
-							class="btn btn-success btn-lg mt-auto"><i
-							class="fa fa-plus-circle"></i> New OPD Entry</a>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-md-4">
-				<div class="card" style="min-height: 200px;">
-					<div class="card-body text-center">
-						<h4 class="card-title">New Local Refer</h4>
-						<p class="card-text">Quickly refer a patient for a Local
-							Hospital.</p>
-						<a href="/hosp1/HOSPITAL/Localref/self/local_refer_revisit.jsp"
-							class="btn btn-success btn-lg mt-auto"><i
-							class="fa fa-share card-icon"></i> New Refer Entry</a>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-md-4">
-				<div class="card" style="min-height: 200px;">
-					<div class="card-body text-center">
-						<h4 class="card-title">View Patient History</h4>
-						<p class="card-text">Search and view past OPD records.</p>
-						<a href="/hosp1/HOSPITAL/OPD/opdReport.jsp"
-							class="btn btn-info text-white btn-lg mt-auto"><i
-							class="fa fa-book"></i> OPD History</a>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="row mt-5">
-			<div class="col-12">
-				<h3>
-					<i class="fa fa-bell" style="font-size: 25px; color: red"></i>
-					Announcements & Alerts
-				</h3>
-				<div class="list-group">
-					<a href="#"
-						class="list-group-item list-group-item-action list-group-item-danger"><i
-						class="fa fa-warning"></i> <%=examsDueCount%> Employees due for
-						Medical Examination this week.</a>
-					<!-- <a href="#" class="list-group-item list-group-item-action list-group-item-info"><i class="fa fa-info-circle"></i> New policy updated if Anything requir.</a> -->
-					<a href="#"
-						class="list-group-item list-group-item-action list-group-item-success"><i
-						class="fa fa-check"></i> System update completed successfully.</a>
-				</div>
-			</div>
-		</div>
-	</div>
+    </div>
 
 </body>
 </html>
