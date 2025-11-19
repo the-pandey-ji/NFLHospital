@@ -28,11 +28,11 @@
                     <table border="0" width="100%" cellspacing="1" height="53">
                         <tr>
                             <td width="12%" height="49" valign="middle" align="left">
-                                <a href="/hosp1/userDashboard.jsp"> 
+                                <a href="/hosp1/home/endUser.jsp"> 
                                     <img border="0" src="/hosp1/nflimage.png" width="80" height="70" style="margin-right:20px;">
                                 </a>
                             </td>
-                            <td width="88%" height="49" style="padding-left: 2vw;">
+                            <td width="88%" height="49" style="padding-left: 2vw;" >
                                 <p align="left" style="margin-top: -3; margin-bottom: 0;">
                                     <strong><b><font face="Tahoma" color="#006600" size="4">NATIONAL FERTILIZERS LIMITED, PANIPAT UNIT</font></b></strong>
                                 </p>

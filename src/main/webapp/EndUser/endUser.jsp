@@ -165,7 +165,7 @@ try {
 <body background="/hosp1/Stationery/Clear%20Day%20Bkgrd.jpg">
 
     <%-- Include the user-specific navigation bar --%>
-    <%@include file="/endUserNavbar.jsp"%> 
+    <%@include file="/EndUser/endUserNavbar.jsp"%> 
 
     <div class="container mt-5">
         <h2 class="text-center mb-5">

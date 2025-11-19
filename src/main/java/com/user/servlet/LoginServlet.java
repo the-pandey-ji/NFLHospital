@@ -57,7 +57,7 @@ public class LoginServlet extends HttpServlet {
 				/* System.out.println("EndUser Login Successful for empn: " + empn); */
                 EndUser eus = userDAO.endUserDetail(empn);
                 session.setAttribute("EndUserObj", eus);
-                response.sendRedirect("/hosp1/home/endUser.jsp");
+                response.sendRedirect("/hosp1/EndUser/endUser.jsp");
                 return;
             }
 
