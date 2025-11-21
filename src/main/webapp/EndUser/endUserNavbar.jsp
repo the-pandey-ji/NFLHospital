@@ -69,16 +69,22 @@ if (user == null) {
 		<ul class="navbar-nav mr-auto">
 			<li class="nav-item active"><a class="nav-link"
 				href="/hosp1/EndUser/endUser.jsp"><i class="fa fa-home"></i>
-					Home (Dashboard)</a></li>
+					Home </a></li>
 			<li class="nav-item active"><a class="nav-link"
 				href="/hosp1/EndUser/EndUserOPDdetails.jsp"><i
-					class="fa fa-book"></i> My OPD History</a></li>
+					class="fa fa-book"></i> OPD History</a></li>
 			<li class="nav-item active"><a class="nav-link"
 				href="/hosp1/EndUser/EndUserReferDetails.jsp"><i
 					class="fa fa-share-square-o"></i> My Referrals</a></li>
 			<li class="nav-item active"><a class="nav-link"
 				href="/hosp1/EndUser/EndUserMEDCerti.jsp"><i
-					class="fa fa-file-contract"></i> Medical Certificate Copies</a></li>
+					class="fa fa-file-contract"></i> Med Certificate</a></li>
+					<li class="nav-item active"><a class="nav-link"
+				href="/hosp1/EndUser/EndUserMedicalExam.jsp"><i
+					class="fa fa-file-contract"></i> Med Examination</a></li>
+					<li class="nav-item active"><a class="nav-link"
+				href="/hosp1/EndUser/EndUserMedicalReport.jsp"><i
+					class="fa fa-file-contract"></i> Med Reports</a></li>
 		</ul>
 	</div>
 	<div class="col-md-6 d-flex align-items-center justify-content-end">
