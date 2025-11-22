@@ -1,267 +1,284 @@
 <%@ page language="java" session="true"%>
 <%@ page import="java.sql.*" %>
-<%@ page import="java.util.*" %>
 <%@ page import="com.DB.DBConnect" %>
-<%@ page import="com.entity.EndUser" %> 
-<%@ page import="java.util.Calendar" %>
+<%@ page import="com.entity.EndUser" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.concurrent.TimeUnit" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+
+<%!
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+    private static final int DAYS_OVERDUE_THRESHOLD = 365;
+
+    public Map<String, String> getLatestExamDetails(String loggedInEmpn) {
+
+        Map<String, String> data = new HashMap<String, String>();
+        data.put("isOverdue", "true");
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String sql = 
+            "SELECT * FROM ( " +
+            "SELECT TO_CHAR(DATED, 'DD-MM-YYYY') AS dated_fmt, DATED, name, empn, sex, age, dept, " +
+            "HB, ALB, SUGAR, BLOODGRP, XRAY, ECG, OTHERINV, PULSE, BP, HEART, LUNG, ABDOMEN, " +
+            "OTHERMED, HERNIA, HYDROCELE, PILES, OTHERSUR, NEARVI, DISTANTVI, COLORVI, ENT, " +
+            "GYOBFEMALE, REMARKS, STATUS, HEIGHT, WEIGHT, meno " +
+            "FROM MEDEXAM WHERE EMPN = ? ORDER BY DATED DESC ) WHERE ROWNUM = 1";
+
+        try {
+            conn = DBConnect.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, loggedInEmpn);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                data.put("recordFound", "true");
+
+                Date examDate = rs.getDate("DATED");
+                long diff = new Date().getTime() - examDate.getTime();
+                long diffDays = diff / (1000 * 60 * 60 * 24); // Manual days conversion
+
+                if (diffDays <= DAYS_OVERDUE_THRESHOLD) {
+                    data.put("isOverdue", "false");
+                }
+
+                data.put("meno", rs.getString("meno"));
+                data.put("dated", rs.getString("dated_fmt"));
+                data.put("name", rs.getString("name"));
+                data.put("empn", rs.getString("empn"));
+                data.put("sex", rs.getString("sex") != null ? rs.getString("sex").trim() : "");
+                data.put("age", rs.getString("age"));
+                data.put("dept", rs.getString("dept"));
+                data.put("hb", rs.getString("HB"));
+                data.put("alb", rs.getString("ALB"));
+                data.put("sugar", rs.getString("SUGAR"));
+                data.put("bloodgrp", rs.getString("BLOODGRP"));
+                data.put("xray", rs.getString("XRAY"));
+                data.put("ecg", rs.getString("ECG"));
+                data.put("otherinv", rs.getString("OTHERINV"));
+                data.put("pulse", rs.getString("PULSE"));
+                data.put("bp", rs.getString("BP"));
+                data.put("heart", rs.getString("HEART"));
+                data.put("lung", rs.getString("LUNG"));
+                data.put("abdomen", rs.getString("ABDomen"));
+                data.put("othermed", rs.getString("OTHERMED"));
+                data.put("hernia", rs.getString("HERNIA"));
+                data.put("hydrocele", rs.getString("HYDROCELE"));
+                data.put("piles", rs.getString("PILES"));
+                data.put("othersur", rs.getString("OTHERSUR"));
+                data.put("nearvi", rs.getString("NEARVI"));
+                data.put("distantvi", rs.getString("DISTANTVI"));
+                data.put("colorvi", rs.getString("COLORVI"));
+                data.put("ent", rs.getString("ENT"));
+                data.put("gynae", rs.getString("GYOBFEMALE"));
+                data.put("remarks", rs.getString("REMARKS"));
+                data.put("status", rs.getString("STATUS"));
+                data.put("ht", rs.getString("HEIGHT"));
+                data.put("wt", rs.getString("WEIGHT"));
+
+            } else {
+                data.put("recordFound", "false");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("SQL Error: " + e.getMessage());
+            data.put("recordFound", "false");
+            data.put("errorMessage", "Database error");
+        } finally {
+            if (rs != null) { try { rs.close(); } catch (Exception e) {} }
+            if (ps != null) { try { ps.close(); } catch (Exception e) {} }
+            if (conn != null) { try { conn.close(); } catch (Exception e) {} }
+        }
+
+        return data;
+    }
+%>
+
 
 <%
-// ==========================================================
-// 1. AUTHENTICATION & SECURITY SETUP
-// ==========================================================
-EndUser user6 = (EndUser) session.getAttribute("EndUserObj");
-if (user6 == null) {
-	response.sendRedirect("/hosp1/index.jsp");
-	return;
-}
+    // ==========================================================
+    // MAIN EXECUTION BLOCK
+    // ==========================================================
+    EndUser user9 = (EndUser) session.getAttribute("EndUserObj");
+    if (user9 == null) {
+        response.sendRedirect("/hosp1/index.jsp");
+        return;
+    }
 
-// The logged-in employee's number (MANDATORY security filter)
-String loggedInEmpn = user6.getEmpn();
-
-// --- 2. YEAR SELECTION LOGIC ---
-String currentYear = new java.text.SimpleDateFormat("yyyy").format(new java.util.Date());
-String selectedYear = request.getParameter("year");
-
-// If no year is selected in the URL, default to the current year.
-if (selectedYear == null || selectedYear.isEmpty()) {
-    selectedYear = currentYear;
-}
-
-// Initialize variables
-String yr = selectedYear;
-Connection conn = null;
-Connection conn1 = null;
-Connection conn2 = null;
+    String loggedInEmpn = user9.getEmpn(); 
+    Map<String, String> examData = getLatestExamDetails(loggedInEmpn);
+    
+    boolean recordFound = "true".equals(examData.get("recordFound"));
+    boolean isOverdue = "true".equals(examData.get("isOverdue"));
 %>
+
 <html>
 <head>
-<meta http-equiv="Content-Language" content="en-us">
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-<title>My Referral History</title>
-<style type="text/css">
-.data-table {
-    border-collapse: collapse;
-    width: 100%;
-    margin-top: 15px;
-    font-size: 13px;
-}
-.data-table th, .data-table td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: left;
-}
-.data-table th {
-    background-color: #303f9f;
-    color: white;
-}
-.summary-table {
-    width: 40%;
-    margin: 20px auto;
-}
-.summary-table th {
-    background-color: #f0f0f0;
-}
-.year-form-container {
-    text-align: right;
-    margin-bottom: 20px;
-    padding-right: 20px;
-}
-</style>
+    <title>My Latest Medical Exam</title>
+    <%@include file="/allCss.jsp"%> 
+    <style>
+        .report-container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 30px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .report-header {
+            border-bottom: 3px solid #1e3c72;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+        }
+        .section-box {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+        }
+        .section-title {
+            color: #1e3c72;
+            font-weight: bold;
+            border-left: 4px solid #007bff;
+            padding-left: 10px;
+            margin-bottom: 15px;
+        }
+        .data-item {
+            margin-bottom: 8px;
+        }
+        .data-label {
+            font-weight: 600;
+            color: #555;
+            min-width: 150px;
+            display: inline-block;
+        }
+        .alert-overdue {
+            animation: pulse-red 1.5s infinite;
+        }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 0, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+        }
+    </style>
 </head>
 <body>
-<%@include file="/EndUser/endUserNavbar.jsp" %>
-
-<div class="container" style="padding: 20px;">
-    <p align="center"><u><b><font size="4">My Referral History</font></b></u></p>
     
-    <div class="year-form-container">
-        <form method="GET" action="EndUserReferDetails.jsp" style="display:inline-block;">
-            <label for="yearSelect" style="font-weight:bold; margin-right: 10px;">Select Year:</label>
-            <select name="year" id="yearSelect" onchange="this.form.submit()" class="form-control" style="width:100px; display:inline-block;">
-                <% 
-                    int yearInt = Integer.parseInt(currentYear);
-                    // Generate options for the last 10 years, adjust range as needed
-                    for (int y = yearInt; y >= yearInt - 9; y--) { 
-                        String yearStr = String.valueOf(y);
-                %>
-                        <option value="<%=yearStr%>" <%=yearStr.equals(selectedYear) ? "selected" : "" %>><%=yearStr%></option>
-                <%
-                    }
-                %>
-            </select>
-            <noscript><button type="submit" class="btn btn-sm btn-primary">Go</button></noscript>
-        </form>
+    <%@include file="/EndUser/endUserNavbar.jsp" %> 
+
+    <div class="container">
+        
+        <h2 class="text-center mt-4 text-primary">My Latest Medical Examination Report</h2>
+
+        <% if (isOverdue) { %>
+            <div class="alert alert-danger text-center alert-overdue mb-4">
+                <h4><i class="fa fa-warning"></i> ACTION REQUIRED: Medical Examination Overdue!</h4>
+                <p class="mb-0">Your last medical examination was over a year ago. Please contact the hospital office to schedule your annual check-up.</p>
+            </div>
+        <% } else if (recordFound) { %>
+            <div class="alert alert-success text-center mb-4">
+                <i class="fa fa-check-circle"></i> Your Medical Examination status is **CURRENT**. (Last Exam: <%= examData.get("dated") %>)
+            </div>
+        <% } %>
+
+        <% if (recordFound) { %>
+            <div class="report-container">
+                <div class="report-header">
+                    <h4 class="mb-0">Employee: <%= examData.get("name") %> (E. Code: <%= examData.get("empn") %>)</h4>
+                    <small class="text-muted">Exam Date: <%= examData.get("dated") %> | Exam No: <%= examData.get("meno") %></small>
+                </div>
+                
+                <div class="section-box">
+                    <h5 class="section-title">Basic Profile</h5>
+                    <div class="row">
+                        <div class="col-md-6 data-item"><span class="data-label">Department:</span> <%= examData.get("dept") %></div>
+                        <div class="col-md-6 data-item"><span class="data-label">Age/Sex:</span> <%= examData.get("age") %> / <%= examData.get("sex") %></div>
+                        <div class="col-md-6 data-item"><span class="data-label">Height:</span> <%= examData.get("ht") %></div>
+                        <div class="col-md-6 data-item"><span class="data-label">Weight:</span> <%= examData.get("wt") %></div>
+                    </div>
+                </div>
+
+                <div class="section-box">
+                    <h5 class="section-title">Investigations & Labs</h5>
+                    <div class="row">
+                        <div class="col-md-4 data-item"><span class="data-label">HB:</span> **<%= examData.get("hb") %>**</div>
+                        <div class="col-md-4 data-item"><span class="data-label">Urine Alb:</span> <%= examData.get("alb") %></div>
+                        <div class="col-md-4 data-item"><span class="data-label">Urine Sugar:</span> <%= examData.get("sugar") %></div>
+                        <div class="col-md-4 data-item"><span class="data-label">Blood Group:</span> <%= examData.get("bloodgrp") %></div>
+                        <div class="col-md-4 data-item"><span class="data-label">X-Ray Chest:</span> <%= examData.get("xray") %></div>
+                        <div class="col-md-4 data-item"><span class="data-label">ECG:</span> <%= examData.get("ecg") %></div>
+                        <div class="col-md-12 data-item"><span class="data-label">Other Inv.:</span> <%= examData.get("otherinv") %></div>
+                    </div>
+                </div>
+
+                <div class="section-box">
+                    <h5 class="section-title">Physical/Systemic Exam</h5>
+                    <div class="row">
+                        <div class="col-md-4 data-item"><span class="data-label">Pulse:</span> <%= examData.get("pulse") %></div>
+                        <div class="col-md-4 data-item"><span class="data-label">B.P.:</span> **<%= examData.get("bp") %>**</div>
+                        <div class="col-md-4 data-item"><span class="data-label">Heart:</span> <%= examData.get("heart") %></div>
+                        <div class="col-md-4 data-item"><span class="data-label">Lung:</span> <%= examData.get("lung") %></div>
+                        <div class="col-md-4 data-item"><span class="data-label">Abdomen:</span> <%= examData.get("abdomen") %></div>
+                        <div class="col-md-4 data-item"><span class="data-label">Other Med. Prob:</span> <%= examData.get("othermed") %></div>
+                    </div>
+                </div>
+
+                <div class="section-box">
+                    <h5 class="section-title">Surgical/Specialist Check</h5>
+                    <div class="row">
+                        <div class="col-md-4 data-item"><span class="data-label">Hernia:</span> <%= examData.get("hernia") %></div>
+                        <div class="col-md-4 data-item"><span class="data-label">Hydrocele:</span> <%= examData.get("hydrocele") %></div>
+                        <div class="col-md-4 data-item"><span class="data-label">Piles:</span> <%= examData.get("piles") %></div>
+                        <div class="col-md-4 data-item"><span class="data-label">Other Sur. Prob:</span> <%= examData.get("othersur") %></div>
+                        <div class="col-md-4 data-item"><span class="data-label">E.N.T.:</span> <%= examData.get("ent") %></div>
+                        <% if ("F".equalsIgnoreCase(examData.get("sex"))) { %>
+                            <div class="col-md-4 data-item"><span class="data-label">Gynae/Ob.:</span> <%= examData.get("gynae") %></div>
+                        <% } %>
+                    </div>
+                </div>
+                
+                <div class="section-box">
+                    <h5 class="section-title">Vision Check</h5>
+                    <div class="row">
+                        <div class="col-md-4 data-item"><span class="data-label">Near Vision:</span> <%= examData.get("nearvi") %></div>
+                        <div class="col-md-4 data-item"><span class="data-label">Distant Vision:</span> <%= examData.get("distantvi") %></div>
+                        <div class="col-md-4 data-item"><span class="data-label">Colour Vision:</span> <%= examData.get("colorvi") %></div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h5 class="section-title">Final Status</h5>
+                    <p class="data-item"><span class="data-label">Remarks:</span> 
+                        <div class="alert alert-secondary mt-2"><%= examData.get("remarks") %></div>
+                    </p>
+                    <p class="data-item text-center lead">
+                        <span class="data-label">Result:</span>
+                        <strong class="text-<%= "FIT".equalsIgnoreCase(examData.get("status")) ? "success" : "danger" %>">
+                            <%= examData.get("status") %>
+                        </strong>
+                    </p>
+                </div>
+                
+                <div class="text-center mt-5">
+                    
+                    <a href="/hosp1/EndUser/endUser.jsp" class="btn btn-secondary mr-2">
+                        <i class="fa fa-arrow-left"></i> Back to Home Page
+                    </a>
+                </div>
+
+            </div>
+        <% } else { %>
+            <div class="alert alert-warning text-center mt-5">
+                <h4 class="alert-heading">No Medical Examination Record Found</h4>
+                <p>No past medical examination records were found for your employee ID (**<%= loggedInEmpn %>**).</p>
+                <p>Please contact the Medical Department for assistance.</p>
+            </div>
+        <% } %>
     </div>
-    
-    <h4 align="center">Records for Year: **<%=selectedYear%>**</h4>
-    <hr>
-
-    <p align="left"><b><font size="3">1. Local References</font></b></p>
-    <table border="1" cellpadding="0" cellspacing="0" class="data-table">
-        <thead>
-            <tr>
-                <th width="5%">REFNO</th>
-                <th width="16%">PATIENTNAME</th>
-                <th width="6%">EMPN</th>
-                <th width="6%">RELATION</th>
-                <th width="12%">REFDATE</th>
-                <th width="16%">DOC</th>
-                <th width="16%">HOSPITAL NAME</th>
-                <th width="16%">REFER / REVISIT</th>
-            </tr>
-        </thead>
-        <tbody>
-<%
-    String refno="";
-    String pname="";
-    String relation="";
-    String refdt="";
-    String doctor="";
-    String spc="";
-    String revisit="";
-    
-    try {
-        conn1 = DBConnect.getConnection();
-        Statement stmt1 = conn1.createStatement();
-        
-        // SQL using the selected year (yr) for the dynamic table name
-        String localQuery = "SELECT a.REFNO, a.PATIENTNAME, a.EMPN, a.REL, TO_CHAR(a.REFDATE, 'DD-MM-YYYY'), a.doc, c.hname, " +
-                            "CASE WHEN a.revisitflag = 'N' THEN 'Refer' WHEN a.revisitflag = 'Y' THEN 'Revisit' WHEN a.revisitflag IS NULL THEN 'Refer' ELSE NULL END AS revisit_status " +
-                            "FROM LOACALREFDETAIL"+yr+" a JOIN LOCALHOSPITAL c ON a.SPECIALIST = c.hcode " +
-                            "WHERE a.EMPN = '"+loggedInEmpn+"' ORDER BY a.refno DESC";
-                            
-        ResultSet rs = stmt1.executeQuery(localQuery);
-        
-        boolean localRecordsFound = false;
-
-        while (rs.next()) {
-            localRecordsFound = true;
-            refno = rs.getString(1);
-            pname = rs.getString(2);
-            relation = rs.getString(4);
-            refdt = rs.getString(5);
-            doctor = rs.getString(6);
-            spc = rs.getString(7);  
-            revisit = rs.getString(8);
-%>	
-            <tr>
-                <td><%=refno%></td>
-                <td><%=pname%></td>
-                <td><%=loggedInEmpn%></td>
-                <td><%=relation%></td>
-                <td><%=refdt%></td>
-                <td><%=doctor%></td>
-                <td><%=spc%></td>
-                <td><%=revisit%></td>
-            </tr>
-<%
-        }
-        if (!localRecordsFound) {
-            
-            out.println("<tr><td colspan='8' align='center'>No local referral records found for the year "
-            + selectedYear + ".</td></tr>");
-        }
-        rs.close();
-        stmt1.close();
-        
-    } catch(SQLException e) {
-        out.println("<tr><td colspan='8' align='center' style='color:red;'>Local Reference Database Error (Table for "+ selectedYear + " might not exist): " + e.getMessage() + "</td></tr>");
-    } finally {
-        if(conn1 != null) try { conn1.close(); } catch (Exception ignored) {}
-    }
-%>
-        </tbody>
-    </table>
-
-    <p align="left" style="margin-top: 30px;"><b><font size="3">2. Outstation References</font></b></p>
-    <table border="1" cellpadding="0" cellspacing="0" class="data-table">
-        <thead>
-            <tr>
-                <td width="6%">REFNO</td>
-                <td width="15%">PATIENTNAME</td>
-                <td width="7%">EMPN</td>
-                <td width="9%">RELATION</td>
-                <td width="5%">AGE</td>
-                <td width="10%">REFDATE</td>
-                <td width="17%">HOSPITAL / CITY</td>
-                <td width="15%">DOC</td>
-                <td width="7%">ESCORT</td>
-                <td width="16%">REFER / REVISIT</td>
-            </tr>
-        </thead>
-        <tbody>
-<%
-    String refno1="";
-    String pname1="";
-    String relation1="";
-    String age1="";
-    String refdt1="";
-    String escort1="";
-    String doctor1="";
-    String hospital1="";
-    String city1="";
-    String revisit1="";
-
-    try {
-        conn2 = DBConnect.getConnection();
-        Statement stmt2 = conn2.createStatement();
-        
-        // SQL using the selected year (yr) for the dynamic table name
-        String outQuery = "SELECT a.REFNO, a.PATIENTNAME, a.EMPN, a.REL, a.AGE, TO_CHAR(a.REFDATE, 'DD-MM-YYYY'), a.doc, b.hname, b.city, a.ESCORT, " +
-                            "CASE WHEN a.revisitflag = 'N' THEN 'Refer' WHEN a.revisitflag = 'Y' THEN 'Revisit' WHEN a.revisitflag IS NULL THEN 'Refer' ELSE NULL END AS revisit_status " +
-                            "FROM OUTREFDETAIL" + yr + " a JOIN OUTSTATIONHOSPITAL b ON a.hospital = b.HCODE " +
-                            "WHERE a.EMPN = '"+loggedInEmpn+"' ORDER BY a.refno DESC";
-
-        ResultSet rs1 = stmt2.executeQuery(outQuery);
-        
-        boolean outRecordsFound = false;
-        
-        while(rs1.next()) {
-            outRecordsFound = true;
-            refno1 = rs1.getString(1);
-            pname1 = rs1.getString(2);
-            relation1 = rs1.getString(4);
-            age1 = rs1.getString(5);
-            refdt1 = rs1.getString(6);
-            doctor1 = rs1.getString(7);
-            hospital1 = rs1.getString(8);
-            city1 = rs1.getString(9);
-            escort1 = rs1.getString(10);
-            revisit1 = rs1.getString(11);
-%>	 
-            <tr>
-                <td><%=refno1%>&nbsp;</td>
-                <td><%=pname1%>&nbsp;</td>
-                <td><%=loggedInEmpn%>&nbsp;</td>
-                <td><%=relation1%>&nbsp;</td>
-                <td><%=age1%>&nbsp;</td>
-                <td><%=refdt1%>&nbsp;</td>
-                <td><%=hospital1%>, <%=city1%>&nbsp;</td>
-                <td><%=doctor1%>&nbsp;</td>
-                <td><%=escort1%>&nbsp;</td>
-                <td><%=revisit1%>&nbsp;</td>
-            </tr>
-<%	
-        }
-        if (!outRecordsFound) {
-            out.println("<tr><td colspan='10' align='center'>No outstation referral records found for the year " + selectedYear+".</td></tr>");
-        }
-        rs1.close();
-        stmt2.close();
-
-    } catch(SQLException e) {
-        out.println("<tr><td colspan='10' align='center' style='color:red;'>Outstation Reference Database Error (Table for"+ selectedYear+" might not exist): " + e.getMessage() + "</td></tr>");
-    } finally {
-        if(conn2 != null) try { conn2.close(); } catch (Exception ignored) {}
-    }
-%>
-        </tbody>
-    </table>
-
-    <p align="center" style="margin-top: 30px;">
-        Viewing records for <%=selectedYear%>. Change the year above to view historical data.
-    </p>
-
-</div>
 </body>
 </html>

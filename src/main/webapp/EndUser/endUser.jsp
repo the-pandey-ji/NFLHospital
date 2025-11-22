@@ -162,7 +162,7 @@ try {
     </style>
 </head>
 
-<body background="/hosp1/Stationery/Clear%20Day%20Bkgrd.jpg">
+<body >
 
     <%-- Include the user-specific navigation bar --%>
     <%@include file="/EndUser/endUserNavbar.jsp"%> 

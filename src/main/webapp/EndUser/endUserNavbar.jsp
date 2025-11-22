@@ -15,8 +15,8 @@ if (user == null) {
 	return;
 }
 %>
-
-<div class="container-fluid p-3 bg-light">
+<div class="sticky-top" style="z-index: 1030;">
+<div class="container-fluid p-3 bg-light sticky-top">
     <div class="d-flex align-items-center position-relative" style="min-height: 80px;">
 
         <!-- LEFT: Logo -->
@@ -41,30 +41,8 @@ if (user == null) {
 </div>
 
 
-<%-- Logout Modal (Copy the modal HTML from the doctor's dashboard here) --%>
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog"
-	aria-labelledby="logoutModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"
-					aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div class="text-center">
-					<h4>Are you sure you want to logout?</h4>
-					<button type="button" class="btn btn-secondary"
-						data-dismiss="modal">Close</button>
-					<a href="/hosp1/logout" class="btn btn-danger ml-4 text-white">Logout!</a>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
 	<div class="collapse navbar-collapse" id="navbarSupportedContent">
 		<ul class="navbar-nav mr-auto">
 			<li class="nav-item active"><a class="nav-link"
@@ -100,8 +78,33 @@ if (user == null) {
 		</a>
 	</div>
 </nav>
+</div>
+<%-- Logout Modal (Copy the modal HTML from the doctor's dashboard here) --%>
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog"
+	aria-labelledby="logoutModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="text-center">
+					<h4>Are you sure you want to logout?</h4>
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">Close</button>
+					<a href="/hosp1/logout" class="btn btn-danger ml-4 text-white">Logout!</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="container-fluid"
 	style="height: 5px; background-color: #0056b3; margin-bottom: 10px; margin-top: 10px"></div>
+	
 <!-- Add the CSS for the hover effect -->
 <style>
 .bg-custom {

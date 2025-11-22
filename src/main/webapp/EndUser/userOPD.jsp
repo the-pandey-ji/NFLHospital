@@ -324,9 +324,9 @@
                     <a href="/hosp1/EndUser/EndUserOPDdetails.jsp" class="btn btn-secondary mr-2">
                         <i class="fa fa-arrow-left"></i> Back to History
                     </a>
-                    <a href="/hosp1/EndUser/EndUserOPDDetailPrint.jsp?opdId=<%= opdId %>" target="_blank" class="btn btn-success">
+                    <%-- <a href="/hosp1/EndUser/EndUserOPDDetailPrint.jsp?opdId=<%= opdId %>" target="_blank" class="btn btn-success">
                         <i class="fa fa-print"></i> Print OPD Slip
-                    </a>
+                    </a> --%>
                 </div>
             </div>
 

@@ -1,267 +1,243 @@
 <%@ page language="java" session="true"%>
 <%@ page import="java.sql.*" %>
-<%@ page import="java.util.*" %>
 <%@ page import="com.DB.DBConnect" %>
-<%@ page import="com.entity.EndUser" %> 
-<%@ page import="java.util.Calendar" %>
+<%@ page import="com.entity.EndUser" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
 
 <%
-// ==========================================================
-// 1. AUTHENTICATION & SECURITY SETUP
-// ==========================================================
-EndUser user6 = (EndUser) session.getAttribute("EndUserObj");
-if (user6 == null) {
+// --- SECURITY & AUTHENTICATION SETUP ---
+EndUser user10 = (EndUser) session.getAttribute("EndUserObj");
+if (user10 == null) {
 	response.sendRedirect("/hosp1/index.jsp");
 	return;
 }
 
-// The logged-in employee's number (MANDATORY security filter)
-String loggedInEmpn = user6.getEmpn();
+// MANDATORY SECURITY FILTER: Get the logged-in user's EMPN
+String loggedInEmpn = user10.getEmpn();
 
-// --- 2. YEAR SELECTION LOGIC ---
-String currentYear = new java.text.SimpleDateFormat("yyyy").format(new java.util.Date());
-String selectedYear = request.getParameter("year");
+// --- Data Variables ---
+List<Map<String, String>> reports = new ArrayList<Map<String, String>>();
+boolean recordsFound = false;
 
-// If no year is selected in the URL, default to the current year.
-if (selectedYear == null || selectedYear.isEmpty()) {
-    selectedYear = currentYear;
-}
-
-// Initialize variables
-String yr = selectedYear;
 Connection conn = null;
-Connection conn1 = null;
-Connection conn2 = null;
+Statement stmt = null;
+ResultSet rs = null;
+
+try {
+    conn = DBConnect.getConnection();
+    stmt = conn.createStatement();
+    
+    // SECURED SQL QUERY: Filters records by the logged-in user's EMPN.
+    // The CASE/DECODE logic handles displaying the dependent name or the employee name.
+    String query = "SELECT a.report_no, " +
+                   "CASE a.self_dep WHEN 'S' THEN b.ename ELSE a.patientname END AS patient_name, " +
+                   "TO_CHAR(a.date_of_test, 'DD-MON-YYYY') AS test_date " +
+                   "FROM TESTREPORT a " +
+                   "JOIN personnel.employeemaster b ON a.empn = b.empn " +
+                   "WHERE b.oldnewdata='N' AND a.empn = '" + loggedInEmpn + "' " +
+                   "ORDER BY a.date_of_test DESC, a.report_no DESC";
+                   
+    rs = stmt.executeQuery(query);
+    
+    while (rs.next()) {
+        recordsFound = true;
+        Map<String, String> row = new HashMap<String, String>();
+        row.put("reportno", rs.getString("report_no"));
+        row.put("pname", rs.getString("patient_name"));
+        row.put("testdate", rs.getString("test_date"));
+        reports.add(row);
+    }
+    
+} catch (SQLException e) {
+    out.println("<p style='color:red; text-align:center;'>Database Error: Failed to fetch test reports: " + e.getMessage() + "</p>");
+} finally {
+    // Java 1.6/pre-1.7 resource closing pattern
+    if (rs != null) try { rs.close(); } catch (Exception ignored) {}
+    if (stmt != null) try { stmt.close(); } catch (Exception ignored) {}
+    if (conn != null) try { conn.close(); } catch (Exception ignored) {}
+}
 %>
 <html>
 <head>
-<meta http-equiv="Content-Language" content="en-us">
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-<title>My Referral History</title>
-<style type="text/css">
-.data-table {
-    border-collapse: collapse;
-    width: 100%;
-    margin-top: 15px;
-    font-size: 13px;
-}
-.data-table th, .data-table td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: left;
-}
-.data-table th {
-    background-color: #303f9f;
+<title>My Path Lab Reports</title>
+<%@include file="/allCss.jsp"%> 
+<style>
+
+/* 🌈 Modern Gradient Header */
+.page-header-box {
+    text-align: center;
+    padding: 20px 15px;         /* originally ~40px → reduced 50% */
+    border-radius: 12px;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
     color: white;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
-.summary-table {
-    width: 40%;
-    margin: 20px auto;
+
+/* Image height reduced 50% */
+.page-header-box img {
+    width: 68px;               /* originally ~136px → 50% */
+    height: auto;
+    margin-bottom: 6px;        /* originally ~12px → 50% */
 }
-.summary-table th {
-    background-color: #f0f0f0;
+
+/* Title reduced 50% */
+.page-header-box h2 {
+    font-size: 20px;           /* originally ~40px → 50% */
+    margin-top: 8px;           /* originally ~16px → 50% */
+    margin-bottom: 4px;
 }
-.year-form-container {
-    text-align: right;
-    margin-bottom: 20px;
-    padding-right: 20px;
+
+/* Subtitle reduced 50% */
+.page-header-box p {
+    font-size: 13px;           /* originally ~26px → 50% */
+    margin: 0;
+    opacity: 0.9;
+}
+/* 🔵 Premium Glass Card */
+.glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+}
+
+/* ✨ Table Styling */
+.modern-table {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.modern-table thead {
+    background: #1e3c72;
+    color: #fff;
+}
+
+.modern-table th {
+    padding: 14px;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+}
+
+.modern-table td {
+    padding: 12px;
+    background: #ffffff;
+}
+
+.modern-table tbody tr {
+    transition: 0.25s;
+}
+
+.modern-table tbody tr:hover {
+    background-color: #eef5ff;
+    transform: scale(1.01);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+}
+
+/* 🟢 Stylish Buttons */
+.btn-view {
+    padding: 6px 14px;
+    border-radius: 6px;
+    background: #1e3c72;
+    color: white;
+    transition: 0.3s;
+}
+
+.btn-view:hover {
+    background: #2a5298;
+    transform: translateY(-2px);
+}
+
+/* 🟩 Home Button */
+.btn-home {
+    padding: 10px 25px;
+    border-radius: 8px;
+    background: #28a745;
+    color: white;
+    font-size: 18px;
+    transition: 0.3s;
+}
+
+.btn-home:hover {
+    background: #218838;
+    transform: translateY(-2px);
 }
 </style>
 </head>
-<body>
-<%@include file="/EndUser/endUserNavbar.jsp" %>
 
-<div class="container" style="padding: 20px;">
-    <p align="center"><u><b><font size="4">My Referral History</font></b></u></p>
-    
-    <div class="year-form-container">
-        <form method="GET" action="EndUserReferDetails.jsp" style="display:inline-block;">
-            <label for="yearSelect" style="font-weight:bold; margin-right: 10px;">Select Year:</label>
-            <select name="year" id="yearSelect" onchange="this.form.submit()" class="form-control" style="width:100px; display:inline-block;">
-                <% 
-                    int yearInt = Integer.parseInt(currentYear);
-                    // Generate options for the last 10 years, adjust range as needed
-                    for (int y = yearInt; y >= yearInt - 9; y--) { 
-                        String yearStr = String.valueOf(y);
-                %>
-                        <option value="<%=yearStr%>" <%=yearStr.equals(selectedYear) ? "selected" : "" %>><%=yearStr%></option>
-                <%
-                    }
-                %>
-            </select>
-            <noscript><button type="submit" class="btn btn-sm btn-primary">Go</button></noscript>
-        </form>
+<body bgcolor="#CCFFFF">
+<%@include file="/EndUser/endUserNavbar.jsp" %> 
+
+<div class="container py-4">
+
+    <!-- 🌈 Beautiful Page Header -->
+    <div class="page-header-box" >
+        <img src="/hosp1/HOSPITAL/testreport/path4.jpg" 
+             alt="Lab Icon"
+             style="width:110px; height:auto; margin-bottom:10px; filter: drop-shadow(0 3px 5px rgba(0,0,0,0.2));">
+
+        <h2 class="fw-bold mt-3">MY PATH LAB REPORTS HISTORY</h2>
+        <p class="text-light">Employee Code: <b><%= loggedInEmpn %></b></p>
     </div>
-    
-    <h4 align="center">Records for Year: **<%=selectedYear%>**</h4>
-    <hr>
 
-    <p align="left"><b><font size="3">1. Local References</font></b></p>
-    <table border="1" cellpadding="0" cellspacing="0" class="data-table">
-        <thead>
-            <tr>
-                <th width="5%">REFNO</th>
-                <th width="16%">PATIENTNAME</th>
-                <th width="6%">EMPN</th>
-                <th width="6%">RELATION</th>
-                <th width="12%">REFDATE</th>
-                <th width="16%">DOC</th>
-                <th width="16%">HOSPITAL NAME</th>
-                <th width="16%">REFER / REVISIT</th>
-            </tr>
-        </thead>
-        <tbody>
-<%
-    String refno="";
-    String pname="";
-    String relation="";
-    String refdt="";
-    String doctor="";
-    String spc="";
-    String revisit="";
-    
-    try {
-        conn1 = DBConnect.getConnection();
-        Statement stmt1 = conn1.createStatement();
-        
-        // SQL using the selected year (yr) for the dynamic table name
-        String localQuery = "SELECT a.REFNO, a.PATIENTNAME, a.EMPN, a.REL, TO_CHAR(a.REFDATE, 'DD-MM-YYYY'), a.doc, c.hname, " +
-                            "CASE WHEN a.revisitflag = 'N' THEN 'Refer' WHEN a.revisitflag = 'Y' THEN 'Revisit' WHEN a.revisitflag IS NULL THEN 'Refer' ELSE NULL END AS revisit_status " +
-                            "FROM LOACALREFDETAIL"+yr+" a JOIN LOCALHOSPITAL c ON a.SPECIALIST = c.hcode " +
-                            "WHERE a.EMPN = '"+loggedInEmpn+"' ORDER BY a.refno DESC";
-                            
-        ResultSet rs = stmt1.executeQuery(localQuery);
-        
-        boolean localRecordsFound = false;
+    <!-- 🔵 Glass Card Content -->
+    <div class="glass-card mx-auto" style="max-width: 950px;">
+        <div class="table-responsive modern-table-container">
 
-        while (rs.next()) {
-            localRecordsFound = true;
-            refno = rs.getString(1);
-            pname = rs.getString(2);
-            relation = rs.getString(4);
-            refdt = rs.getString(5);
-            doctor = rs.getString(6);
-            spc = rs.getString(7);  
-            revisit = rs.getString(8);
-%>	
-            <tr>
-                <td><%=refno%></td>
-                <td><%=pname%></td>
-                <td><%=loggedInEmpn%></td>
-                <td><%=relation%></td>
-                <td><%=refdt%></td>
-                <td><%=doctor%></td>
-                <td><%=spc%></td>
-                <td><%=revisit%></td>
-            </tr>
-<%
-        }
-        if (!localRecordsFound) {
-            
-            out.println("<tr><td colspan='8' align='center'>No local referral records found for the year "
-            + selectedYear + ".</td></tr>");
-        }
-        rs.close();
-        stmt1.close();
-        
-    } catch(SQLException e) {
-        out.println("<tr><td colspan='8' align='center' style='color:red;'>Local Reference Database Error (Table for "+ selectedYear + " might not exist): " + e.getMessage() + "</td></tr>");
-    } finally {
-        if(conn1 != null) try { conn1.close(); } catch (Exception ignored) {}
-    }
-%>
-        </tbody>
-    </table>
+            <table class="table modern-table">
+                <thead>
+                    <tr>
+                        <th>Report No.</th>
+                        <th>Patient Name</th>
+                        <th>Report Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
 
-    <p align="left" style="margin-top: 30px;"><b><font size="3">2. Outstation References</font></b></p>
-    <table border="1" cellpadding="0" cellspacing="0" class="data-table">
-        <thead>
-            <tr>
-                <td width="6%">REFNO</td>
-                <td width="15%">PATIENTNAME</td>
-                <td width="7%">EMPN</td>
-                <td width="9%">RELATION</td>
-                <td width="5%">AGE</td>
-                <td width="10%">REFDATE</td>
-                <td width="17%">HOSPITAL / CITY</td>
-                <td width="15%">DOC</td>
-                <td width="7%">ESCORT</td>
-                <td width="16%">REFER / REVISIT</td>
-            </tr>
-        </thead>
-        <tbody>
-<%
-    String refno1="";
-    String pname1="";
-    String relation1="";
-    String age1="";
-    String refdt1="";
-    String escort1="";
-    String doctor1="";
-    String hospital1="";
-    String city1="";
-    String revisit1="";
+                <tbody>
+                <% if (recordsFound) { 
+                        for (Map<String, String> row : reports) { %>
 
-    try {
-        conn2 = DBConnect.getConnection();
-        Statement stmt2 = conn2.createStatement();
-        
-        // SQL using the selected year (yr) for the dynamic table name
-        String outQuery = "SELECT a.REFNO, a.PATIENTNAME, a.EMPN, a.REL, a.AGE, TO_CHAR(a.REFDATE, 'DD-MM-YYYY'), a.doc, b.hname, b.city, a.ESCORT, " +
-                            "CASE WHEN a.revisitflag = 'N' THEN 'Refer' WHEN a.revisitflag = 'Y' THEN 'Revisit' WHEN a.revisitflag IS NULL THEN 'Refer' ELSE NULL END AS revisit_status " +
-                            "FROM OUTREFDETAIL" + yr + " a JOIN OUTSTATIONHOSPITAL b ON a.hospital = b.HCODE " +
-                            "WHERE a.EMPN = '"+loggedInEmpn+"' ORDER BY a.refno DESC";
+                    <tr>
+                        <td class="fw-bold"><%= row.get("reportno") %></td>
+                        <td class="text-start"><%= row.get("pname") %></td>
+                        <td><%= row.get("testdate") %></td>
+                        <td>
+                            <a href="ReportView.jsp?q=<%= row.get("reportno") %>" 
+                               target="_blank" 
+                               class="btn-view">
+                               View
+                            </a>
+                        </td>
+                    </tr>
 
-        ResultSet rs1 = stmt2.executeQuery(outQuery);
-        
-        boolean outRecordsFound = false;
-        
-        while(rs1.next()) {
-            outRecordsFound = true;
-            refno1 = rs1.getString(1);
-            pname1 = rs1.getString(2);
-            relation1 = rs1.getString(4);
-            age1 = rs1.getString(5);
-            refdt1 = rs1.getString(6);
-            doctor1 = rs1.getString(7);
-            hospital1 = rs1.getString(8);
-            city1 = rs1.getString(9);
-            escort1 = rs1.getString(10);
-            revisit1 = rs1.getString(11);
-%>	�
-            <tr>
-                <td><%=refno1%>&nbsp;</td>
-                <td><%=pname1%>&nbsp;</td>
-                <td><%=loggedInEmpn%>&nbsp;</td>
-                <td><%=relation1%>&nbsp;</td>
-                <td><%=age1%>&nbsp;</td>
-                <td><%=refdt1%>&nbsp;</td>
-                <td><%=hospital1%>, <%=city1%>&nbsp;</td>
-                <td><%=doctor1%>&nbsp;</td>
-                <td><%=escort1%>&nbsp;</td>
-                <td><%=revisit1%>&nbsp;</td>
-            </tr>
-<%	
-        }
-        if (!outRecordsFound) {
-            out.println("<tr><td colspan='10' align='center'>No outstation referral records found for the year " + selectedYear+".</td></tr>");
-        }
-        rs1.close();
-        stmt2.close();
+                <% } } else { %>
 
-    } catch(SQLException e) {
-        out.println("<tr><td colspan='10' align='center' style='color:red;'>Outstation Reference Database Error (Table for"+ selectedYear+" might not exist): " + e.getMessage() + "</td></tr>");
-    } finally {
-        if(conn2 != null) try { conn2.close(); } catch (Exception ignored) {}
-    }
-%>
-        </tbody>
-    </table>
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-muted">
+                            No Path Lab Reports found for your employee ID.
+                        </td>
+                    </tr>
 
-    <p align="center" style="margin-top: 30px;">
-        Viewing records for <%=selectedYear%>. Change the year above to view historical data.
-    </p>
+                <% } %>
+                </tbody>
+            </table>
 
+        </div>
+    </div>
+
+    <!-- 🏠 Home Button -->
+    <div class="text-center mt-4 mb-4">
+        <a href="/hosp1/EndUser/endUser.jsp" class="btn-home">
+            <i class="fa fa-home"></i> Back to Home Page
+        </a>
+    </div>
 </div>
 </body>
 </html>

@@ -96,7 +96,7 @@
 </form>
 
 <% if (!results.isEmpty()) { %>
-    <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+    <table border="1" cellpadding="8" cellspacing="0" style="width: 95%; border-collapse: collapse; margin-left: 40px; margin-right: 20px; text-align: center;">
         <thead style="background-color: #f0f0f0;">
             <tr>
                 <th>OPD No.</th>
@@ -107,6 +107,7 @@
                 <th>OPD Date</th>
                 <th>Employee Code</th>
                 <th>Employee Name</th>
+                <th>View Detailed OPD</th>
                
             </tr>
         </thead>
@@ -114,10 +115,9 @@
         <% for (Map<String, String> row : results) { %>
             <tr>
                 <td>
-                    <a href="/hosp1/EndUser/userOPD.jsp?opdId=<%= row.get("srno") %>" target="_blank"
-                       style="color: blue; text-decoration: underline;">
+                 
                         <%= row.get("srno") %>
-                    </a>
+                   
                 </td>
                 <td><%= row.get("patientname") %></td>
                 <td><%= row.get("relation") %></td>
@@ -126,6 +126,11 @@
                 <td><%= row.get("opddate") %></td>
                 <td><%= row.get("empn") %></td>
                 <td><%= row.get("empname") %></td>
+                <td align="center">
+                    <a href="/hosp1/EndUser/userOPD.jsp?opdId=<%= row.get("srno") %>" target="_blank" class="btn btn-sm btn-primary">
+                        View OPD Details
+                    </a>
+                </td>
                
             </tr>
         <% } %>
