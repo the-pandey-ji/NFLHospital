@@ -202,51 +202,51 @@ try {
         </div>
 
         <%-- Display Personal Metrics --%>
-        <div class="row">
-
-            <div class="col-md-4">
-                <div class="user-dashboard-card bg-primary"> 
-                    <i class="fa fa-notes-medical card-icon"></i>
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Total OPD Visits</h5>
-                        <p class="h1"><%= totalOPDVisits %></p>
-                        <small>Since Record Start</small>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="user-dashboard-card bg-warning">
-                    <i class="fa fa-share-square-o card-icon"></i>
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Total Referrals</h5>
-                        <p class="h1"><%= totalReferrals %></p>
-                        <small>Local & Outstation (Current Year)</small>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="user-dashboard-card bg-success"> 
-                    <i class="fa fa-calendar-check card-icon"></i>
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Last Medical Exam</h5>
-                        <p class="h2"><%= lastMedicalExamDate %></p>
-                        <small>Status: <%= isMedicalExamDue ? "DUE" : "CURRENT" %></small>
-                    </div>
-                </div>
+        <div class="row d-flex">
+    <div class="col-md-4 mb-3 d-flex">
+        <div class="user-dashboard-card bg-primary pt-2 w-100">
+            <i class="fa fa-book" style="font-size:40px;"></i>
+            <div class="card-body text-center">
+                <h5 class="card-title">Total OPD Visits</h5>
+                <p class="h1"><%= totalOPDVisits %></p>
+                <small>Since Record Start</small>
             </div>
         </div>
+    </div>
+
+    <div class="col-md-4 mb-3 d-flex">
+        <div class="user-dashboard-card bg-warning pt-2 w-100">
+            <i class="fa fa-share-square-o card-icon" style="font-size:40px;"></i>
+            <div class="card-body text-center">
+                <h5 class="card-title">Total Referrals</h5>
+                <p class="h1"><%= totalReferrals %></p>
+                <small>Local & Outstation (Current Year)</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3 d-flex">
+        <div class="user-dashboard-card bg-success pt-2 w-100">
+            <i class="fa fa-calendar-check-o" style="font-size:40px;"></i>
+            <div class="card-body text-center">
+                <h5 class="card-title">Last Medical Exam</h5>
+                <p class="h2"><%= lastMedicalExamDate %></p>
+                <small>Status: <%= isMedicalExamDue ? "DUE" : "CURRENT" %></small>
+            </div>
+        </div>
+    </div>
+</div>
+
         
         <%-- Action Links for the User --%>
         <div class="row mt-5">
             <div class="col-md-6">
-                <a href="/hosp1/HOSPITAL/OPD/opdReport.jsp?empn=<%= empn %>" class="btn btn-info btn-block py-3">
+                <a href="/hosp1/EndUser/EndUserOPDdetails.jsp" class="btn btn-info btn-block py-3">
                     <i class="fa fa-history"></i> View Detailed OPD History
                 </a>
             </div>
              <div class="col-md-6">
-                <a href="/hosp1/HOSPITAL/Reports/referralHistory.jsp?empn=<%= empn %>" class="btn btn-secondary btn-block py-3">
+                <a href="/hosp1/EndUser/EndUserReferDetails.jsp" class="btn btn-secondary btn-block py-3">
                     <i class="fa fa-clipboard-list"></i> View Referral History
                 </a>
             </div>

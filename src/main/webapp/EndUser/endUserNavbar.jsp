@@ -56,13 +56,13 @@ if (user == null) {
 					class="fa fa-share-square-o"></i> My Referrals</a></li>
 			<li class="nav-item active"><a class="nav-link"
 				href="/hosp1/EndUser/EndUserMEDCerti.jsp"><i
-					class="fa fa-file-contract"></i> Med Certificate</a></li>
+					class="	fa fa-certificate"></i> Med Certificate</a></li>
 					<li class="nav-item active"><a class="nav-link"
 				href="/hosp1/EndUser/EndUserMedicalExam.jsp"><i
-					class="fa fa-file-contract"></i> Med Examination</a></li>
+					class="fa fa-medkit"></i> Med Examination</a></li>
 					<li class="nav-item active"><a class="nav-link"
 				href="/hosp1/EndUser/EndUserMedicalReport.jsp"><i
-					class="fa fa-file-contract"></i> Med Reports</a></li>
+					class="fa fa-plus-square"></i> Med Reports</a></li>
 		</ul>
 	</div>
 	<div class="col-md-6 d-flex align-items-center justify-content-end">
