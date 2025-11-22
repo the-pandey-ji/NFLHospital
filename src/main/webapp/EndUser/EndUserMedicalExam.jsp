@@ -182,7 +182,7 @@
             </div>
         <% } else if (recordFound) { %>
             <div class="alert alert-success text-center mb-4">
-                <i class="fa fa-check-circle"></i> Your Medical Examination status is **CURRENT**. (Last Exam: <%= examData.get("dated") %>)
+                <i class="fa fa-check-circle"></i> Your Medical Examination status is **COMPLETED**. (Last Exam: <%= examData.get("dated") %>)
             </div>
         <% } %>
 

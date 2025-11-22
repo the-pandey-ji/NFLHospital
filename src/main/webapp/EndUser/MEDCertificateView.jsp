@@ -241,7 +241,7 @@ h5{ margin-top:10px!important; font-size:15px; }
                 </div>
 
                 <div class="text-center mt-4">
-                    <a href="/hosp1/EndUser/EndUserMedCertDetails.jsp" class="btn btn-secondary mr-2">
+                    <a href="/hosp1/EndUser/EndUserMEDCerti.jsp" class="btn btn-secondary mr-2">
                         <i class="fa fa-arrow-left"></i> Back to History
                     </a>
                      <%-- <a href="/hosp1/jsps/printMedicalCert.jsp?srno=<%= certData.get("srno") %>" target="_blank" class="btn btn-success">

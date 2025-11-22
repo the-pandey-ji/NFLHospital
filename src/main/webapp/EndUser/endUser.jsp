@@ -5,6 +5,7 @@
 <%@ page import="com.entity.EndUser" %>
 <%@ page import="java.util.Optional" %>
 <%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Calendar" %>
 
 <%
     // --- 1. Authentication Check ---
@@ -122,6 +123,71 @@ try {
     <title>User Health Dashboard</title>
     <%@include file="/allCss.jsp"%>
     <style>
+ 
+         /* Stylish Greeting Section */
+        .greeting {
+            text-align: center;
+            padding: 20px; /* Reduced padding to decrease height */
+           background: linear-gradient(120deg, rgba(255, 106, 0, 0.7), rgba(238, 9, 121, 0.7));
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: gradientShift 5s ease-in-out infinite;
+            transition: all 0.3s ease;
+            height: auto; /* Ensure height adjusts based on content */
+        }
+
+        /* Hover effect for the greeting */
+        .greeting:hover {
+            background: linear-gradient(120deg, #ee0979, #ff6a00);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            transform: translateY(-5px);
+        }
+
+        /* Greeting message styling */
+        .greeting h2 {
+            font-size: 2.2rem; /* Reduced font size */
+            font-weight: 600;
+            margin-bottom: 10px; /* Reduced margin */
+            text-transform: uppercase;
+            letter-spacing: 1.5px; /* Reduced letter spacing */
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Styling for the smaller subheading */
+        .greeting .time-greeting {
+            font-size: 1.2rem; /* Reduced font size */
+            font-weight: 400;
+            color: #f2f2f2;
+        }
+
+        /* Font Awesome icon styling */
+        .greeting i {
+            font-size: 50px; /* Reduced icon size */
+            color: #ffffff;
+            margin-bottom: 10px; /* Reduced margin */
+        }
+
+        /* Smooth background gradient transition */
+        @keyframes gradientShift {
+            0% { background: linear-gradient(120deg, #ff6a00, #ee0979); }
+            50% { background: linear-gradient(120deg, #ff9e00, #d90571); }
+            100% { background: linear-gradient(120deg, #ff6a00, #ee0979); }
+        }
+
+        /* Add smooth fade-in animation */
+        .greeting {
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+   
+    
         .user-dashboard-card {
             transition: transform 0.3s ease-in-out;
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -159,6 +225,14 @@ try {
             70% { box-shadow: 0 0 0 10px rgba(255, 0, 0, 0); }
             100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
         }
+        
+        /* Add some styles to the chart */
+        #opdChart {
+            width: 100%;  /* Ensure full width */
+           /*  height: 100px;  Fixed height */
+        }
+        
+        
     </style>
 </head>
 
@@ -166,40 +240,97 @@ try {
 
     <%-- Include the user-specific navigation bar --%>
     <%@include file="/EndUser/endUserNavbar.jsp"%> 
+     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
 
     <div class="container mt-5">
-        <h2 class="text-center mb-5">
-            <i class="fa fa-user-md" style="font-size: 40px; color: #303f9f;"></i>
-            Your Personal Health Dashboard
-        </h2>
+      
         
-        <%-- Display Personal Alerts --%>
-        <div class="row mb-5">
-            <div class="col-12">
-                <h3><i class="fa fa-bell" style="font-size: 25px; color: orange"></i> Health Alerts</h3>
-                <div class="list-group">
-                
-                    <% if (isMedicalExamDue) { %>
-                        <div class="list-group-item list-group-item-danger alert-due">
-                            <i class="fa fa-warning"></i> 
-                            <strong>URGENT:</strong> Your Annual Medical Examination is **PENDING** or was last done more than a year ago! 
-                            Please contact the Hospital administration immediately. 
-                            (Last Exam: <%= lastMedicalExamDate %>)
-                        </div>
-                    <% } else { %>
-                        <div class="list-group-item list-group-item-success">
-                            <i class="fa fa-check-circle"></i> 
-                            Your Medical Examination status is **CURRENT**. 
-                            (Last Exam: <%= lastMedicalExamDate %>)
-                        </div>
-                    <% } %>
-                    
-                    <a href="#" class="list-group-item list-group-item-info">
-                        <i class="fa fa-info-circle"></i> Total OPD Visits: <%= totalOPDVisits %>
-                    </a>
-                </div>
+            <%-- Personalized Greeting Based on Time --%>
+        <div class="greeting">
+            <% 
+                Calendar calendar = Calendar.getInstance();
+                int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+                String greeting = "";
+
+                if (hourOfDay < 12) {
+                    greeting = "Good Morning";
+                } else if (hourOfDay < 17) {
+                    greeting = "Good Afternoon";
+                } else {
+                    greeting = "Good Evening";
+                }
+            %>
+            <h2>
+                <%= greeting %>, <span style="font-weight: 700; font-size: 2.5rem;"><%= user3.getUsername() %></span>!
+            </h2>
+            <div class="time-greeting">
+               <h3> <i class="fa fa-user-md"></i> Welcome to your Personal Health Dashboard.</h3>
             </div>
         </div>
+        
+        
+        
+       <div class="row mb-5">
+    <!-- Alerts Column (Left) -->
+    <div class="col-md-6">
+        <h3><i class="fa fa-bell" style="font-size: 25px; color: orange"></i> Health Alerts</h3>
+        <div class="list-group">
+            <% if (isMedicalExamDue) { %>
+                <div class="list-group-item list-group-item-danger alert-due">
+                    <i class="fa fa-warning"></i> 
+                    <strong>URGENT:</strong> Your Annual Medical Examination is **PENDING** or was last done more than a year ago! 
+                    Please contact the Hospital administration immediately. 
+                    (Last Exam: <%= lastMedicalExamDate %>)
+                </div>
+            <% } else { %>
+                <div class="list-group-item list-group-item-success">
+                    <i class="fa fa-check-circle"></i> 
+                    Your Medical Examination status is **COMPLETED**.<BR> 
+                    (Last Exam: <%= lastMedicalExamDate %>)
+                </div>
+            <% } %>
+            
+            <a href="#" class="list-group-item list-group-item-info">
+                <i class="fa fa-info-circle"></i> Total OPD Visits: <%= totalOPDVisits %>
+            </a>
+        </div>
+    </div>
+
+    <!-- Graph Column (Right) -->
+    <div class="col-md-6">
+        <div class="chart-container" style="height:200px;">
+            <canvas id="opdChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const opdData = [5, 10, 7, 12, 14, 9]; // Replace with real data
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+
+    const ctx = document.getElementById('opdChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'OPD Visits in Last 6 Months',
+                data: opdData,
+                fill: false,
+                borderColor: 'rgba(0, 123, 255, 1)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+});
+</script>
+
+
 
         <%-- Display Personal Metrics --%>
         <div class="row d-flex">
@@ -231,7 +362,7 @@ try {
             <div class="card-body text-center">
                 <h5 class="card-title">Last Medical Exam</h5>
                 <p class="h2"><%= lastMedicalExamDate %></p>
-                <small>Status: <%= isMedicalExamDue ? "DUE" : "CURRENT" %></small>
+                <small>Status: <%= isMedicalExamDue ? "DUE" : "COMPLETED" %></small>
             </div>
         </div>
     </div>
@@ -251,7 +382,7 @@ try {
                 </a>
             </div>
         </div>
-
+      
     </div>
 
 </body>
