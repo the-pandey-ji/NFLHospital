@@ -47,7 +47,7 @@ public class LoginServlet extends HttpServlet {
 			if (us != null && "V".equalsIgnoreCase(us.getRole())) {
 				
 				session.setAttribute("Docobj", us);
-				 response.sendRedirect("/hosp1/EndUser/CGMUser.jsp");
+				 response.sendRedirect("/hosp1/CGMUser/CGMUser.jsp");
 				return;
             	
             }
