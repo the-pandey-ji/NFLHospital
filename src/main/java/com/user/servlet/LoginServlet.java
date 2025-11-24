@@ -41,6 +41,16 @@ public class LoginServlet extends HttpServlet {
             // 1️⃣ Try default user login
             UserDAOImpl userDAO = new UserDAOImpl(DBConnect.getConnection());
             User us = userDAO.userLogin(empn, password);
+            
+            
+            
+			if (us != null && "V".equalsIgnoreCase(us.getRole())) {
+				
+				session.setAttribute("Docobj", us);
+				 response.sendRedirect("/hosp1/EndUser/CGMUser.jsp");
+				return;
+            	
+            }
 
             if (us != null) {
                 session.setAttribute("Docobj", us);
