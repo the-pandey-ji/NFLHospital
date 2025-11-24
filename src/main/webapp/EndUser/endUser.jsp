@@ -1,11 +1,10 @@
 <%@ page language="java" session="true"%>
 <%@ page import="java.sql.*"%>
-<%@ page import="java.util.List"%>
+<%@ page import="java.util.*"%>
 <%@ page import="com.DB.DBConnect"%>
 <%@ page import="com.entity.EndUser" %>
-<%@ page import="java.util.Optional" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="java.util.Calendar" %>
+
 
 <%
     // --- 1. Authentication Check ---
@@ -16,15 +15,21 @@
         return;
     }
     
-    // The key identifier for the user's data
-    String empn = user3.getEmpn(); 
+    String empn = user3.getEmpn();
     
+    // Initialize variables for the chart data
+    //List<Integer> opdVisitCounts = new ArrayList<Integer>();
+    List<Integer> opdVisitCounts = new ArrayList<Integer>(Collections.nCopies(12, 0)); // 12 months, all initialized to 0
+    List<String> months = Arrays.asList("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
+
     // Initialize variables for personal metrics
     String totalOPDVisits = "N/A";
     String totalReferrals = "N/A";
     String lastMedicalExamDate = "N/A";
     boolean isMedicalExamDue = false;
     
+    StringBuilder opdDataString = new StringBuilder();
+
     Connection con = null;
     Statement stmt = null;
     ResultSet rs = null;
@@ -41,24 +46,43 @@
         }
         rs.close(); // Close the first ResultSet
 
-        // --- 3. Fetch Total Referrals for the User (Local & Outstation) ---
-        // This is complex due to dynamic year tables, simplifying for a total count placeholder
-        // In a real application, you'd iterate through years or use a view/partitioned table.
-        // For this example, we'll only count from the current year's table as a placeholder
+        // --- 3. Fetch OPD Visits for Each Month ---
+        String currentYear = new SimpleDateFormat("yyyy").format(new java.util.Date());
+        String opdVisitSql = "SELECT TO_CHAR(OPDDATE, 'MM') AS MONTH, COUNT(*) AS VISITS " +
+                             "FROM OPD WHERE EMPN = '" + empn + "' AND TO_CHAR(OPDDATE, 'YYYY') = '" + currentYear + "' " +
+                             "GROUP BY TO_CHAR(OPDDATE, 'MM') ORDER BY MONTH";
         
-        // First get the current year for the dynamic table name
-        String currentYear = "";
-ResultSet rsYr = null;
-try {
-    rsYr = stmt.executeQuery("SELECT TO_CHAR(SYSDATE, 'YYYY') FROM DUAL");
-    if (rsYr.next()) {
-        currentYear = rsYr.getString(1);
-    }
-} catch (SQLException e) {
-    System.out.println("Error getting current year: " + e.getMessage());
-} finally {
-    if (rsYr != null) try { rsYr.close(); } catch (SQLException ignore) {}
-}
+        rs = stmt.executeQuery(opdVisitSql);
+
+        // Initialize the list with zeros for each month
+        for (int i = 0; i < 12; i++) {
+            opdVisitCounts.add(0); // Initialize all months with zero visits
+        }
+
+        // Fill in the actual visit counts for the months
+        while (rs.next()) {
+            String month = rs.getString("MONTH");
+            int visitCount = rs.getInt("VISITS");
+
+            // Convert month (1-12) to index (0-11)
+            int monthIndex = Integer.parseInt(month) - 1;
+            opdVisitCounts.set(monthIndex, visitCount);
+        }
+
+        // Convert the opdVisitCounts list to a JavaScript array to use in the Chart.js
+       
+        for (Integer count : opdVisitCounts) {
+            opdDataString.append(count).append(",");
+        }
+
+        // Remove the last comma to format correctly for JavaScript array
+        if (opdDataString.length() > 0) {
+            opdDataString.setLength(opdDataString.length() - 1); // remove trailing comma
+        }
+
+
+        
+
         
         // Count Local Referrals (assuming table name LOACALREFDETAILYYYY)
         String localRefSql = "SELECT COUNT(*) FROM LOACALREFDETAIL" + currentYear + " WHERE empn = '" + empn + "'";
@@ -234,6 +258,8 @@ try {
         
         
     </style>
+    
+
 </head>
 
 <body >
@@ -304,31 +330,9 @@ try {
     </div>
 </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const opdData = [5, 10, 7, 12, 14, 9]; // Replace with real data
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
 
-    const ctx = document.getElementById('opdChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: months,
-            datasets: [{
-                label: 'OPD Visits in Last 6 Months',
-                data: opdData,
-                fill: false,
-                borderColor: 'rgba(0, 123, 255, 1)',
-                tension: 0.1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
-});
-</script>
+
+
 
 
 
@@ -384,6 +388,39 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
       
     </div>
+    
+    
+    
+    
+    <script>
+console.log("<%=opdDataString.toString() %>");
+document.addEventListener("DOMContentLoaded", function () {
+    // Fetch the real OPD visit data from the backend (in the form of a JavaScript array)
+    const opdData = [<%=opdDataString.toString() %>]; // This will insert the opdVisitCounts dynamically
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    // Set up the chart
+    const ctx = document.getElementById('opdChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'OPD Visits in 2025',
+                data: opdData,
+                fill: false,
+                borderColor: 'rgba(0, 123, 255, 1)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+            
+        }
+    });
+});
+</script>
 
 </body>
 </html>
