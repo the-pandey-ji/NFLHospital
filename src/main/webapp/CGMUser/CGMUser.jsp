@@ -270,7 +270,7 @@ System.out.println("Loading CGMUser.jsp for user dashboard.");
 <body >
 
     <%-- Include the user-specific navigation bar --%>
-    <%@include file="/EndUser/endUserNavbar.jsp"%> 
+    <%@include file="/CGMUser/CGMUserNavbar.jsp"%> 
      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
 
     <div class="container mt-5">
@@ -397,35 +397,100 @@ System.out.println("Loading CGMUser.jsp for user dashboard.");
     
     
     
-    <script>
-console.log("<%=opdDataString.toString() %>");
-document.addEventListener("DOMContentLoaded", function () {
-    // Fetch the real OPD visit data from the backend (in the form of a JavaScript array)
-    const opdData = [<%=opdDataString.toString() %>]; // This will insert the opdVisitCounts dynamically
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+   <!-- Dashboard Selection Popup -->
+<div class="modal fade" id="dashboardPopup" tabindex="-1" aria-labelledby="dashboardPopupLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
 
-    // Set up the chart
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="dashboardPopupLabel">Choose Dashboard</h5>
+      </div>
+
+      <div class="modal-body text-center">
+        <p class="mb-3">Which dashboard would you like to view?</p>
+
+        <!-- Self Dashboard button -->
+        <button id="selfBtn" class="btn btn-success btn-lg w-100 mb-3">
+           Self Dashboard
+        </button>
+
+        <!-- Plant Dashboard button -->
+        <button id="plantBtn" class="btn btn-warning btn-lg w-100">
+          Plant Dashboard
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== CHART SCRIPT ===================== -->
+<script>
+console.log("<%= opdDataString.toString() %>");
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const opdData = [<%= opdDataString.toString() %>];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
     const ctx = document.getElementById('opdChart').getContext('2d');
+
     new Chart(ctx, {
         type: 'line',
         data: {
             labels: months,
             datasets: [{
-                label: 'OPD Visits in 2025',
+                label: 'OPD Visits in <%= new java.text.SimpleDateFormat("yyyy").format(new java.util.Date()) %>',
                 data: opdData,
-                fill: false,
                 borderColor: 'rgba(0, 123, 255, 1)',
-                tension: 0.1
+                borderWidth: 2,
+                fill: false,
+                tension: 0.2
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false
-            
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    ticks: {
+                        precision: 0   // ⭐ Force whole numbers only
+                    }
+                }
+            }
         }
     });
+
 });
 </script>
+
+
+<!-- ===================== DASHBOARD POPUP SCRIPT ===================== -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    // Show popup ONLY if not shown earlier in this session
+    if (!sessionStorage.getItem("dashboardSelected")) {
+        var popup = new bootstrap.Modal(document.getElementById('dashboardPopup'));
+        popup.show();
+    }
+
+    // Self Dashboard
+    document.getElementById("selfBtn").addEventListener("click", function () {
+        sessionStorage.setItem("dashboardSelected", "self");
+        window.location.href = "/hosp1/EndUser/endUser.jsp";
+    });
+
+    // Plant Dashboard
+    document.getElementById("plantBtn").addEventListener("click", function () {
+        sessionStorage.setItem("dashboardSelected", "plant");
+        window.location.href = "/hosp1/CGMUser/CGMUser.jsp";
+    });
+
+});
+</script>
+
 
 </body>
 </html>
