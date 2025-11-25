@@ -245,8 +245,10 @@ td {
     </div>
 	
 	
-	
-	
+	<!-- Clear sessionStorage popup flag on login using JSP -->
+	<script>
+sessionStorage.removeItem("dashboardSelected");
+</script>
 
 	<%@include file="footer.jsp"%>
 
