@@ -161,10 +161,10 @@ String yr = "";
 		        ps.setString(1, empn);
 		        rs = ps.executeQuery();
 		        if (rs.next()) {
-					ename = rs1.getString(1);
-					desg = rs1.getString(2);
-					dept = rs1.getString(3);
-				}
+		            ename = rs.getString(1);
+		            desg = rs.getString(2);
+		            dept = rs.getString(3);
+		        }
 
     		ps.close();
     		rs.close();
