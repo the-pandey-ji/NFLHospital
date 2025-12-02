@@ -76,7 +76,7 @@
 <div class="dashboard-container mt-5">
 
     <h2 class="text-center mb-4">
-        <i class="fa fa-dashboard"></i> CGM Dashboard
+        <i class="fa fa-dashboard"></i> Master Dashboard
     </h2>
 
 <%-- ======================= Fetch Live Data ======================= --%>
@@ -378,7 +378,7 @@ const medChart = new Chart(document.getElementById("medChart"), {
 
         <!-- Plant Dashboard button -->
         <button id="plantBtn" class="btn btn-warning btn-lg w-100">
-          Plant Dashboard
+          Master Dashboard
         </button>
       </div>
 
