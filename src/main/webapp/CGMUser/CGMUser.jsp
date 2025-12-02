@@ -1,165 +1,314 @@
 <%@ page language="java" session="true"%>
-<%@ page import="java.math.*" %>
-<%@ page import="oracle.jdbc.driver.*" %>
-<%@ page contentType="text/html" %>
-<%@ page import="java.util.*" %>
-<%@ page import="java.io.* "%>
-<%@ page import="java.lang.*" %>
-<%@ page import="java.sql.*" %>
-<%@ page import="java.text.*" %>
-<%@ page import="java.util.Date" %>
-<%@ page import="java.io.*" %>
+<%@ page import="java.sql.*,java.util.*,java.text.*" %>
+<%@ page import="com.DB.DBConnect"%>
 
 <html>
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
-<meta name="ProgId" content="FrontPage.Editor.Document">
-<title>NFL Hospital</title>
-<script language="JavaScript1.2">
-function alert()
-{
-}
- </script>
- <style>
-    /* Custom styles for the dashboard cards */
-    .dashboard-card {
-        transition: transform 0.3s ease-in-out;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-        border-radius: 10px;
-        min-height: 150px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 20px;
-        text-decoration: none !important;
-        color: inherit;
-    }
-    .dashboard-card:hover {
-        transform: scale(1.03);
-        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.3);
-    }
-    .card-title {
-        font-weight: bold;
-        margin-top: 10px;
-    }
-    .card-icon {
-        font-size: 40px;
-    }
-</style>
+<title>NFL Hospital Dashboard</title>
 
+<!-- Chart.js only (Rest of CSS is already in navbar) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<style>
+/* --- 70% Layout --- */
+.dashboard-container {
+    width: 70%;
+    margin: auto;
+}
+
+/* --- Card Style --- */
+.menu-card {
+    height: 180px;
+    border-radius: 15px;
+    padding: 25px;
+    color: white !important;
+    text-decoration: none !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    transition: 0.3s ease;
+    font-size: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+.menu-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+}
+
+/* Gradient Themes */
+.bg-grad-blue { background: linear-gradient(135deg, #007bff, #0056d2); }
+.bg-grad-green { background: linear-gradient(135deg, #28a745, #1e7e34); }
+.bg-grad-yellow { background: linear-gradient(135deg, #ffc107, #d39e00); }
+.bg-grad-red { background: linear-gradient(135deg, #dc3545, #b21f2d); }
+.bg-grad-purple { background: linear-gradient(135deg, #6f42c1, #5a32a3); }
+.bg-grad-teal { background: linear-gradient(135deg, #20c997, #138f75); }
+
+.menu-card i {
+    font-size: 45px;
+    margin-bottom: 15px;
+}
+
+/* Analytics Card */
+.analytics-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+.chart-box {
+    height: 300px !important;
+    max-height: 300px;
+    width: 100%;
+}
+</style>
 </head>
 
 <body>
 
- <%@include file="/CGMUser/CGMUserNavbar.jsp"%> 
+<!-- Include Navbar -->
+<%@ include file="/CGMUser/CGMUserNavbar.jsp" %>
+
+<div class="dashboard-container mt-5">
+
+    <h2 class="text-center mb-4">
+        <i class="fa fa-dashboard"></i> CGM Dashboard
+    </h2>
+
+<%-- ======================= Fetch Live Data ======================= --%>
+<%
+    // Today OPD
+    String todayOPDCount = "0";
+    try {
+        Connection con = DBConnect.getConnection();
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(
+           "SELECT COUNT(*) FROM opd WHERE TRUNC(opddate)=TRUNC(SYSDATE)"
+        );
+        if(rs.next()) todayOPDCount = rs.getString(1);
+        con.close();
+    } catch(Exception e){ todayOPDCount="0"; }
+
+    // Today Referred Cases
+    String localRefCount="0";
+    String year = new java.text.SimpleDateFormat("yyyy").format(new java.util.Date());
+    try {
+        Connection con = DBConnect.getConnection();
+        Statement st = con.createStatement();
+        ResultSet rs = st.executeQuery(
+           "SELECT COUNT(*) FROM LOACALREFDETAIL"+year+" WHERE TRUNC(refdate)=TRUNC(SYSDATE)"
+        );
+        if(rs.next()) localRefCount = rs.getString(1);
+        con.close();
+    } catch(Exception e){ localRefCount="0"; }
+
+    // Today Med Certificates
+    String todayMedCert="0";
+    try {
+        Connection con = DBConnect.getConnection1();
+        Statement st = con.createStatement();
+        ResultSet rs = st.executeQuery(
+           "SELECT COUNT(*) FROM HOSPITAL.MEDICALCRT WHERE TRUNC(MDATE)=TRUNC(SYSDATE)"
+        );
+        if(rs.next()) todayMedCert = rs.getString(1);
+        con.close();
+    } catch(Exception e){ todayMedCert="0"; }
+
+    // Monthly OPD Data
+    String opdDataString = "";
+    try {
+        Connection con = DBConnect.getConnection();
+        Statement stmt = con.createStatement();
+        String sql = "SELECT TO_CHAR(opddate,'MM'), COUNT(*) FROM opd " +
+                     "WHERE TO_CHAR(opddate,'YYYY')=TO_CHAR(SYSDATE,'YYYY') " +
+                     "GROUP BY TO_CHAR(opddate,'MM') ORDER BY TO_CHAR(opddate,'MM')";
+        ResultSet rs = stmt.executeQuery(sql);
+        int[] opdCounts = new int[12];
+        while(rs.next()){
+            int month = Integer.parseInt(rs.getString(1))-1;
+            opdCounts[month] = rs.getInt(2);
+        }
+        opdDataString = Arrays.toString(opdCounts);
+        con.close();
+    } catch(Exception e){ opdDataString = "[0,0,0,0,0,0,0,0,0,0,0,0]"; }
+
+    // Monthly Referred Data
+    String refDataString = "";
+    try {
+        Connection con = DBConnect.getConnection();
+        Statement stmt = con.createStatement();
+        String sql = "SELECT TO_CHAR(refdate,'MM'), COUNT(*) FROM LOACALREFDETAIL"+year+" " +
+                     "GROUP BY TO_CHAR(refdate,'MM') ORDER BY TO_CHAR(refdate,'MM')";
+        ResultSet rs = stmt.executeQuery(sql);
+        int[] refCounts = new int[12];
+        while(rs.next()){
+            int month = Integer.parseInt(rs.getString(1))-1;
+            refCounts[month] = rs.getInt(2);
+        }
+        refDataString = Arrays.toString(refCounts);
+        con.close();
+    } catch(Exception e){ refDataString = "[0,0,0,0,0,0,0,0,0,0,0,0]"; }
+
+    // Medical Exam Completed/Pending
+    int medCompleted=0, medPending=0;
+    try {
+        Connection con = DBConnect.getConnection1();
+        Statement stmt = con.createStatement();
+
+        ResultSet rsC = stmt.executeQuery(
+            "SELECT COUNT(*) FROM personnel.employeemaster m " +
+            "WHERE m.oldnewdata='N' AND m.onpayroll='A' " +
+            "AND EXISTS (SELECT 1 FROM hospital.medexam em " +
+            "WHERE m.empn = em.empn AND SYSDATE - em.dated <= 365)"
+        );
+        if(rsC.next()) medCompleted = rsC.getInt(1);
+
+        ResultSet rsP = stmt.executeQuery(
+            "SELECT COUNT(*) FROM personnel.employeemaster m " +
+            "WHERE m.oldnewdata='N' AND m.onpayroll='A' " +
+            "AND NOT EXISTS (SELECT 1 FROM hospital.medexam em " +
+            "WHERE m.empn = em.empn AND SYSDATE - em.dated <= 365)"
+        );
+        if(rsP.next()) medPending = rsP.getInt(1);
+
+        con.close();
+    } catch(Exception e){ medCompleted=0; medPending=0; }
+%>
+
+<%-- ======================= 6-MENU CARDS ======================= --%>
+<div class="row">
+
+    <div class="col-md-4 mb-4">
+        <a href="/hosp1/CGMUser/Reports/noopd.jsp" class="menu-card bg-grad-blue">
+            <i class="fa fa-stethoscope"></i>
+            Today's OPD
+            <p class="h3"><%= todayOPDCount %></p>
+        </a>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <a href="/hosp1/CGMUser/Reports/todayrefered.jsp" class="menu-card bg-grad-yellow">
+            <i class="fa fa-share"></i>
+            Today's Referred cases
+            <p class="h3"><%= localRefCount %></p>
+        </a>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <a href="/hosp1/CGMUser/Reports/medcert.htm" class="menu-card bg-grad-purple">
+            <i class="fa fa-medkit"></i>
+            Medical Certificates
+            <p class="h3"><%= todayMedCert %></p>
+        </a>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <a href="/hosp1/CGMUser/Reports/opdhome.jsp" class="menu-card bg-grad-green">
+            <i class="fa fa-book"></i>
+            OPD in Range
+        </a>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <a href="/hosp1/CGMUser/Reports/noref.jsp" class="menu-card bg-grad-red">
+            <i class="fa fa-calendar"></i>
+            Date Wise Refer
+        </a>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <a href="/hosp1/CGMUser/Reports/alert.jsp" class="menu-card bg-grad-teal">
+            <i class="fa fa-bell"></i>
+            Employees Due for Med. Examination
+        </a>
+    </div>
+
+</div>
+
+<%-- ======================= ANALYTICS ======================= --%>
+<h3 class="mt-5 mb-3">
+    <i class="fa fa-bar-chart"></i> Analytics
+</h3>
+
+<div class="analytics-card">
+    <div class="row">
+
+        <div class="col-md-6 mb-4">
+            <h5 class="text-center">OPD Monthly Trend</h5>
+            <canvas id="opdChart" class="chart-box"></canvas>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <h5 class="text-center">Referred Cases Trend</h5>
+            <canvas id="refChart" class="chart-box"></canvas>
+        </div>
+
+        <div class="col-md-12">
+            <h5 class="text-center">Medical Exam Status</h5>
+            <canvas id="medChart" class="chart-box"></canvas>
+        </div>
+
+    </div>
+</div>
+
+<%-- ======================= CHART SCRIPTS ======================= --%>
+<script>
+const opdChart = new Chart(document.getElementById("opdChart"), {
+    type: "line",
+    data: {
+        labels: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+        datasets: [{
+            label: "OPD Cases",
+            data: <%= opdDataString %>,
+            borderColor: "#007bff",
+            borderWidth: 3,
+            fill: false
+        }]
+    },
+    options: { responsive: true }
+});
+
+const refChart = new Chart(document.getElementById("refChart"), {
+    type: "bar",
+    data: {
+        labels: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+        datasets: [{
+            label: "Referred Cases",
+            data: <%= refDataString %>,
+            backgroundColor: "#ffc107"
+        }]
+    },
+    options: { responsive: true }
+});
+
+const medChart = new Chart(document.getElementById("medChart"), {
+    type: "pie",
+    data: {
+        labels: ["Completed", "Pending"],
+        datasets: [{
+            data: [<%= medCompleted %>, <%= medPending %>],
+            backgroundColor: ["#28a745", "#dc3545"]
+        }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+</script>
 
 
-
-    
-    <div class="container mt-5">
-        <h2 class="text-center mb-4"> <i class="fa fa-stethoscope card-icon" style="font-size: 40px"></i> Doctor Dashboard</h2>
-        <div class="row">
-        
-            <div class="col-md-4">
-                <a href="/hosp1/HOSPITAL/Reports/noopd.jsp" class="dashboard-card bg-primary text-white">
-                    <i class="fa fa-stethoscope card-icon" style="font-size: 40px"></i>
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Today's OPD</h5>
-
-						
-						<%
-						    // Initialize count variable
-						    String todayOPDCount = "N/A";
-						    Connection con = null;
-						    Statement stmt = null;
-						    ResultSet rs = null;
-						
-						    try {
-						        // Use the connection you usually use for OPD data
-						        con = DBConnect.getConnection(); 
-						        stmt = con.createStatement();
-						        
-						        // SQL to get today's OPD count
-						        // String sql = "SELECT COUNT(*) FROM opd WHERE TO_CHAR(opddate, 'DD-MM-YYYY') = TO_CHAR(SYSDATE, 'DD-MM-YYYY') and doctor = '" + session.getAttribute("username") + "'";
-						        String sql = "SELECT COUNT(*) FROM opd WHERE TO_CHAR(opddate, 'DD-MM-YYYY') = TO_CHAR(SYSDATE, 'DD-MM-YYYY') ";
-						        rs = stmt.executeQuery(sql);
-						        
-						        if (rs.next()) {
-						            todayOPDCount = rs.getString(1);
-						        }
-						    } catch (SQLException e) {
-						        System.out.println("Error fetching OPD count: " + e.getMessage());
-						        todayOPDCount = "Error"; // Indicate failure on dashboard
-						    } finally {
-						        // Clean up resources
-						        if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
-						        if (stmt != null) try { stmt.close(); } catch (SQLException ignore) {}
-						        if (con != null) try { con.close(); } catch (SQLException ignore) {}
-						    }
-						
-						    // The variable 'todayOPDCount' now holds the value and can be used on the dashboard.
-						%>
-                        <p class="h3"><%=todayOPDCount %></p> 
-                    </div>
-                </a>
-            </div>
-
-            <div class="col-md-4">
-                <a href="/hosp1/HOSPITAL/Reports/todayrefered.jsp" class="dashboard-card bg-warning text-dark">
-                    <i class="fa fa-share card-icon" style="font-size: 40px"></i>
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Today's Local Referrals</h5>
-                       
-							<%
-							    String localRefCount = "N/A";
-							    String localRefYear = "";
-							    Connection conLocal = null;
-							    Statement stmtLocal = null;
-							    ResultSet rsLocal = null;
-							
-							    try {
-							        conLocal = DBConnect.getConnection();
-							        stmtLocal = conLocal.createStatement();
-							        
-							        // 1. Get the current year (required for your dynamic table names)
-							        ResultSet rsYr = stmtLocal.executeQuery("SELECT TO_CHAR(SYSDATE, 'YYYY') FROM DUAL");
-							        if(rsYr.next()){
-							            localRefYear = rsYr.getString(1);
-							        }
-							        
-							        // 2. Execute the count query using the fetched year
-							        String sql = "SELECT COUNT(*) FROM LOACALREFDETAIL" + localRefYear + 
-							                     " WHERE TO_CHAR(refdate, 'DD-MM-YYYY') = TO_CHAR(SYSDATE, 'DD-MM-YYYY')";
-							                     
-							        rsLocal = stmtLocal.executeQuery(sql);
-							        
-							        if (rsLocal.next()) {
-							            localRefCount = rsLocal.getString(1);
-							        }
-							    } catch (SQLException e) {
-							        System.out.println("Error fetching Local Ref count: " + e.getMessage());
-							        localRefCount = "Error";
-							    } 
-							%>
-                        <p class="h3"><%=localRefCount %></p>
-                    </div>
-                </a>
-            </div>
-            
-            <div class="col-md-4">
-                <a href="/hosp1/HOSPITAL/Medical Examination/alert.jsp" class="dashboard-card bg-danger text-white">
-                    <i class="fa fa-medkit card-icon" style="font-size: 40px"></i>
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Med Exams Due This Month</h5>
-						   <%
+<div class="row mt-5">
+            <div class="col-12">
+                <h3><i class="fa fa-bell" style="font-size:25px;color:red"></i> Announcements & Alerts</h3>
+                <div class="list-group">
+                 <%
 						    // Variable to hold the count
 						    String examsDueCount = "N/A";
-						    /* Connection con = null;
+						     Connection con = null;
 						    Statement stmt = null;
-						    ResultSet rs = null; */
+						    ResultSet rs = null; 
 						
 						    try {
 						        // Use getConnection1() as seen in the provided alert.jsp
@@ -196,28 +345,16 @@ function alert()
 						
 						    // The variable 'examsDueCount' is now ready for use in the dashboard.
 						%>
-                        <p class="h3"><%=examsDueCount %></p>
-                    </div>
-                </a>
-            </div>
-
-        </div>
-
-
-        <div class="row mt-5">
-            <div class="col-12">
-                <h3><i class="fa fa-bell" style="font-size:25px;color:red"></i> Announcements & Alerts</h3>
-                <div class="list-group">
                     <a href="#" class="list-group-item list-group-item-action list-group-item-danger"><i class="fa fa-warning"></i> <%=examsDueCount %> Employees due for Medical Examination this week.</a>
                     <!-- <a href="#" class="list-group-item list-group-item-action list-group-item-info"><i class="fa fa-info-circle"></i> New policy updated if Anything requir.</a> -->
                     <a href="#" class="list-group-item list-group-item-action list-group-item-success"><i class="fa fa-check"></i> System update completed successfully.</a>
                 </div>
             </div>
         </div>
+    
+    
+    
     </div>
-    
-    
-    
     
     
     
@@ -250,45 +387,7 @@ function alert()
 </div>
 
 
-<!-- ===================== CHART SCRIPT ===================== -->
-<%-- <script>
-console.log("<%= opdDataString.toString() %>");
 
-document.addEventListener("DOMContentLoaded", function () {
-
-    const opdData = [<%= opdDataString.toString() %>];
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-    const ctx = document.getElementById('opdChart').getContext('2d');
-
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: months,
-            datasets: [{
-                label: 'OPD Visits in <%= new java.text.SimpleDateFormat("yyyy").format(new java.util.Date()) %>',
-                data: opdData,
-                borderColor: 'rgba(0, 123, 255, 1)',
-                borderWidth: 2,
-                fill: false,
-                tension: 0.2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    ticks: {
-                        precision: 0   // ⭐ Force whole numbers only
-                    }
-                }
-            }
-        }
-    });
-
-});
-</script> --%>
 
 
 <!-- ===================== DASHBOARD POPUP SCRIPT ===================== -->
@@ -315,7 +414,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
-    
 </body>
 </html>
- 
