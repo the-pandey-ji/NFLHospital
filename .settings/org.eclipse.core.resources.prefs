@@ -1,4 +1,5 @@
 eclipse.preferences.version=1
+encoding//src/main/webapp/CGMUser/CGMUser.jsp=UTF-8
 encoding//src/main/webapp/EndUser/EndUserMedicalReport.jsp=UTF-8
 encoding//src/main/webapp/EndUser/MEDCertificateView.jsp=UTF-8
 encoding//src/main/webapp/EndUser/userOPD.jsp=UTF-8

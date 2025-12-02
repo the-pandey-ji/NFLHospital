@@ -7,14 +7,24 @@
 
 <%
 // Check if the user is logged in
-EndUser user = (EndUser) session.getAttribute("EndUserObj");
-if (user == null) {
+EndUser euser = (EndUser) session.getAttribute("EndUserObj");
+if (euser == null) {
 	// Redirect to login page if not logged in
 	response.sendRedirect("/hosp1/index.jsp");
 
 	return;
 }
+
+//Check if the user is logged in
+User user = (User) session.getAttribute("Docobj");
+if (user == null) {
+    // Redirect to login page if not logged in
+    response.sendRedirect("/hosp1/index.jsp");
+    
+    return;
+}
 %>
+
 <div class="sticky-top" style="z-index: 1030;">
 <div class="container-fluid p-3 bg-light sticky-top">
     <div class="d-flex align-items-center position-relative" style="min-height: 80px;">
@@ -46,26 +56,42 @@ if (user == null) {
 	<div class="collapse navbar-collapse" id="navbarSupportedContent">
 		<ul class="navbar-nav mr-auto">
 			<li class="nav-item active"><a class="nav-link"
-				href="/hosp1/EndUser/endUser.jsp"><i class="fa fa-home"></i>
+				href="/hosp1/CGMUser/CGMUser.jsp"><i class="fa fa-home"></i>
 					Home </a></li>
 			<li class="nav-item active"><a class="nav-link"
-				href="/hosp1/EndUser/EndUserOPDdetails.jsp"><i
-					class="fa fa-book"></i> OPD History</a></li>
-			<li class="nav-item active"><a class="nav-link"
-				href="/hosp1/EndUser/EndUserReferDetails.jsp"><i
-					class="fa fa-share-square-o"></i> My Referrals</a></li>
-			<li class="nav-item active"><a class="nav-link"
-				href="/hosp1/EndUser/EndUserMEDCerti.jsp"><i
-					class="	fa fa-certificate"></i> Med Certificate</a></li>
+				href="/hosp1/CGMUser/Reports/noopd.jsp"><i
+					class="fa fa-book"></i> Today's OPD</a></li>
 					<li class="nav-item active"><a class="nav-link"
-				href="/hosp1/EndUser/EndUserMedicalExam.jsp"><i
-					class="fa fa-medkit"></i> Med Examination</a></li>
+				href="/hosp1/CGMUser/Reports/opdhome.jsp"><i
+					class="fa fa-book"></i>OPD in Range</a></li>
+			<li class="nav-item active"><a class="nav-link"
+				href="/hosp1/CGMUser/Reports/todayrefered.jsp"><i
+					class="fa fa-share-square-o"></i> Today's Refer</a></li>
+			<li class="nav-item active"><a class="nav-link"
+				href="/hosp1/CGMUser/Reports/noref.jsp"><i
+					class="fa fa-share-square-o"></i> Date wise Refer</a></li>
 					<li class="nav-item active"><a class="nav-link"
-				href="/hosp1/EndUser/EndUserMedicalReport.jsp"><i
-					class="fa fa-plus-square"></i> Med Reports</a></li>
+				href="/hosp1/CGMUser/Reports/medcert.htm"><i
+					class="fa fa-medkit"></i> Med. Certificates</a></li>
+					<li class="nav-item active"><a class="nav-link"
+				href="/hosp1/CGMUser/Reports/alert.jsp"><i
+					class="fa fa-plus-square"></i> Emp. Due MED.EX.</a></li>
+					
+					 <!-- <li class="nav-item dropdown">
+                <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" aria-haspopup="true" aria-expanded="false"> <i class="fa fa-file-text" style="font-size:20px"></i> Reports </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                    <a class="dropdown-item" href="/hosp1/CGMUser/Reports/alert.jsp">Employees Due for MED.EX.</a>
+                    <a class="dropdown-item" href="/hosp1/CGMUser/Reports/noopd.jsp">Today's OPD Report</a>
+                    <a class="dropdown-item" href="/hosp1/CGMUser/Reports/opdhome.jsp">Date wise OPD Report</a>
+                    <a class="dropdown-item" href="/hosp1/CGMUser/Reports/todayrefered.jsp">Today's Referred Cases</a>
+                    <a class="dropdown-item" href="/hosp1/CGMUser/Reports/noref.jsp">Date wise Referred Cases</a>
+                    <a class="dropdown-item" href="/hosp1/CGMUser/Reports/medcert.htm">Medical Certificates</a>
+                </div>
+            </li> -->
 		</ul>
 	</div>
-	<div class="col-md-6 d-flex align-items-center justify-content-end">
+	<div class="col-md-4 d-flex align-items-center justify-content-end">
 		<span class="text-white btn btn-info mr-3"> <i
 			class="fa fa-user"></i> Welcome, **<%=user.getUsername()%>**
 		</span>
