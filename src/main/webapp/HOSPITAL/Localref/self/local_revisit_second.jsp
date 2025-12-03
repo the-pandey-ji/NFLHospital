@@ -94,6 +94,15 @@
 <div align="center">
   <center>
   <table border="0" width="44%" style="border-style: solid; border-width: 1">
+   <tr>
+      <td width="50%"><b><font face="Tahoma" size="2">Select Emp Category</font></b></td>
+      <td width="50%"><font face="Tahoma" size="2" color="#0000FF"><b>
+      <select size="1" name="typ" required>
+           <option value="N">NFL</option>
+           <option value="C">CISF</option>
+           <option value="O">Others</option>
+        </select></b></font></td>
+    </tr>
     <tr>
       <td width="50%"><font face="Tahoma" size="2"><b>Reference No </b></font></td>
       <td width="50%"><font face="Tahoma" size="2" color="#0000FF"><b><input type="text" name="refno" readonly value="<%= refno%>" size="21"></b></font></td>
@@ -137,6 +146,7 @@
       <td width="50%"><font face="Tahoma" size="2"><b>Disease</b></font></td>
       <td width="50%"><input type="text" name="disease" readonly value="<%=disease%>" size="20"></td>
     </tr>
+   
   </table>
   </center>
   <input type="hidden" name="yr1" value="<%=yr%>">

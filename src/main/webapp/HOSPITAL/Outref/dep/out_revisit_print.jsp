@@ -77,7 +77,7 @@ else
     Connection conn1 = null;
     
     String notes = "";
-    String pname = name , typ = "";
+    String pname = name , typ = request.getParameter("typ");
     
     
     
@@ -131,7 +131,7 @@ else
     	       notes = "Reference no. "+ refno +" Revisit to " + referredto + " for " + disease ;
     	    /* System.out.println("notes "+notes+" refdt1  "+refdt1); */
     	        
-    	       Statement stmt5 = conn.createStatement();
+    	 /*       Statement stmt5 = conn.createStatement();
 
     	      	ResultSet rsdetail = stmt5.executeQuery("select typ,empname from opd where srno = " + refno);
     	  		if (rsdetail.next()) {
@@ -143,7 +143,7 @@ else
     	  
     	  		}
     	  		rsdetail.close();
-    	  		stmt5.close();
+    	  		stmt5.close(); */
     	  		
     	  		/* System.out.println("typ "+typ+" ename  "+ename); */
     	  		
