@@ -209,6 +209,7 @@ if (user11 == null) {
     font-size: 13px;
     text-align: left;
 }
+
 .test-table td {
     padding: 6px 12px;
     border: 1px solid #eee;
@@ -227,6 +228,74 @@ if (user11 == null) {
     color: #dc3545; /* Red */
     font-weight: bold;
 }
+
+
+ 
+@media print {
+
+
+.sticky-top,
+    .sticky-top * {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+    }
+
+    /* Hide navbar, buttons, background */
+    body, .report-card {
+        background: #fff !important;
+        box-shadow: none !important;
+    }
+
+    nav, .btn, .fa, .fa-print, .fa-arrow-left,
+    .container > .btn, .no-print, .navbar {
+        display: none !important;
+    }
+
+    /* Remove margins for better page fit */
+    .report-card {
+        margin: 0 !important;
+        padding: 10px !important;
+        width: 100% !important;
+    }
+
+    /* Table styling optimized for printing */
+    .test-table th, .test-table td {
+        font-size: 12px !important;
+        padding: 4px 6px !important;
+        border: 1px solid #000 !important;
+    }
+
+    .section-title {
+        margin-top: 10px !important;
+        margin-bottom: 5px !important;
+        border-left: 3px solid #000 !important;
+        color: #000 !important;
+        padding-left: 6px !important;
+    }
+
+    /* Remove background colors */
+    .test-table th {
+        background: #ddd !important;
+        color: #000 !important;
+    }
+    .bg-light {
+        background: #eee !important;
+    }
+
+    /* Force single-color print */
+    * {
+        color: #000 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Page break rules */
+    .page-break {
+        page-break-before: always;
+    }
+}
+
 </style>
 </head>
 <body bgcolor="#EAFFFF">
@@ -291,7 +360,8 @@ if (user11 == null) {
                 </tbody>
             </table>
         </div>
-
+        
+     
         <div class="row">
             <div class="col-md-6">
                 <h3 class="section-title">Urine Examination</h3>
@@ -326,6 +396,10 @@ if (user11 == null) {
                 </table>
             </div>
         </div>
+
+
+		<div class="page-break"></div>
+
 
         <h3 class="section-title">Biochemistry & Liver Function</h3>
         <div class="table-responsive">
