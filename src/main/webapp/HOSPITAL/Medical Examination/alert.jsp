@@ -14,7 +14,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
 <meta name="ProgId" content="FrontPage.Editor.Document">
-<title>Leaves Details</title>
+<title>Medical Exam Due</title>
 
 <style type="text/css" media="print">
 .printbutton {
@@ -51,7 +51,7 @@ try {
 conn = DBConnect.getConnection1();
 	Statement stmt=conn.createStatement();
 	stmt=conn.createStatement();
-	ResultSet rs = stmt.executeQuery("select ename,sex, empn, (to_char(sysdate,'yyyy')-to_char(birthdate,'yyyy')) age FROM personnel.employeemaster m where oldnewdata='N' and onpayroll='A'  AND NOT EXISTS ( SELECT empn FROM hospital.medexam em WHERE m.empn = em.empn  and TO_DATE(sysdate, 'YYYY-MM-DD') - TO_DATE(em.dated, 'YYYY-MM-DD')>365 )");
+	ResultSet rs = stmt.executeQuery("SELECT m.ename, m.sex, m.empn, TRUNC(MONTHS_BETWEEN(SYSDATE, m.birthdate) / 12) AS age FROM personnel.employeemaster m WHERE m.oldnewdata = 'N' AND m.onpayroll = 'A'  AND NOT EXISTS ( SELECT 1  FROM hospital.medexam em WHERE em.empn = m.empn AND em.dated >= SYSDATE - 365 ) ORDER BY m.empn");
 while(rs.next())
 	{
 	
