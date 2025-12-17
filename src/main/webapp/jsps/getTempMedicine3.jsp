@@ -3,6 +3,38 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 
 <%
+  // Fetch medical tests
+  Connection testCon = null;
+  PreparedStatement testPs = null;
+  ResultSet testRs = null;
+  StringBuilder testOptions = new StringBuilder();
+
+  try {
+    testCon = DBConnect.getConnection();
+    testPs = testCon.prepareStatement(
+        "SELECT TESTNAME FROM HOSPITAL.MEDICALTESTS ORDER BY TESTNAME"
+    );
+    testRs = testPs.executeQuery();
+
+    while (testRs.next()) {
+      String testName = testRs.getString("TESTNAME");
+      testOptions.append("<option value='")
+                 .append(testName)
+                 .append("'>")
+                 .append(testName)
+                 .append("</option>");
+    }
+  } catch (Exception e) {
+    testOptions.append("<option>Error loading tests</option>");
+  } finally {
+    if (testRs != null) testRs.close();
+    if (testPs != null) testPs.close();
+    if (testCon != null) testCon.close();
+  }
+%>
+
+
+<%
   String empnParam = request.getParameter("empn");
   if (empnParam == null || empnParam.trim().isEmpty()) {
     return;
@@ -116,11 +148,79 @@
     }
     %>
     <tr>
-    <td colspan="5" style="text-align: center;">
-	<label for="notes">Additional Notes:</label><br>
-<textarea name="notes" id="notes" rows="3" placeholder="Enter additional details if any" style="width: 100%;"></textarea>
-    </td>
-		</tr>
+  <td colspan="5" style="text-align:center;">
+
+    <!-- Tests Dropdown -->
+    <label><b>Investigations / Tests:</b></label><br>
+    <select id="testSelect" multiple style="width: 100%;">
+  <%= testOptions.toString() %>
+</select>
+
+
+    <br><br>
+
+    <!-- Notes -->
+    <label for="notes"><b>Additional Notes:</b></label><br>
+    <textarea name="notes" id="notes" rows="4"
+      placeholder="Selected tests will appear here automatically"
+      style="width: 100%;"></textarea>
+
+  </td>
+</tr>
+
+<script>
+
+
+  // ✅ Initialize dropdown when table loads
+  $(document).ready(function () {
+    initTestDropdown();
+  });
+
+  function initTestDropdown() {
+	  // ✅ options already rendered by JSP from DB
+	  $('#testSelect').select2({
+	    placeholder: "Search & select tests",
+	    allowClear: true,
+	    width: 'resolve'
+	  });
+
+	  $('#testSelect').on('change', updateNotesWithTests);
+	}
+
+
+  function updateNotesWithTests() {
+	  let selectedTests = $('#testSelect').val() || [];
+	  let notesBox = $('#notes');
+
+	  let currentText = notesBox.val() || "";
+
+	  const TEST_HEADER = "\n\n--- Tests :  \n";
+
+	  // Split manual notes and test section
+	  let parts = currentText.split(/--- Tests :  \n/);
+	  let manualNotes = parts[0].trim();
+
+	  if (selectedTests.length === 0) {
+	    // Keep whatever doctor has written
+	    notesBox.val(manualNotes);
+	    return;
+	  }
+
+	  // ✅ comma + space separated
+	  let testLine = selectedTests.join(", ");
+
+	  let testBlock = TEST_HEADER + testLine;
+
+	  // Append tests BELOW manual notes
+	  if (manualNotes.length > 0) {
+	    notesBox.val(manualNotes + testBlock);
+	  } else {
+	    notesBox.val(testBlock.trim());
+	  }
+	}
+
+</script>
+
 
 	<%  
   } catch (Exception e) {
