@@ -8,9 +8,31 @@
     String empn = request.getParameter("empn");
     String opdId = request.getParameter("opdId");
 
+    // ===== YEAR LOGIC =====
+    String currentYear = new java.text.SimpleDateFormat("yyyy").format(new java.util.Date());
+    String selectedYear = request.getParameter("year");
+
+    if (selectedYear == null || selectedYear.trim().isEmpty()) {
+        selectedYear = currentYear;
+    }
+
+    String opdTable;
+    if (selectedYear.equals(currentYear)) {
+        opdTable = "OPD";
+    } else {
+        opdTable = "OPD" + selectedYear;
+    }
+    // ===== END YEAR LOGIC =====
+
+    // ===== SEARCH FLAG (ONLY ADDITION) =====
+    boolean searchClicked =
+        (empn != null && !empn.trim().isEmpty()) ||
+        (opdId != null && !opdId.trim().isEmpty());
+    // ===== END SEARCH FLAG =====
+
     List<Map<String, String>> results = new ArrayList<Map<String, String>>();
 
-    if ((empn != null && !empn.trim().isEmpty()) || (opdId != null && !opdId.trim().isEmpty())) {
+    if (searchClicked) {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -18,7 +40,11 @@
         try {
             conn = DBConnect.getConnection();
 
-            StringBuilder query = new StringBuilder("SELECT SRNO, PATIENTNAME, RELATION, AGE, TO_CHAR(OPDDATE, 'DD-MON-YYYY') as OPDDATE, SEX, EMPN, EMPNAME FROM OPD WHERE 1=1");
+            StringBuilder query = new StringBuilder(
+                "SELECT SRNO, PATIENTNAME, RELATION, AGE, " +
+                "TO_CHAR(OPDDATE, 'DD-MON-YYYY') AS OPDDATE, " +
+                "SEX, EMPN, EMPNAME FROM " + opdTable + " WHERE 1=1"
+            );
 
             if (empn != null && !empn.trim().isEmpty()) {
                 query.append(" AND EMPN = ?");
@@ -27,7 +53,7 @@
             if (opdId != null && !opdId.trim().isEmpty()) {
                 query.append(" AND SRNO = ?");
             }
-            
+
             query.append(" ORDER BY SRNO DESC");
 
             ps = conn.prepareStatement(query.toString());
@@ -70,13 +96,27 @@
 <head>
     <title>OPD Search Report</title>
 </head>
-<body >
+<body>
 <%@include file="/navbar.jsp" %>
 
 <h2 style="text-align:center;">OPD HISTORY</h2>
 
-<!-- Search Form -->
 <form method="get" style="text-align: center; margin-bottom: 20px;">
+
+    <label>Year:</label>
+    <select name="year" onchange="this.form.submit()" style="margin-right: 20px; padding:5px;">
+        <%
+            int yr = Integer.parseInt(currentYear);
+            for (int y = yr; y >= 2025; y--) {
+        %>
+            <option value="<%=y%>" <%= String.valueOf(y).equals(selectedYear) ? "selected" : "" %>>
+                <%=y%>
+            </option>
+        <%
+            }
+        %>
+    </select>
+
     <label style="margin-right: 10px;">Employee Code (EMPN):</label>
     <input type="text" name="empn" value="<%= (empn != null) ? empn : "" %>" style="margin-right: 20px; padding:5px;"/>
 
@@ -87,48 +127,47 @@
 </form>
 
 <% if (!results.isEmpty()) { %>
-    <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse;">
-        <thead style="background-color: #f0f0f0;">
-            <tr>
-                <th>OPD No.</th>
-                <th>Patient Name</th>
-                <th>Relation</th>
-                <th>Age</th>
-                <th>Sex</th>
-                <th>OPD Date</th>
-                <th>Employee Code</th>
-                <th>Employee Name</th>
-                <th>Edit OPD</th>
-            </tr>
-        </thead>
-        <tbody>
-        <% for (Map<String, String> row : results) { %>
-            <tr>
-                <td>
-                    <a href="/hosp1/jsps/printSelfOPD.jsp?opdId=<%= row.get("srno") %>" target="_blank"
-                       style="color: blue; text-decoration: underline;">
-                        <%= row.get("srno") %>
-                    </a>
-                </td>
-                <td><%= row.get("patientname") %></td>
-                <td><%= row.get("relation") %></td>
-                <td><%= row.get("age") %></td>
-                <td><%= row.get("sex") %></td>
-                <td><%= row.get("opddate") %></td>
-                <td><%= row.get("empn") %></td>
-                <td><%= row.get("empname") %></td>
-                 <td>
-          <a href="/hosp1/jsps/Edit_OPD.jsp?opdId=<%= row.get("srno") %>" 
-               style="padding: 4px 10px; background-color: #f0ad4e; color: white; text-decoration: none; border-radius: 3px;" disabled>
-                Edit
-            </a> 
-        </td>
-            </tr>
-        <% } %>
-        </tbody>
-    </table>
-<% } else if (request.getParameter("empn") != null || request.getParameter("opdId") != null) { %>
-    <p style="text-align: center; color: red;">No records found.</p>
+<table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+    <thead style="background-color: #f0f0f0;">
+        <tr>
+            <th>OPD No.</th>
+            <th>Patient Name</th>
+            <th>Relation</th>
+            <th>Age</th>
+            <th>Sex</th>
+            <th>OPD Date</th>
+            <th>Employee Code</th>
+            <th>Employee Name</th>
+            <th>Edit OPD</th>
+        </tr>
+    </thead>
+    <tbody>
+    <% for (Map<String, String> row : results) { %>
+        <tr>
+            <td>
+                <a href="/hosp1/jsps/printSelfOPD.jsp?opdId=<%= row.get("srno") %>&year=<%= selectedYear %>" target="_blank">
+                    <%= row.get("srno") %>
+                </a>
+            </td>
+            <td><%= row.get("patientname") %></td>
+            <td><%= row.get("relation") %></td>
+            <td><%= row.get("age") %></td>
+            <td><%= row.get("sex") %></td>
+            <td><%= row.get("opddate") %></td>
+            <td><%= row.get("empn") %></td>
+            <td><%= row.get("empname") %></td>
+            <td>
+                <a href="/hosp1/jsps/Edit_OPD.jsp?opdId=<%= row.get("srno") %>&year=<%= selectedYear %>"
+   style="padding: 4px 10px; background-color: #f0ad4e; color: white; text-decoration: none; border-radius: 3px;">
+    Edit
+</a>
+            </td>
+        </tr>
+    <% } %>
+    </tbody>
+</table>
+<% } else if (searchClicked) { %>
+<p style="text-align: center; color: red;">No records found.</p>
 <% } %>
 
 </body>

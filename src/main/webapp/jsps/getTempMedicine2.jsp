@@ -5,6 +5,25 @@
 <%
   String empnParam = request.getParameter("ovcode"); // Employee or patient code
   String opdParam = request.getParameter("opdno");   // Current OPD number
+  
+//===== YEAR LOGIC =====
+String currentYear = new java.text.SimpleDateFormat("yyyy").format(new java.util.Date());
+String selectedYear = request.getParameter("selectedYear");  // Year for OPD table selection
+
+if (selectedYear == null || selectedYear.trim().isEmpty()) {
+   selectedYear = currentYear;
+}
+
+String opdTable,prescriptionTable;
+if (selectedYear.equals(currentYear)) {
+   opdTable = "OPD";
+   prescriptionTable = "PRESCRIPTION";
+} else {
+   opdTable = "OPD" + selectedYear;
+   prescriptionTable = "PRESCRIPTION" + selectedYear;
+}
+//===== END YEAR LOGIC =====
+
 
   if (empnParam == null || empnParam.trim().isEmpty()) {
     out.println("<tr><td colspan='5'>No Employee code provided.</td></tr>");
@@ -18,6 +37,7 @@
   Connection conn = null;
   PreparedStatement ps = null;
   ResultSet rs = null;
+  
 
   try {
     conn = DBConnect.getConnection();
@@ -44,7 +64,7 @@
         "SELECT m.MEDICINECODE, m.MEDICINENAME, p.DOSAGE, p.TIMING, p.DAYS " +
         "FROM temp_med tm " +
         "LEFT JOIN HOSPITAL.MEDICINEMASTER m ON TO_CHAR(m.MEDICINECODE) = tm.med_code " +
-        "LEFT JOIN HOSPITAL.PRESCRIPTION p ON p.MEDICINECODE = tm.med_code AND p.OPD_ID = ? " + // 🔹 OPD filter only
+        "LEFT JOIN HOSPITAL." + prescriptionTable + " p ON p.MEDICINECODE = tm.med_code AND p.OPD_ID = ? " + // 🔹 OPD filter only
         "ORDER BY m.MEDICINENAME";
 
     ps = conn.prepareStatement(sql);

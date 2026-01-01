@@ -44,8 +44,29 @@
 
 <%
     int opdId = 0;
+
+// ===== YEAR LOGIC =====
+String currentYear = new java.text.SimpleDateFormat("yyyy").format(new java.util.Date());
+String selectedYear = request.getParameter("year");
+
+if (selectedYear == null || selectedYear.trim().isEmpty()) {
+    selectedYear = currentYear;
+}
+
+String opdTable,prescriptionTable;
+if (selectedYear.equals(currentYear)) {
+    opdTable = "OPD";
+    prescriptionTable = "PRESCRIPTION";
+} else {
+    opdTable = "OPD" + selectedYear;
+    prescriptionTable = "PRESCRIPTION" + selectedYear;
+}
+// ===== END YEAR LOGIC =====
+
     try {
         opdId = Integer.parseInt(request.getParameter("opdId"));
+        
+        
     } catch (NumberFormatException e) {
         out.println("Invalid OPD ID.");
         return;
@@ -65,7 +86,7 @@
         conn = DBConnect.getConnection();
 
         // Get basic patient details from OPD table
-        String sql1 = "SELECT PATIENTNAME, AGE, SEX, EMPN, EMPNAME, RELATION FROM opd WHERE srno = ?";
+        String sql1 = "SELECT PATIENTNAME, AGE, SEX, EMPN, EMPNAME, RELATION FROM " + opdTable + " WHERE srno = ?";
         ps1 = conn.prepareStatement(sql1);
         ps1.setInt(1, opdId);
         rs1 = ps1.executeQuery();
@@ -86,7 +107,7 @@
 
        // Get prescriptions (medicines, diseases, notes)
         String sql2 = "SELECT p.MEDICINECODE, mm.MEDICINENAME, p.DOSAGE, p.TIMING, p.DAYS, p.NOTES, p.DISEASECODE " +
-                      "FROM PRESCRIPTION p LEFT JOIN MEDICINEMASTER mm ON TO_CHAR(p.MEDICINECODE) = TO_CHAR(mm.MEDICINECODE) " +
+                      "FROM " + prescriptionTable + " p LEFT JOIN MEDICINEMASTER mm ON TO_CHAR(p.MEDICINECODE) = TO_CHAR(mm.MEDICINECODE) " +
                       "WHERE p.OPD_ID = ?";
         ps2 = conn.prepareStatement(sql2);
         ps2.setInt(1, opdId);
@@ -356,7 +377,7 @@
 	    loadMedicine();
 	  });
 
-	  // Ã¢â‚¬â€� Disease side (as before) Ã¢â‚¬â€�
+	  // ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬ï¿½ Disease side (as before) ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬ï¿½
 	  function loadDisease() {
 	    $.ajax({
 	      url: '/hosp1/jsps/getDisease.jsp',
@@ -390,7 +411,7 @@
 	    $('#todoItemsDisease').html(listHtml);
 	  }
 
-	  // Ã¢â‚¬â€� Medicine side (with robust fallback) Ã¢â‚¬â€�
+	  // ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬ï¿½ Medicine side (with robust fallback) ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬ï¿½
 	  function loadMedicine() {
 	    $.ajax({
 	      url: '/hosp1/jsps/getMedicine.jsp',
@@ -530,7 +551,8 @@
             method: 'GET',
             data: { 
                 ovcode: ovcode,
-                opdno: opdno // ðŸ”¹ send OPD number here
+                opdno: opdno, // Ã°Å¸â€�Â¹ send OPD number here
+                selectedYear: '<%=selectedYear %>'
             },
             success: function (response) {
                 $('#medicineDetailsTable tbody').html(response);
@@ -597,7 +619,12 @@
 
 				document.forms[0].submit();
     }
+    
+    
+    
+    
 		</script>
+		
 		
 </body>
 </html>

@@ -84,11 +84,29 @@ ResultSet rs = null;
 ResultSet rs2 = null;
 ResultSet rsDiseases = null;
 
+//===== YEAR LOGIC =====
+String currentYear = new java.text.SimpleDateFormat("yyyy").format(new java.util.Date());
+String selectedYear = request.getParameter("year");
+
+if (selectedYear == null || selectedYear.trim().isEmpty()) {
+ selectedYear = currentYear;
+}
+
+String opdTable,prescriptionTable;
+if (selectedYear.equals(currentYear)) {
+ opdTable = "OPD";
+ prescriptionTable = "PRESCRIPTION";
+} else {
+ opdTable = "OPD" + selectedYear;
+ prescriptionTable = "PRESCRIPTION" + selectedYear;
+}
+//===== END YEAR LOGIC =====
+
 try {
     conn = DBConnect.getConnection();
 
     // Fetch patient details
-    String query = "select PATIENTNAME, RELATION, AGE, to_char(opddate,'dd-MON-yyyy') as opddate, SEX, EMPN, EMPNAME,doctor from opd where srno=?";
+    String query = "select PATIENTNAME, RELATION, AGE, to_char(opddate,'dd-MON-yyyy') as opddate, SEX, EMPN, EMPNAME,doctor from " + opdTable + " where srno=?";
     pstmt = conn.prepareStatement(query);
     pstmt.setInt(1, opdId);
     rs = pstmt.executeQuery();
@@ -123,7 +141,7 @@ try {
     String query2 = 
         "SELECT NVL(mm.MEDICINENAME, 'Unknown Medicine') AS MEDICINE, " +
         "p.DOSAGE, p.FREQUENCY, p.TIMING, p.DAYS, p.NOTES, p.DISEASECODE " +
-        "FROM HOSPITAL.PRESCRIPTION p " +
+        "FROM HOSPITAL."+ prescriptionTable +" p " +
         "LEFT JOIN HOSPITAL.MEDICINEMASTER mm ON TO_CHAR(p.MEDICINECODE) = TO_CHAR(mm.MEDICINECODE) " +
         "WHERE p.OPD_ID = ?";
 
