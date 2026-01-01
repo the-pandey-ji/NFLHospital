@@ -8,10 +8,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 <title>Reports</title>
 <style type="text/css" media="print">
-.printbutton {
-    visibility: hidden;
-    display: none;
-}
+.printbutton { visibility: hidden; display: none; }
 </style>
 </head>
 <body>
@@ -22,381 +19,212 @@ String fromDate = request.getParameter("fromDate");
 String toDate = request.getParameter("toDate");
 
 if (fromDate == null || toDate == null || fromDate.trim().isEmpty() || toDate.trim().isEmpty()) {
-    out.println("<h3 style='color:red;text-align:center;'>Date range is missing. Please go back and select both From and To dates.</h3>");
+    out.println("<h3 style='color:red;text-align:center;'>Date range is missing. Please select both From and To dates.</h3>");
     return;
 }
 
-int refno;
-String pname;
-int empn;
-String relation;
-String age;
-String refdt;
-String doctor;
-String spc;
-String yr = "";
+// Parse dates
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+java.util.Date fromDateUtil = sdf.parse(fromDate);
+java.util.Date toDateUtil = sdf.parse(toDate);
+int fromYear = Integer.parseInt(fromDate.substring(0,4));
+int toYear = Integer.parseInt(toDate.substring(0,4));
 
-Connection conn = null;
-PreparedStatement pstmt = null;
-ResultSet rs = null;
+// --- Lists to collect all Local and Outstation records ---
+List<Map<String,Object>> localRefs = new ArrayList<Map<String,Object>>();
+List<Map<String,Object>> outstationRefs = new ArrayList<Map<String,Object>>();
+
+Connection conn = null, conn1 = null;
+PreparedStatement pstmt = null, pstmt1 = null;
+ResultSet rs = null, rs1 = null;
 
 try {
     conn = DBConnect.getConnection();
-
-    // Get current year
-    pstmt = conn.prepareStatement("SELECT TO_CHAR(SYSDATE, 'YYYY') FROM dual");
-    rs = pstmt.executeQuery();
-    if (rs.next()) {
-        yr = rs.getString(1);
-    }
-    rs.close();
-    pstmt.close();
-
-    // Query local references
-    String localQuery = "SELECT a.REFNO, a.PATIENTNAME, a.EMPN, a.REL, a.AGE, " +
-        "TO_CHAR(a.REFDATE, 'DD-MM-YYYY') AS REFDATE_FORMATTED, a.doc, c.hname, " +
-        "CASE WHEN a.revisitflag = 'N' THEN 'Refer' WHEN a.revisitflag = 'Y' THEN 'Revisit' ELSE 'Refer' END AS revisit_status " +
-        "FROM LOACALREFDETAIL" + yr + " a " +
-        "JOIN LOCALHOSPITAL c ON a.SPECIALIST = c.hcode " +
-        "WHERE TRUNC(a.refdate) BETWEEN TO_DATE(?, 'YYYY-MM-DD') AND TO_DATE(?, 'YYYY-MM-DD') " +
-        "ORDER BY a.REFDATE DESC";
-
-    pstmt = conn.prepareStatement(localQuery);
-    pstmt.setString(1, fromDate);
-    pstmt.setString(2, toDate);
-    rs = pstmt.executeQuery();
-%>
-
-<p align="center"><font color="#800000" size="3" face="Tahoma"><b>Details of Local References</b></font></p>
-<table border="1" cellpadding="0" cellspacing="0" align="center" style="border-collapse: collapse" bordercolor="#111111" width="75%" height="38">
-  <tr>
-    <td bgcolor="#FFCCCC"><b><font SIZE="2">REF.NO</font></b></td>
-    <td bgcolor="#FFCCCC"><b><font SIZE="2">PATIENTNAME</font></b></td>
-    <td bgcolor="#FFCCCC"><b><font SIZE="2">EMPN</font></b></td>
-    <td bgcolor="#FFCCCC"><b><font SIZE="2">RELATION</font></b></td>
-    <td bgcolor="#FFCCCC"><b><font SIZE="2">REF.DATE</font></b></td>
-    <td bgcolor="#FFCCCC"><b><font SIZE="2">DOCTOR</font></b></td>
-    <td bgcolor="#FFCCCC"><b><font SIZE="2">SPECIALIST</font></b></td>
-    <td bgcolor="#FFCCCC"><font size="2"><b>REFER / REVISIT</b></font></td>
-  </tr>
-
-<%
-    while (rs.next()) {
-        refno = rs.getInt("REFNO");
-        pname = rs.getString("PATIENTNAME");
-        empn = rs.getInt("EMPN");
-        relation = rs.getString("REL");
-        age = rs.getString("AGE");
-        refdt = rs.getString("REFDATE_FORMATTED");
-        doctor = rs.getString("doc");
-        spc = rs.getString("hname");
-        String revisit = rs.getString("revisit_status");
-%>
-  <tr>
-    <td><%= refno %></td>
-    <td><%= pname %></td>
-    <td><%= empn %></td>
-    <td><%= relation %></td>
-    <td><%= refdt %></td>
-    <td><%= doctor %></td>
-    <td><%= spc %></td>
-    <td><%= revisit %></td>
-  </tr>
-<%
-    }
-    rs.close();
-    pstmt.close();
-} catch (SQLException e) {
-    out.println("<pre style='color:red;'>SQL Error: " + e.getMessage() + "</pre>");
-} finally {
-    if (rs != null) try { rs.close(); } catch (Exception ignored) {}
-    if (pstmt != null) try { pstmt.close(); } catch (Exception ignored) {}
-    if (conn != null) try { conn.close(); } catch (Exception ignored) {}
-}
-%>
-</table>
-
-<!-- Specialist Summary -->
-<p align="center"><font color="#800000" size="3" face="Tahoma"><b>Referred Detail</b></font></p>
-<div align="center">
-  <center>
-    <table border="1" width="29%">
-      <tr>
-        <td bgcolor="#FFCCCC"><font face="Tahoma"><b>Specialist</b></font></td>
-        <td bgcolor="#FFCCCC" align="center"><font face="Tahoma"><b>No of cases</b></font></td>
-      </tr>
-
-<%
-Connection conn1 = null;
-PreparedStatement pstmt1 = null;
-ResultSet rs1 = null;
-try {
     conn1 = DBConnect.getConnection();
 
-    String specialistQuery = "SELECT b.hname, COUNT(*) FROM LOACALREFDETAIL" + yr + " a, LOCALHOSPITAL b " +
-                             "WHERE a.SPECIALIST = b.hcode AND a.refdate BETWEEN TO_DATE(?, 'YYYY-MM-DD') AND TO_DATE(?, 'YYYY-MM-DD') " +
-                             "GROUP BY b.hname";
+    // --- Loop through all years ---
+    for(int yr = fromYear; yr <= toYear; yr++){
 
-    pstmt1 = conn1.prepareStatement(specialistQuery);
-    pstmt1.setString(1, fromDate);
-    pstmt1.setString(2, toDate);
-    rs1 = pstmt1.executeQuery();
+        // --- Determine date range for this year ---
+        java.sql.Date startDate = (yr == fromYear) ? new java.sql.Date(fromDateUtil.getTime()) : java.sql.Date.valueOf(yr + "-01-01");
+        java.sql.Date endDate = (yr == toYear) ? new java.sql.Date(toDateUtil.getTime()) : java.sql.Date.valueOf(yr + "-12-31");
 
-    while (rs1.next()) {
-        String special = rs1.getString(1);
-        String nos = rs1.getString(2);
-%>
-      <tr>
-        <td><font face="Tahoma" size="2"><%= special.toUpperCase() %></font></td>
-        <td align="center"><font face="Tahoma" size="2"><%= nos %></font></td>
-      </tr>
-<%
+        String localTable = "LOACALREFDETAIL" + yr;
+        String outTable = "OUTREFDETAIL" + yr;
+
+        // --- Local References ---
+        String localQuery = "SELECT a.REFNO, a.PATIENTNAME, a.EMPN, a.REL, a.AGE, " +
+            "TO_CHAR(a.REFDATE,'DD-MM-YYYY') AS REFDATE_FORMATTED, a.doc, c.hname, " +
+            "CASE WHEN a.revisitflag='N' THEN 'Refer' WHEN a.revisitflag='Y' THEN 'Revisit' ELSE 'Refer' END AS revisit_status " +
+            "FROM " + localTable + " a JOIN LOCALHOSPITAL c ON a.SPECIALIST = c.hcode " +
+            "WHERE TRUNC(a.refdate) BETWEEN ? AND ? ORDER BY a.REFDATE DESC";
+
+        pstmt = conn.prepareStatement(localQuery);
+        pstmt.setDate(1, startDate);
+        pstmt.setDate(2, endDate);
+        rs = pstmt.executeQuery();
+
+        while(rs.next()){
+            Map<String,Object> row = new HashMap<String,Object>();
+            row.put("REFNO", rs.getInt("REFNO"));
+            row.put("PATIENTNAME", rs.getString("PATIENTNAME"));
+            row.put("EMPN", rs.getInt("EMPN"));
+            row.put("REL", rs.getString("REL"));
+            row.put("AGE", rs.getString("AGE"));
+            row.put("REFDATE", rs.getString("REFDATE_FORMATTED"));
+            row.put("DOC", rs.getString("doc"));
+            row.put("HNAME", rs.getString("hname"));
+            row.put("REVIST", rs.getString("revisit_status"));
+            localRefs.add(row);
+        }
+        if(rs != null){ rs.close(); rs=null;}
+        if(pstmt != null){ pstmt.close(); pstmt=null;}
+
+        // --- Outstation References ---
+        String outQuery = "SELECT a.REFNO, a.PATIENTNAME, a.EMPN, a.REL, a.AGE, " +
+                          "TO_CHAR(a.REFDATE,'DD-MM-YYYY') AS REFDATE_FORMATTED, b.hname, b.city, a.doc, a.ESCORT, " +
+                          "CASE WHEN a.revisitflag='N' THEN 'Refer' WHEN a.revisitflag='Y' THEN 'Revisit' ELSE 'Refer' END AS revisit_status " +
+                          "FROM " + outTable + " a JOIN OUTSTATIONHOSPITAL b ON a.hospital = b.HCODE " +
+                          "WHERE a.refdate BETWEEN ? AND ? ORDER BY a.refno";
+
+        pstmt1 = conn1.prepareStatement(outQuery);
+        pstmt1.setDate(1, startDate);
+        pstmt1.setDate(2, endDate);
+        rs1 = pstmt1.executeQuery();
+
+        while(rs1.next()){
+            Map<String,Object> row = new HashMap<String,Object>();
+            row.put("REFNO", rs1.getInt("REFNO"));
+            row.put("PATIENTNAME", rs1.getString("PATIENTNAME"));
+            row.put("EMPN", rs1.getInt("EMPN"));
+            row.put("REL", rs1.getString("REL"));
+            row.put("AGE", rs1.getString("AGE"));
+            row.put("REFDATE", rs1.getString("REFDATE_FORMATTED"));
+            row.put("HNAME", rs1.getString("hname")+" - "+rs1.getString("city"));
+            row.put("DOC", rs1.getString("doc"));
+            row.put("ESCORT", rs1.getString("ESCORT"));
+            row.put("REVIST", rs1.getString("revisit_status"));
+            outstationRefs.add(row);
+        }
+
+        if(rs1 != null){ rs1.close(); rs1=null;}
+        if(pstmt1 != null){ pstmt1.close(); pstmt1=null;}
     }
-    rs1.close();
 
-    pstmt1.close();
-
-    pstmt1 = conn1.prepareStatement(
-        "SELECT COUNT(*) FROM LOACALREFDETAIL" + yr + " WHERE refdate BETWEEN TO_DATE(?, 'YYYY-MM-DD') AND TO_DATE(?, 'YYYY-MM-DD')"
-    );
-    pstmt1.setString(1, fromDate);
-    pstmt1.setString(2, toDate);
-    rs1 = pstmt1.executeQuery();
-    String total = "0";
-    if (rs1.next()) {
-        total = rs1.getString(1);
-    }
 %>
-      <tr>
-        <td><font face="Tahoma" size="2">Total</font></td>
-        <td align="center"><font face="Tahoma" size="2"><%= total %></font></td>
-      </tr>
+
+<!-- Display Local References Table -->
+<p align="center"><font color="#800000" size="3" face="Tahoma"><b>Local References</b></font></p>
+<table border="1" align="center" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="75%">
+<tr>
+    <td bgcolor="#FFCCCC"><b>REF.NO</b></td>
+    <td bgcolor="#FFCCCC"><b>PATIENTNAME</b></td>
+    <td bgcolor="#FFCCCC"><b>EMPN</b></td>
+    <td bgcolor="#FFCCCC"><b>RELATION</b></td>
+    <td bgcolor="#FFCCCC"><b>AGE</b></td>
+    <td bgcolor="#FFCCCC"><b>REFDATE</b></td>
+    <td bgcolor="#FFCCCC"><b>DOCTOR</b></td>
+    <td bgcolor="#FFCCCC"><b>SPECIALIST</b></td>
+    <td bgcolor="#FFCCCC"><b>REFER / REVISIT</b></td>
+</tr>
 <%
-} catch (SQLException e) {
-    out.println("<pre style='color:red;'>SQL Error: " + e.getMessage() + "</pre>");
-} finally {
-    if (rs1 != null) try { rs1.close(); } catch (Exception ignored) {}
-    if (pstmt1 != null) try { pstmt1.close(); } catch (Exception ignored) {}
-    if (conn1 != null) try { conn1.close(); } catch (Exception ignored) {}
-}
+for(Map<String,Object> row : localRefs){
 %>
-    </table>
-  </center>
-</div>
-
-
-
-<!-- Outstation References -->
-<p align="center"><b><font color="#800000" face="Tahoma" size="3">Out Station References</font></b></p>
-<table border="1" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="89%">
-  <tr>
-    <td bgcolor="#FFCCCC"><font SIZE="2"><b>REFNO</b></font></td>
-    <td bgcolor="#FFCCCC"><font SIZE="2"><b>PATIENTNAME</b></font></td>
-    <td bgcolor="#FFCCCC"><font SIZE="2"><b>EMPN</b></font></td>
-    <td bgcolor="#FFCCCC"><font SIZE="2"><b>REL</b></font></td>
-    <td bgcolor="#FFCCCC"><font SIZE="2"><b>AGE</b></font></td>
-    <td bgcolor="#FFCCCC"><font SIZE="2"><b>REFDATE</b></font></td>
-    <td bgcolor="#FFCCCC"><font SIZE="2"><b>HOSPITAL</b></font></td>
-    <td bgcolor="#FFCCCC"><font SIZE="2"><b>DOC</b></font></td>
-    <td bgcolor="#FFCCCC"><font SIZE="2"><b>ESCORT</b></font></td>
-    <td bgcolor="#FFCCCC"><font SIZE="2"><b>REFER / REVISIT</b></font></td>
-  </tr>
-
+<tr>
+    <td><%= row.get("REFNO") %></td>
+    <td><%= row.get("PATIENTNAME") %></td>
+    <td><%= row.get("EMPN") %></td>
+    <td><%= row.get("REL") %></td>
+    <td><%= row.get("AGE") %></td>
+    <td><%= row.get("REFDATE") %></td>
+    <td><%= row.get("DOC") %></td>
+    <td><%= row.get("HNAME") %></td>
+    <td><%= row.get("REVIST") %></td>
+</tr>
 <%
-Connection conn2 = null;
-PreparedStatement pstmt2 = null;
-ResultSet rs2 = null;
-try {
-    conn2 = DBConnect.getConnection();
-
-    String outstationQuery = "SELECT a.REFNO, a.PATIENTNAME, a.EMPN, a.REL, a.AGE, " +
-                            "TO_CHAR(a.REFDATE, 'DD-MM-YYYY') AS REFDATE_FORMATTED, b.hname, b.city, a.doc, a.ESCORT, " +
-                            "CASE WHEN a.revisitflag = 'N' THEN 'Refer' WHEN a.revisitflag = 'Y' THEN 'Revisit' ELSE 'Refer' END AS revisit_status " +
-                            "FROM OUTREFDETAIL" + yr + " a " +
-                            "JOIN OUTSTATIONHOSPITAL b ON a.hospital = b.HCODE " +
-                            "WHERE a.refdate BETWEEN TO_DATE(?, 'YYYY-MM-DD') AND TO_DATE(?, 'YYYY-MM-DD') " +
-                            "ORDER BY a.refno";
-
-    pstmt2 = conn2.prepareStatement(outstationQuery);
-    pstmt2.setString(1, fromDate);
-    pstmt2.setString(2, toDate);
-    rs2 = pstmt2.executeQuery();
-
-    while (rs2.next()) {
-%>
-  <tr>
-    <td><%= rs2.getInt("REFNO") %></td>
-    <td><%= rs2.getString("PATIENTNAME") %></td>
-    <td><%= rs2.getInt("EMPN") %></td>
-    <td><%= rs2.getString("REL") %></td>
-    <td><%= rs2.getString("AGE") %></td>
-    <td><%= rs2.getString("REFDATE_FORMATTED") %></td>
-    <td><%= rs2.getString("hname") %> - <%= rs2.getString("city") %></td>
-    <td><%= rs2.getString("doc") %></td>
-    <td><%= rs2.getString("ESCORT") %></td>
-    <td><%= rs2.getString("revisit_status") %></td>
-  </tr>
-<%
-    }
-} catch (SQLException e) {
-    out.println("<pre style='color:red;'>SQL Error: " + e.getMessage() + "</pre>");
-} finally {
-    if (rs2 != null) try { rs2.close(); } catch (Exception ignored) {}
-    if (pstmt2 != null) try { pstmt2.close(); } catch (Exception ignored) {}
-    if (conn2 != null) try { conn2.close(); } catch (Exception ignored) {}
 }
 %>
 </table>
 
-<p align="center"><font color="#800000" size="3" face="Tahoma"><b>Outstation Specialist Summary</b></font></p>
-<div align="center">
-  <center>
-    <table border="1" width="29%">
-      <tr>
-        <td bgcolor="#FFCCCC"><font face="Tahoma"><b>Specialist</b></font></td>
-        <td bgcolor="#FFCCCC" align="center"><font face="Tahoma"><b>No of cases</b></font></td>
-      </tr>
-
+<!-- Similarly, display Outstation References -->
+<p align="center"><font color="#800000" size="3" face="Tahoma"><b>Outstation References</b></font></p>
+<table border="1" style="border-collapse: collapse" bordercolor="#111111" width="89%">
+<tr>
+    <td bgcolor="#FFCCCC"><b>REF.NO</b></td>
+    <td bgcolor="#FFCCCC"><b>PATIENTNAME</b></td>
+    <td bgcolor="#FFCCCC"><b>EMPN</b></td>
+    <td bgcolor="#FFCCCC"><b>REL</b></td>
+    <td bgcolor="#FFCCCC"><b>AGE</b></td>
+    <td bgcolor="#FFCCCC"><b>REFDATE</b></td>
+    <td bgcolor="#FFCCCC"><b>HOSPITAL</b></td>
+    <td bgcolor="#FFCCCC"><b>DOCTOR</b></td>
+    <td bgcolor="#FFCCCC"><b>ESCORT</b></td>
+    <td bgcolor="#FFCCCC"><b>REFER / REVISIT</b></td>
+</tr>
 <%
-Connection conn3 = null;
-PreparedStatement pstmt3 = null;
-ResultSet rs3 = null;
-try {
-    conn3 = DBConnect.getConnection();
-
-    // Query for specialist-wise count
-    String outstationSpecialistQuery = "SELECT b.hname, COUNT(*) " +
-                                       "FROM OUTREFDETAIL" + yr + " a, OUTSTATIONHOSPITAL b " +
-                                       "WHERE a.hospital = b.hcode AND a.refdate BETWEEN TO_DATE(?, 'YYYY-MM-DD') AND TO_DATE(?, 'YYYY-MM-DD') " +
-                                       "GROUP BY b.hname";
-
-    pstmt3 = conn3.prepareStatement(outstationSpecialistQuery);
-    pstmt3.setString(1, fromDate);
-    pstmt3.setString(2, toDate);
-    rs3 = pstmt3.executeQuery();
-
-    while (rs3.next()) {
-        String specialist = rs3.getString(1);
-        String count = rs3.getString(2);
+for(Map<String,Object> row : outstationRefs){
 %>
-      <tr>
-        <td><font face="Tahoma" size="2"><%= specialist.toUpperCase() %></font></td>
-        <td align="center"><font face="Tahoma" size="2"><%= count %></font></td>
-      </tr>
+<tr>
+    <td><%= row.get("REFNO") %></td>
+    <td><%= row.get("PATIENTNAME") %></td>
+    <td><%= row.get("EMPN") %></td>
+    <td><%= row.get("REL") %></td>
+    <td><%= row.get("AGE") %></td>
+    <td><%= row.get("REFDATE") %></td>
+    <td><%= row.get("HNAME") %></td>
+    <td><%= row.get("DOC") %></td>
+    <td><%= row.get("ESCORT") %></td>
+    <td><%= row.get("REVIST") %></td>
+</tr>
 <%
-    }
-    rs3.close();
-    pstmt3.close();
-
-    // Query for total count
-    pstmt3 = conn3.prepareStatement(
-        "SELECT COUNT(*) FROM OUTREFDETAIL" + yr + " WHERE refdate BETWEEN TO_DATE(?, 'YYYY-MM-DD') AND TO_DATE(?, 'YYYY-MM-DD')"
-    );
-    pstmt3.setString(1, fromDate);
-    pstmt3.setString(2, toDate);
-    rs3 = pstmt3.executeQuery();
-
-    String total = "0";
-    if (rs3.next()) {
-        total = rs3.getString(1);
-    }
-%>
-      <tr>
-        <td><font face="Tahoma" size="2">Total</font></td>
-        <td align="center"><font face="Tahoma" size="2"><%= total %></font></td>
-      </tr>
-<%
-} catch (SQLException e) {
-    out.println("<pre style='color:red;'>SQL Error: " + e.getMessage() + "</pre>");
-} finally {
-    if (rs3 != null) try { rs3.close(); } catch (Exception ignored) {}
-    if (pstmt3 != null) try { pstmt3.close(); } catch (Exception ignored) {}
-    if (conn3 != null) try { conn3.close(); } catch (Exception ignored) {}
 }
 %>
-    </table>
-  </center>
-</div>
-
-
-
-<p align="center"><font color="#800000" size="3" face="Tahoma"><b>Doctor-wise Reference Summary (Local + Outstation)</b></font></p>
-<div align="center">
-  <table border="1" width="40%">
-    <tr>
-      <td bgcolor="#FFCCCC"><font face="Tahoma"><b>Doctor</b></font></td>
-      <td bgcolor="#FFCCCC" align="center"><font face="Tahoma"><b>No of Cases</b></font></td>
-      <td bgcolor="#FFCCCC" align="center"><font face="Tahoma"><b>Reference Type</b></font></td>
-    </tr>
+</table>
 
 <%
-Connection connDoc = null;
-PreparedStatement pstmtDoc = null;
-ResultSet rsDoc = null;
+// --- Doctor-wise Summary (Local + Outstation)
+Map<String,Integer> doctorSummary = new TreeMap<String,Integer>();
 
-try {
-    connDoc = DBConnect.getConnection();
-
-    // LOCAL references: doctor-wise summary
-    // LOCAL references: doctor-wise summary (case-insensitive)
-String localDoctorQuery = "SELECT UPPER(a.doc) AS doc, COUNT(*) FROM LOACALREFDETAIL" + yr + " a " +
-                          "WHERE a.refdate BETWEEN TO_DATE(?, 'YYYY-MM-DD') AND TO_DATE(?, 'YYYY-MM-DD') " +
-                          "GROUP BY UPPER(a.doc) ORDER BY UPPER(a.doc)";
-
-
-    pstmtDoc = connDoc.prepareStatement(localDoctorQuery);
-    pstmtDoc.setString(1, fromDate);
-    pstmtDoc.setString(2, toDate);
-    rsDoc = pstmtDoc.executeQuery();
-
-    while (rsDoc.next()) {
-       doctor = rsDoc.getString(1);
-        String count = rsDoc.getString(2);
-%>
-    <tr>
-      <td><font face="Tahoma" size="2"><%= doctor != null ? doctor.toUpperCase() : "UNKNOWN" %></font></td>
-      <td align="center"><font face="Tahoma" size="2"><%= count %></font></td>
-      <td align="center"><font face="Tahoma" size="2">Local</font></td>
-    </tr>
-<%
-    }
-    rsDoc.close();
-    pstmtDoc.close();
-
-    // OUTSTATION references: doctor-wise summary
-    String outDoctorQuery = "SELECT a.doc, COUNT(*) FROM OUTREFDETAIL" + yr + " a " +
-                            "WHERE a.refdate BETWEEN TO_DATE(?, 'YYYY-MM-DD') AND TO_DATE(?, 'YYYY-MM-DD') " +
-                            "GROUP BY a.doc ORDER BY a.doc";
-
-    pstmtDoc = connDoc.prepareStatement(outDoctorQuery);
-    pstmtDoc.setString(1, fromDate);
-    pstmtDoc.setString(2, toDate);
-    rsDoc = pstmtDoc.executeQuery();
-
-    while (rsDoc.next()) {
-         doctor = rsDoc.getString(1);
-        String count = rsDoc.getString(2);
-%>
-    <tr>
-      <td><font face="Tahoma" size="2"><%= doctor != null ? doctor.toUpperCase() : "UNKNOWN" %></font></td>
-      <td align="center"><font face="Tahoma" size="2"><%= count %></font></td>
-      <td align="center"><font face="Tahoma" size="2">Outstation</font></td>
-    </tr>
-<%
-    }
-
-} catch (SQLException e) {
-    out.println("<pre style='color:red;'>SQL Error: " + e.getMessage() + "</pre>");
-} finally {
-    if (rsDoc != null) try { rsDoc.close(); } catch (Exception ignored) {}
-    if (pstmtDoc != null) try { pstmtDoc.close(); } catch (Exception ignored) {}
-    if (connDoc != null) try { connDoc.close(); } catch (Exception ignored) {}
+for(Map<String,Object> row : localRefs){
+    String doc = row.get("DOC") != null ? row.get("DOC").toString().toUpperCase() : "UNKNOWN";
+    doctorSummary.put(doc, doctorSummary.getOrDefault(doc,0)+1);
+}
+for(Map<String,Object> row : outstationRefs){
+    String doc = row.get("DOC") != null ? row.get("DOC").toString().toUpperCase() : "UNKNOWN";
+    doctorSummary.put(doc, doctorSummary.getOrDefault(doc,0)+1);
 }
 %>
 
-  </table>
-</div>
+<p align="center"><font color="#800000" size="3" face="Tahoma"><b>Doctor-wise Reference Summary</b></font></p>
+<table border="1" width="40%" align="center">
+<tr>
+    <td bgcolor="#FFCCCC"><b>Doctor</b></td>
+    <td bgcolor="#FFCCCC" align="center"><b>No of Cases</b></td>
+</tr>
+<%
+for(Map.Entry<String,Integer> entry : doctorSummary.entrySet()){
+%>
+<tr>
+    <td><%= entry.getKey() %></td>
+    <td align="center"><%= entry.getValue() %></td>
+</tr>
+<%
+}
+%>
+</table>
 
+<%
+} catch(Exception e){
+    out.println("<pre style='color:red;'>Error: "+e.getMessage()+"</pre>");
+} finally {
+    if(rs != null) try{ rs.close(); } catch(Exception ignored){}
+    if(rs1 != null) try{ rs1.close(); } catch(Exception ignored){}
+    if(pstmt != null) try{ pstmt.close(); } catch(Exception ignored){}
+    if(pstmt1 != null) try{ pstmt1.close(); } catch(Exception ignored){}
+    if(conn != null) try{ conn.close(); } catch(Exception ignored){}
+    if(conn1 != null) try{ conn1.close(); } catch(Exception ignored){}
+}
+%>
 
 </body>
 </html>
