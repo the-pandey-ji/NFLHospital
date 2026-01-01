@@ -12,7 +12,7 @@
     </script>
 </head>
 <body background="../Stationery/Clear%20Day%20Bkgrd.jpg">
-<%@include file="/CGMUser/CGMUserNavbar.jsp"%> 
+<%@ include file="/navbar.jsp" %> 
     <h2 align="center"><u>No of Referred Cases in Date Range</u></h2>
 
     <form method="POST" action="/hosp1/HOSPITAL/Reports/refered2all.jsp" >
