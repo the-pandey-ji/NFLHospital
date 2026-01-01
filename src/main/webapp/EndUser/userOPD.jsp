@@ -15,6 +15,26 @@
     // Employee number MUST come from the secure session object
     String loggedInEmpn = user5.getEmpn(); 
     
+
+ // ===== YEAR LOGIC =====
+ String currentYear = new java.text.SimpleDateFormat("yyyy").format(new java.util.Date());
+ String selectedYear = request.getParameter("year");
+
+ if (selectedYear == null || selectedYear.trim().isEmpty()) {
+     selectedYear = currentYear;
+ }
+
+ String opdTable,prescriptionTable;
+ if (selectedYear.equals(currentYear)) {
+     opdTable = "OPD";
+     prescriptionTable = "PRESCRIPTION";
+ } else {
+     opdTable = "OPD" + selectedYear;
+     prescriptionTable = "PRESCRIPTION" + selectedYear;
+ }
+ // ===== END YEAR LOGIC =====
+
+    
     // --- Get OPD ID from URL parameter ---
     String opdIdParam = request.getParameter("opdId");
     int opdId = 0;
@@ -53,7 +73,7 @@
         conn = DBConnect.getConnection();
 
         // --- 2. SECURED FETCH: Fetch patient details only if SRNO and EMPN match ---
-        String query = "select PATIENTNAME, RELATION, AGE, to_char(opddate,'dd-MON-yyyy') as opddate, SEX, EMPN, EMPNAME, doctor from opd where srno=? AND EMPN=?";
+        String query = "select PATIENTNAME, RELATION, AGE, to_char(opddate,'dd-MON-yyyy') as opddate, SEX, EMPN, EMPNAME, doctor from "+ opdTable +" where srno=? AND EMPN=?";
         pstmt = conn.prepareStatement(query);
         pstmt.setInt(1, opdId);
         pstmt.setString(2, loggedInEmpn); // SECURITY: Enforce ownership check
@@ -86,7 +106,7 @@
             String query2 = 
                 "SELECT NVL(mm.MEDICINENAME, 'Unknown Medicine') AS MEDICINE, " +
                 "p.DOSAGE, p.FREQUENCY, p.TIMING, p.DAYS, p.NOTES, p.DISEASECODE " +
-                "FROM HOSPITAL.PRESCRIPTION p " +
+                "FROM HOSPITAL."+ prescriptionTable +" p " +
                 "LEFT JOIN HOSPITAL.MEDICINEMASTER mm ON TO_CHAR(p.MEDICINECODE) = TO_CHAR(mm.MEDICINECODE) " +
                 "WHERE p.OPD_ID = ?";
 
