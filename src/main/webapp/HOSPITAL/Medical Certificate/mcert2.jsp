@@ -117,7 +117,7 @@ request.setCharacterEncoding("UTF-8");
 	// Calculate leave duration in days
 	long days = 0;
 	try {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		java.util.Date from = sdf.parse(fromdt);
 		java.util.Date to = sdf.parse(todt);
 		long diff = to.getTime() - from.getTime();
